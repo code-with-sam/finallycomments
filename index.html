@@ -52,6 +52,16 @@
               parent_permlink: result.content[post].parent_permlink
           })
         }
+      // let userAtt
+      //   for ( user in result.accounts ){
+      //
+      //
+      //     resultsArray.push({
+      //         name: result.accounts[user].name,
+      //         reputation: result.content[user].reputation,
+      //         metadata: JSON.parse(json_metadata).profile
+      //     })
+      //   }
 
         resultsArray = resultsArray.sort((a,b) => {
             return b.id - a.id
@@ -64,22 +74,15 @@
 
         resultsArray.forEach( (post, i, arr) => {
             var permlink = post.parent_permlink
+            var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
             var  template = `
+            <img src="${metadata.profile_image}" height="70" width="70">
             <div data-post-id="${post.id}"  class="comment-level-${post.depth} ${post.permlink}">
-            <h4>${post.id}</h4>
             <h3><a href="">${post.title}</a> - ${post.author}</h3>
             <p>${ (post.body).substring(0, 250) }...</p>
             </div>`
-            //
             if ( post.depth === 1 ) {
               $('body').prepend( template)
-            } else {
-              //  console.log(  selector
-              // $('body').prepend( template)
-              // $('body').find(selector).css('background', 'red')
-              $('.' + permlink ).prepend( template)
-              console.log(permlink)
-              console.log( $('.' + permlink ))
             }
         })
 
@@ -87,13 +90,10 @@
             var permlink = post.parent_permlink
             var  template = `
             <div data-post-id="${post.id}" class="comment-level-${post.depth} ${post.permlink}">
-            <h4>${post.id}</h4>
             <h3><a href="">${post.title}</a> - ${post.author}</h3>
             <p>${ (post.body).substring(0, 250) }...</p>
             </div>`
-            //
             if ( post.depth > 1 ) {
-
               $('.' + permlink ).prepend( template)
               console.log(permlink)
               console.log( $('.' + permlink ))
