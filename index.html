@@ -5,7 +5,7 @@
   <meta charset="utf8">
   <style>
     .comment {
-      padding: 15px;
+      padding: 0 15px 10px;
     }
     .comment-level-1 {
       /*border: solid 1px red;*/
@@ -13,6 +13,7 @@
     .comment-level-2 {
       /*border: solid 1px green;*/
       margin-left: 20px;
+      /*padding: 0 15px 15px*/
     }
     img {
       border-radius: 50%;
@@ -24,6 +25,7 @@
 
     Hello world
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 
     <script
       src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -72,7 +74,7 @@
             var  template = `
             <div data-post-id="${post.id}"  class="comment comment-level-${post.depth} ${post.permlink}">
               <img src="${metadata.profile_image}" height="50" width="50">
-              <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${post.created}</h4>
+              <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${ moment(post.created).fromNow() }</h4>
               <p>${ post.body }...</p>
             </div>`
             if ( post.depth === 1 ) {
@@ -86,10 +88,10 @@
 
             var  template = `
             <div data-post-id="${post.id}" class="comment comment-level-${post.depth} ${post.permlink}">
-            <img src="${metadata.profile_image}" height="50" width="50">
-            <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${post.created}</h4>
+              <img src="${metadata.profile_image}" height="50" width="50">
+              <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${ moment(post.created).fromNow() }</h4>
 
-            <p>${ post.body }...</p>
+              <p>${ post.body }...</p>
             </div>`
             if ( post.depth > 1 ) {
               $('.' + permlink ).prepend( template)
@@ -97,8 +99,6 @@
               console.log( $('.' + permlink ))
             }
         })
-
-
 
     });
     </script>
