@@ -1,0 +1,60 @@
+<!doctype html>
+
+<html>
+  <head>
+  <meta charset="utf8">
+  </head>
+  <body>
+
+    Hello world
+    <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+
+    <script>
+    let parent = 'sambillingham';
+    let parentPermlink = '20180116t130531377z-post';
+
+    steem.api.setOptions({ url: 'wss://rpc.buildteam.io' });
+
+
+    // steem.api.getContentReplies(parent, parentPermlink, function (err, result) {
+    //   console.log(err, result);
+    // });
+
+    steem.api.getState(`/photofeed/@${parent}/${parentPermlink}`, function(err, result) {
+        console.log(err, result);
+
+        let resultsArray = [];
+
+        for ( post in result.content ){
+
+          var html = result.content[post].body
+
+          resultsArray.push({
+              id: result.content[post].id,
+              title: result.content[post].title,
+              author: result.content[post].author,
+              body: html,
+              permlink: result.content[post].permlink
+          })
+        }
+
+        resultsArray = resultsArray.sort((a,b) => {
+            return b.id - a.id
+        });
+
+        console.log(resultsArray)
+        resultsArray.forEach( (post, i, arr) => {
+
+          let template = `
+          <div data-post-id="${post.id}">
+          <h3><a href="">${post.title}</a> - ${post.author}</h3>
+          <p>${ (post.body).substring(0, 250) }...</p>
+          </div>`
+          document.querySelector('body').innerHTML += template
+        })
+
+
+    });
+    </script>
+  </body>
+</html>
