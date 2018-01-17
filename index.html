@@ -4,12 +4,19 @@
   <head>
   <meta charset="utf8">
   <style>
+    .comment {
+      padding: 15px;
+    }
     .comment-level-1 {
-      border: solid 1px red;
+      /*border: solid 1px red;*/
     }
     .comment-level-2 {
-      border: solid 1px green;
+      /*border: solid 1px green;*/
       margin-left: 20px;
+    }
+    img {
+      border-radius: 50%;
+      border: solid 2px #ccc;
     }
   </style>
   </head>
@@ -17,6 +24,7 @@
 
     Hello world
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+
     <script
       src="https://code.jquery.com/jquery-3.2.1.min.js"
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -49,37 +57,23 @@
               permlink: result.content[post].permlink,
               depth: result.content[post].depth,
               root_comment: result.content[post].root_comment,
-              parent_permlink: result.content[post].parent_permlink
+              parent_permlink: result.content[post].parent_permlink,
+              created: result.content[post].created
           })
         }
-      // let userAtt
-      //   for ( user in result.accounts ){
-      //
-      //
-      //     resultsArray.push({
-      //         name: result.accounts[user].name,
-      //         reputation: result.content[user].reputation,
-      //         metadata: JSON.parse(json_metadata).profile
-      //     })
-      //   }
 
         resultsArray = resultsArray.sort((a,b) => {
             return b.id - a.id
         });
 
-        // console.log(resultsArray)
-        // console.log(resultsArray.pop())
-        // console.log(resultsArray)
-
-
         resultsArray.forEach( (post, i, arr) => {
             var permlink = post.parent_permlink
             var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
             var  template = `
-            <img src="${metadata.profile_image}" height="70" width="70">
-            <div data-post-id="${post.id}"  class="comment-level-${post.depth} ${post.permlink}">
-            <h3><a href="">${post.title}</a> - ${post.author}</h3>
-            <p>${ (post.body).substring(0, 250) }...</p>
+            <div data-post-id="${post.id}"  class="comment comment-level-${post.depth} ${post.permlink}">
+              <img src="${metadata.profile_image}" height="50" width="50">
+              <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${post.created}</h4>
+              <p>${ post.body }...</p>
             </div>`
             if ( post.depth === 1 ) {
               $('body').prepend( template)
@@ -88,10 +82,14 @@
 
         resultsArray.forEach( (post, i, arr) => {
             var permlink = post.parent_permlink
+            var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+
             var  template = `
-            <div data-post-id="${post.id}" class="comment-level-${post.depth} ${post.permlink}">
-            <h3><a href="">${post.title}</a> - ${post.author}</h3>
-            <p>${ (post.body).substring(0, 250) }...</p>
+            <div data-post-id="${post.id}" class="comment comment-level-${post.depth} ${post.permlink}">
+            <img src="${metadata.profile_image}" height="50" width="50">
+            <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${post.created}</h4>
+
+            <p>${ post.body }...</p>
             </div>`
             if ( post.depth > 1 ) {
               $('.' + permlink ).prepend( template)
