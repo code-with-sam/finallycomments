@@ -4,6 +4,42 @@
   <head>
   <meta charset="utf8">
   <style>
+    @import url('https://fonts.googleapis.com/css?family=Sanchez');
+
+    .sc-section {
+      font-family: 'Sanchez', serif;
+    }
+    .sc-comments {
+      padding: 15px 0;
+      border: solid 1px #ccc;
+    }
+    .sc-topbar__rule {
+      border: none;
+      border: solid 2px #ccc;
+    }
+    .sc-topbar {
+      margin-top: 25px
+    }
+    .sc-topbar__upvote {
+      display: inline-block;
+      margin: 0 20px 10px 0;
+      cursor: pointer;
+      background: #7f8db1;
+      border-radius: 5px;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+      padding: 5px 10px;
+    }
+    .sc-topbar__reply {
+      display: inline-block;
+      margin: 0 20px 10px 0;
+      cursor: pointer;
+      background: #7f8db1;
+      border-radius: 5px;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+      padding: 5px 10px;
+    }
     .comment {
       padding: 0 15px 10px;
     }
@@ -19,11 +55,78 @@
       border-radius: 50%;
       border: solid 2px #ccc;
     }
+
+
+
+    .modal {
+      display: none;
+      background: rgba(0,0,0,0.3);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+
+    }
+    .modal__inner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      z-index: 1000;
+      max-width: 400px;
+      border-radius: 3px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.2)
+    }
+    .modal__inner h3 {
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 1.5em;
+      letter-spacing: 1px;
+    }
+    .modal__inner input {
+      margin: 20px 0;
+      text-align: center;
+      outline: 0;
+      border: solid 1px #333;
+      border-radius: 3px;
+      padding: 5px;
+    }
+    .modal__inner p {
+      font-size: 14px;
+    }
+    .modal__inner input:focus {
+      outline: 0;
+    }
+    .upvote-btn {
+      display: block;
+      margin-top: 20px;
+    }
+
   </style>
   </head>
   <body>
 
     Hello world
+
+    <section class="sc-section"></section>
+
+    <div class="modal">
+    </div>
+
+    <div class="modal__inner">
+      <input class="username" placeholder="yourusername" type="text"></input>
+      <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+      <a href="#" target="_blank" class=" upvote-btn">Upvote</a>
+    </div>
+
+
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 
@@ -32,75 +135,126 @@
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
     <script>
-    let parent = 'sambillingham';
-    let parentPermlink = '20180116t130531377z-post';
 
-    steem.api.setOptions({ url: 'wss://rpc.buildteam.io' });
+    const CATEGORY = 'photofeed';
+    const AUTHOR = 'sambillingham';
+    const PERMLINK = '20180116t130531377z-post';
+
+    init()
 
 
-    // steem.api.getContentReplies(parent, parentPermlink, function (err, result) {
-    //   console.log(err, result);
-    // });
+    function init(){
+        addTopBar()
+        getComments()
+    }
 
-    steem.api.getState(`/photofeed/@${parent}/${parentPermlink}`, function(err, result) {
-        console.log(err, result);
+    function addTopBar(){
+      let template = `
+          <div class="sc-topbar">
+            <span class="sc-topbar__date"></span>
+            <span class="sc-topbar__upvote">Upvote</span>
+            <span class="sc-topbar__reply">Reply<span>
+          </div>
+          <hr class="sc-topbar__rule">
+      `
 
-        let resultsArray = [];
+      $('.sc-section').append(template)
+    }
+    function setVoteUrl(username, author, permlink, weight){
+      let steemconnectUrl = `https://v2.steemconnect.com/sign/vote?voter=${username}&author=${author}&permlink=${permlink}&weight=${weight}`
+      $('.upvote-btn').attr('href', steemconnectUrl);
+    }
 
-        for ( post in result.content ){
+    $('.sc-topbar__upvote').on('click', () => {
+      $('.modal, .modal__inner').fadeIn();
+    })
 
-          var html = result.content[post].body
 
-          resultsArray.push({
-              id: result.content[post].id,
-              title: result.content[post].title,
-              author: result.content[post].author,
-              body: html,
-              permlink: result.content[post].permlink,
-              depth: result.content[post].depth,
-              root_comment: result.content[post].root_comment,
-              parent_permlink: result.content[post].parent_permlink,
-              created: result.content[post].created
-          })
-        }
+    $('.modal').on('click', (e) => {
+      $('.modal, .modal__inner').fadeOut();
+    })
 
-        resultsArray = resultsArray.sort((a,b) => {
-            return b.id - a.id
+    $('.username').on('keyup', (e) => {
+      let username = $('.username').val().trim()
+      let weight = $('.slider').val()
+      let permlink = PERMLINK
+      let author = AUTHOR
+      setVoteUrl(username, author, permlink, weight)
+    })
+
+    $('.slider').on('change', (e) => {
+      let username = $('.username').val().trim()
+      let weight = $('.slider').val()
+      let permlink = PERMLINK
+      let author = AUTHOR
+      setVoteUrl(username, author, permlink, weight)
+    })
+
+
+    function getComments(){
+        $('.sc-section').append('<div class="sc-comments"></div>')
+
+        steem.api.setOptions({ url: 'wss://rpc.buildteam.io' });
+        steem.api.getState(`/${CATEGORY}/@${AUTHOR}/${PERMLINK}`, function(err, result) {
+            console.log(err, result);
+
+            let resultsArray = [];
+
+            for ( post in result.content ){
+
+              var html = result.content[post].body
+
+              resultsArray.push({
+                  id: result.content[post].id,
+                  title: result.content[post].title,
+                  author: result.content[post].author,
+                  body: html,
+                  permlink: result.content[post].permlink,
+                  depth: result.content[post].depth,
+                  root_comment: result.content[post].root_comment,
+                  parent_permlink: result.content[post].parent_permlink,
+                  created: result.content[post].created
+              })
+            }
+
+            resultsArray = resultsArray.sort((a,b) => {
+                return b.id - a.id
+            });
+
+            resultsArray.forEach( (post, i, arr) => {
+                var permlink = post.parent_permlink
+                var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+                var  template = `
+                <div data-post-id="${post.id}"  class="comment comment-level-${post.depth} ${post.permlink}">
+                  <img src="${metadata.profile_image}" height="50" width="50">
+                  <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> &middot; ${ moment(post.created).fromNow() }</h4>
+                  <p>${ post.body }...</p>
+                </div>`
+                if ( post.depth === 1 ) {
+                  $('.sc-comments').prepend( template)
+                }
+            })
+
+            resultsArray.forEach( (post, i, arr) => {
+                var permlink = post.parent_permlink
+                var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+
+                var  template = `
+                <div data-post-id="${post.id}" class="comment comment-level-${post.depth} ${post.permlink}">
+                  <img src="${metadata.profile_image}" height="50" width="50">
+                  <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${ moment(post.created).fromNow() }</h4>
+
+                  <p>${ post.body }...</p>
+                </div>`
+                if ( post.depth > 1 ) {
+                  $('.' + permlink ).prepend( template)
+                  console.log(permlink)
+                  console.log( $('.' + permlink ))
+                }
+            })
+
         });
-
-        resultsArray.forEach( (post, i, arr) => {
-            var permlink = post.parent_permlink
-            var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
-            var  template = `
-            <div data-post-id="${post.id}"  class="comment comment-level-${post.depth} ${post.permlink}">
-              <img src="${metadata.profile_image}" height="50" width="50">
-              <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${ moment(post.created).fromNow() }</h4>
-              <p>${ post.body }...</p>
-            </div>`
-            if ( post.depth === 1 ) {
-              $('body').prepend( template)
-            }
-        })
-
-        resultsArray.forEach( (post, i, arr) => {
-            var permlink = post.parent_permlink
-            var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
-
-            var  template = `
-            <div data-post-id="${post.id}" class="comment comment-level-${post.depth} ${post.permlink}">
-              <img src="${metadata.profile_image}" height="50" width="50">
-              <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${ moment(post.created).fromNow() }</h4>
-
-              <p>${ post.body }...</p>
-            </div>`
-            if ( post.depth > 1 ) {
-              $('.' + permlink ).prepend( template)
-              console.log(permlink)
-              console.log( $('.' + permlink ))
-            }
-        })
-
-    });
+      }
     </script>
   </body>
 </html>
