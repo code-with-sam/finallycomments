@@ -5,7 +5,9 @@
   <meta charset="utf8">
   <style>
     @import url('https://fonts.googleapis.com/css?family=Sanchez');
-
+    * {
+      box-sizing: border-box;
+    }
     .sc-section {
       font-family: 'Sanchez', serif;
     }
@@ -71,9 +73,35 @@
 
     }
 
-    .modal__inner,
     .modal__inner__comment {
-      display: none;
+      width: 100%;
+      padding: 15px 0;
+      position: relative;
+    }
+    .sc-comment__username {
+
+    }
+
+    .sc-comment__message {
+      width: 100%;
+      margin-bottom: 20px;
+      border: solid 1px #333;
+    }
+
+    .sc-comment__btn {
+      display: inline-block;
+      margin: 0 20px 10px 0;
+      cursor: pointer;
+      background: #7f8db1;
+      border-radius: 5px;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+      padding: 5px 10px;
+      text-decoration: none;
+    }
+
+      .modal__inner {
+      /*display: none;*/
       text-align: center;
       padding: 40px;
       position: fixed;
@@ -107,6 +135,15 @@
       display: block;
       margin-top: 20px;
     }
+    .sc-close {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      transform: rotate(45deg);
+      font-size: 40px;
+      line-height: 1;
+      cursor: pointer;
+    }
 
   </style>
   </head>
@@ -119,18 +156,11 @@
     <div class="modal">
     </div>
 
-    <div class="modal__inner">
+    <!-- <div class="modal__inner">
       <input class="sc-vote__username" placeholder="yourusername" type="text">
       <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
       <a href="#" target="_blank" class="sc-vote__btn">Upvote</a>
-    </div>
-
-    <div class="modal__inner__comment">
-      <input class="sc-comment__username" placeholder="yourusername" type="text">
-      <textarea class="sc-comment__message" placeholder="message"></textarea>
-      <a href="#" target="_blank" class="sc-comment__btn">Comment</a>
-    </div>
-
+    </div> -->
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
@@ -169,6 +199,17 @@
       $('.sc-section').append(template)
     }
 
+    function addCommentTemplateAfter(dest) {
+      let template = `<div class="modal__inner__comment">
+        <input class="sc-comment__username" placeholder="yourusername" type="text">
+        <textarea class="sc-comment__message" placeholder="message"></textarea>
+        <a href="#" target="_blank" class="sc-comment__btn">Comment</a>
+        <span class="sc-close sc-comment__close" >&#43;</span>
+      </div>`
+      $(template).insertAfter(dest)
+    }
+
+
     function setVoteUrl(username, author, permlink, weight){
       let steemconnectUrl = `https://v2.steemconnect.com/sign/vote?voter=${username}&author=${author}&permlink=${permlink}&weight=${weight}`
       $('.sc-vote__btn').attr('href', steemconnectUrl);
@@ -196,7 +237,8 @@
     })
 
     $('.sc-topbar__reply').on('click', () => {
-      $('.modal, .modal__inner__comment').fadeIn();
+      // $('.modal, .modal__inner__comment').fadeIn();
+      addCommentTemplateAfter('.sc-section .sc-topbar__rule')
     })
 
     $('.modal').on('click', (e) => {
@@ -219,7 +261,7 @@
       setVoteUrl(username, author, permlink, weight)
     })
 
-    $('.sc-comment__username').on('keyup', (e) => {
+    $('.sc-section').on('keyup', '.sc-comment__username',(e) => {
       console.log('user')
       let username = $('.sc-comment__username').val().trim()
       let message = $('.sc-comment__message').val()
@@ -227,14 +269,17 @@
       let parentAuthor = AUTHOR
       setCommentUrl(parentAuthor,parentPermlink, username, message)
     })
-    $('.sc-comment__message').on('keyup', (e) => {
+    $('.sc-section').on('keyup', '.sc-comment__message' , (e) => {
       let username = $('.sc-comment__username').val().trim()
       let message = $('.sc-comment__message').val()
       let parentPermlink = PERMLINK
       let parentAuthor = AUTHOR
       setCommentUrl(parentAuthor,parentPermlink, username, message)
-
     })
+
+    $('.sc-section').on('click', '.sc-comment__close', (e) => {
+      $(e.currentTarget).parent().remove()
+    });
 
     function getComments(){
         $('.sc-section').append('<div class="sc-comments"></div>')
