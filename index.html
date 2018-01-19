@@ -20,7 +20,9 @@
       border: solid 2px #ccc;
     }
     .sc-topbar {
-      margin-top: 25px
+      position: relative;
+
+      margin-top: 25px;
     }
     .sc-topbar__upvote {
       display: inline-block;
@@ -42,11 +44,20 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.15);
       padding: 5px 10px;
     }
+    .sc-close {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      transform: rotate(45deg);
+      font-size: 40px;
+      line-height: 1;
+      cursor: pointer;
+    }
     .comment {
       padding: 0 15px 10px;
     }
     .comment-level-1 {
-      /*border: solid 1px red;*/
+      /*border: solid 1px #4f79ff;*/
     }
     .comment-level-2 {
       /*border: solid 1px green;*/
@@ -59,27 +70,12 @@
     }
 
 
-
-    .modal {
-      display: none;
-      background: rgba(0,0,0,0.3);
-      position: fixed;
-      width: 100%;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 100;
-
-    }
-
     .modal__inner__comment {
       width: 100%;
       padding: 15px 0;
       position: relative;
     }
     .sc-comment__username {
-
     }
 
     .sc-comment__message {
@@ -100,49 +96,144 @@
       text-decoration: none;
     }
 
-      .modal__inner {
-      /*display: none;*/
-      text-align: center;
-      padding: 40px;
-      position: fixed;
-      top: 50px;
-      left: 50%;
-      transform: translateX(-50%);
+    .sc-vote {
+      position: absolute;
+      padding: 20px;
       background-color: #fff;
-      z-index: 1000;
-      max-width: 400px;
+      max-width: 300px;
       border-radius: 3px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.2)
+      box-shadow: 0 0 25px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    .sc-vote__close {
+      bottom: 15px;
+      top: auto;
+      font-size: 50px;
+    }
+    .sc-vote__username {
+      width: 100%;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+      border: none;
+      border: solid 1px #ccc;
+      padding: 10px;
+    }
+    .sc-vote__username:focus {
+      outline: none;
+    }
+    .sc-vote__value {
+      display: inline-block;
+      width: 50px;
+      text-align: center;
+    }
+    .sc-vote__slider {
+      width: 150px;
+
     }
 
-    .modal__inner input,
-    .modal__inner__comment input {
-      margin: 20px 0;
+    input[type=range] {
+      -webkit-appearance: none;
+      margin: 10px 0;
+    }
+    input[type=range]:focus {
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      background: #ccc;
+      border-radius: 25px;
+      border: 0px solid #fafafa;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border: 0px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #4f79ff;
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -3.6px;
+    }
+    input[type=range]:focus::-webkit-slider-runnable-track {
+      background: #ccc;
+    }
+    input[type=range]::-moz-range-track {
+      width: 100%;
+      height: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      background: #ccc;
+      border-radius: 25px;
+      border: 0px solid #fafafa;
+    }
+    input[type=range]::-moz-range-thumb {
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border: 0px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #4f79ff;
+      cursor: pointer;
+    }
+    input[type=range]::-ms-track {
+      height: 10px;
+      cursor: pointer;
+      background: transparent;
+      border-color: transparent;
+      border-width: 39px 0;
+      color: transparent;
+    }
+    input[type=range]::-ms-fill-lower {
+      background: #ccc;
+      border: 0px solid #fafafa;
+      border-radius: 50px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    input[type=range]::-ms-fill-upper {
+      background: #ccc;
+      border: 0px solid #fafafa;
+      border-radius: 50px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    input[type=range]::-ms-thumb {
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border: 0px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #4f79ff;
+      cursor: pointer;
+    }
+    input[type=range]:focus::-ms-fill-lower {
+      background: #ccc;
+    }
+    input[type=range]:focus::-ms-fill-upper {
+      background: #ccc;
+    }
+
+
+
+
+    .sc-vote__btn {
+      display: inline-block;
+      border-radius: 50%;
+      border: solid 4px #333;
+      height: 30px;
+      width: 30px;
       text-align: center;
-      outline: 0;
-      border: solid 1px #333;
-      border-radius: 3px;
-      padding: 5px;
+      line-height: 26px;
+      text-decoration: none;
     }
-    .modal__inner p,
-    .modal__inner__comment p {
-      font-size: 14px;
-    }
-    .modal__inner input:focus {
-      outline: 0;
-    }
+
     .upvote-btn {
       display: block;
       margin-top: 20px;
-    }
-    .sc-close {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      transform: rotate(45deg);
-      font-size: 40px;
-      line-height: 1;
-      cursor: pointer;
+
     }
 
   </style>
@@ -152,15 +243,6 @@
     Hello world
 
     <section class="sc-section"></section>
-
-    <div class="modal">
-    </div>
-
-    <!-- <div class="modal__inner">
-      <input class="sc-vote__username" placeholder="yourusername" type="text">
-      <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
-      <a href="#" target="_blank" class="sc-vote__btn">Upvote</a>
-    </div> -->
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
@@ -201,7 +283,7 @@
 
     function addCommentTemplateAfter(dest) {
       let template = `<div class="modal__inner__comment">
-        <input class="sc-comment__username" placeholder="yourusername" type="text">
+        <input class="sc-comment__username" placeholder="username" type="text">
         <textarea class="sc-comment__message" placeholder="message"></textarea>
         <a href="#" target="_blank" class="sc-comment__btn">Comment</a>
         <span class="sc-close sc-comment__close" >&#43;</span>
@@ -209,6 +291,17 @@
       $(template).insertAfter(dest)
     }
 
+
+    function addVoteTemplateAfter(dest){
+      let template = `<div class="sc-vote">
+            <input class="sc-vote__username" placeholder="username" type="text">
+            <a href="#" target="_blank" class="sc-vote__btn">^</a>
+            <span class="sc-vote__value">50%</span>
+            <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
+            <span class="sc-close sc-vote__close" >&#43;</span>
+          </div>`
+      $(template).insertAfter(dest)
+    }
 
     function setVoteUrl(username, author, permlink, weight){
       let steemconnectUrl = `https://v2.steemconnect.com/sign/vote?voter=${username}&author=${author}&permlink=${permlink}&weight=${weight}`
@@ -233,16 +326,13 @@
 
 
     $('.sc-topbar__upvote').on('click', () => {
-      $('.modal, .modal__inner').fadeIn();
+      addVoteTemplateAfter('.sc-topbar__upvote')
+
     })
 
     $('.sc-topbar__reply').on('click', () => {
-      // $('.modal, .modal__inner__comment').fadeIn();
       addCommentTemplateAfter('.sc-section .sc-topbar__rule')
-    })
-
-    $('.modal').on('click', (e) => {
-      $('.modal, .modal__inner, .modal__inner__comment').fadeOut();
+      $('.sc-vote').remove()
     })
 
     $('.sc-vote__username').on('keyup', (e) => {
@@ -253,11 +343,12 @@
       setVoteUrl(username, author, permlink, weight)
     })
 
-    $('.sc-vote__slider').on('change', (e) => {
+    $('.sc-vote__slider').on('input', (e) => {
       let username = $('.sc-vote__username').val().trim()
       let weight = $('.sc-vote__slider').val()
       let permlink = PERMLINK
       let author = AUTHOR
+      $('.sc-vote__value').text(weight + '%')
       setVoteUrl(username, author, permlink, weight)
     })
 
@@ -277,7 +368,7 @@
       setCommentUrl(parentAuthor,parentPermlink, username, message)
     })
 
-    $('.sc-section').on('click', '.sc-comment__close', (e) => {
+    $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
       $(e.currentTarget).parent().remove()
     });
 
