@@ -364,20 +364,20 @@
             })
 
             $('.sc-section').on('keyup', '.sc-vote__username', (e) => {
-              let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
+              let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
               let username = $('.sc-vote__username').val().trim()
               let weight = $('.sc-vote__slider').val()
-              let permlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-              let author = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+              let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+              let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
               steemComments.setVoteUrl(username, author, permlink, weight)
             })
 
             $('.sc-section').on('input', '.sc-vote__slider', (e) => {
-              let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
+              let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
               let username = $('.sc-vote__username').val().trim()
               let weight = $('.sc-vote__slider').val()
-              let permlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-              let author = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+              let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+              let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
               $('.sc-vote__value').text(weight + '%')
               steemComments.setVoteUrl(username, author, permlink, weight)
             })
@@ -386,8 +386,8 @@
               let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
               let username = $('.sc-comment__username').val().trim()
               let message = $('.sc-comment__message').val()
-              let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-              let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+              let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+              let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
               let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
               steemComments.setCommentUrl(parentAuthor,parentPermlink, username, message, title)
             })
@@ -396,8 +396,8 @@
               let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
               let username = $('.sc-comment__username').val().trim()
               let message = $('.sc-comment__message').val()
-              let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-              let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+              let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+              let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
               let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
               steemComments.setCommentUrl(parentAuthor,parentPermlink, username, message, title)
             })
@@ -440,7 +440,6 @@
         steemComments.PERMLINK = parts.pop();
         steemComments.AUTHOR = parts.pop().substr(1);
         steemComments.CATEGORY = parts.pop();
-        console.log(steemComments.CATEGORY, steemComments.AUTHOR, steemComments.PERMLINK)
       },
       addTopBar: () => {
         let template = `
