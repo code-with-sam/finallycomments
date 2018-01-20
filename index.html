@@ -141,6 +141,7 @@
       border-radius: 3px;
       padding: 10px;
       height: 100px;
+      resize: vertical;
     }
 
     .sc-comment__btn {
@@ -336,6 +337,7 @@
     function addTopBar(){
       let template = `
           <div class="sc-topbar">
+            <span class="sc-topbar__count"> !0 Comments</span>
             <span class="sc-topbar__date"></span>
             <span class="sc-topbar__upvote">Upvote</span>
             <span class="sc-topbar__reply">Reply<span>
@@ -359,6 +361,7 @@
 
 
     function addVoteTemplateAfter(dest){
+      $('.sc-vote').remove()
       let template = `<div class="sc-vote">
             <input class="sc-vote__username" placeholder="username" type="text">
             <a href="#" target="_blank" class="sc-vote__btn">^</a>
@@ -393,7 +396,6 @@
 
     $('.sc-topbar__upvote').on('click', () => {
       addVoteTemplateAfter('.sc-topbar__upvote')
-
     })
 
     $('.sc-topbar__reply').on('click', () => {
@@ -403,22 +405,27 @@
 
     $('.sc-section').on('click', '.sc-item__reply', (e) => {
       addCommentTemplateAfter(e.currentTarget)
-
     })
 
-    $('.sc-vote__username').on('keyup', (e) => {
+    $('.sc-section').on('click', '.sc-item__upvote', (e) => {
+      addVoteTemplateAfter(e.currentTarget)
+    })
+
+    $('.sc-section').on('keyup', '.sc-vote__username', (e) => {
+      let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
       let username = $('.sc-vote__username').val().trim()
       let weight = $('.sc-vote__slider').val()
-      let permlink = PERMLINK
-      let author = AUTHOR
+      let permlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+      let author = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
       setVoteUrl(username, author, permlink, weight)
     })
 
-    $('.sc-vote__slider').on('input', (e) => {
+    $('.sc-section').on('input', '.sc-vote__slider', (e) => {
+      let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
       let username = $('.sc-vote__username').val().trim()
       let weight = $('.sc-vote__slider').val()
-      let permlink = PERMLINK
-      let author = AUTHOR
+      let permlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+      let author = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
       $('.sc-vote__value').text(weight + '%')
       setVoteUrl(username, author, permlink, weight)
     })
@@ -428,7 +435,7 @@
       let username = $('.sc-comment__username').val().trim()
       let message = $('.sc-comment__message').val()
       let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-      let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('permlink')
+      let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
       setCommentUrl(parentAuthor,parentPermlink, username, message)
     })
     $('.sc-section').on('keyup', '.sc-comment__message' , (e) => {
