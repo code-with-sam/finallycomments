@@ -8,6 +8,12 @@
     * {
       box-sizing: border-box;
     }
+
+    .sc-cf:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
     .sc-section {
       font-family: 'Sanchez', serif;
     }
@@ -53,30 +59,60 @@
       line-height: 1;
       cursor: pointer;
     }
-    .comment {
+    .sc-item {
       padding: 0 15px 10px;
     }
-    .comment-level-1 {
+    .sc-item__level-1 {
       /*border: solid 1px #4f79ff;*/
     }
-    .comment-level-2 {
+    .sc-item__level-2 {
       /*border: solid 1px green;*/
       margin-left: 20px;
       /*padding: 0 15px 15px*/
     }
-    img {
+
+    .sc-item__left {
+      float: left;
+      min-width: 50px;
+    }
+    .sc-item__right {
+      float: left;
+      padding: 0 20px;
+      width: calc(100% - 50px)
+    }
+
+    .sc-item__image {
       border-radius: 50%;
       border: solid 2px #ccc;
     }
-
-
-    .modal__inner__comment {
-      width: 100%;
-      padding: 15px 0;
-      position: relative;
+    .sc-item__username {
+      margin: 0 0 10px 0
     }
-    .sc-comment__username {
+    .sc-item__author-link {
+      display: inline-block;
+      padding: 3px 6px;
+      transform: translateX(-6px);
+      border-radius: 10px;
+      text-decoration: none;
+      color: #0e0e0e;
+      font-size: 17px;
+      transition: all 200ms;
     }
+    .sc-item__author-link:hover {
+      background: rgba(141, 141, 243, 0.2);
+    }
+    .sc-item__middot {
+      padding: 0 4px 0 0px;
+    }
+    .sc-item__datetime {
+      color: #777;
+      font-style: italic;
+      font-size: 13px;
+    }
+    .sc-item__content {
+      margin: 0 0 20px 0;
+    }
+
 
     .sc-comment__message {
       width: 100%;
@@ -406,10 +442,17 @@
                 var permlink = post.parent_permlink
                 var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
                 var  template = `
-                <div data-post-id="${post.id}"  class="comment comment-level-${post.depth} ${post.permlink}">
-                  <img src="${metadata.profile_image}" height="50" width="50">
-                  <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> &middot; ${ moment(post.created).fromNow() }</h4>
-                  <p>${ post.body }...</p>
+                <div data-post-id="${post.id}"  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+                  <div class="sc-item__left">
+                    <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
+                  </div>
+                  <div class="sc-item__right">
+                    <h4 class="sc-item__username">
+                      <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
+                      <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
+                      </h4>
+                    <p class="sc-item__content">${ post.body }...</p>
+                  </div>
                 </div>`
                 if ( post.depth === 1 ) {
                   $('.sc-comments').prepend( template)
@@ -421,11 +464,17 @@
                 var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
 
                 var  template = `
-                <div data-post-id="${post.id}" class="comment comment-level-${post.depth} ${post.permlink}">
-                  <img src="${metadata.profile_image}" height="50" width="50">
-                  <h4><a href="https://steemit.com/@${post.author}" target="_blank">${post.author}</a> - ${ moment(post.created).fromNow() }</h4>
-
-                  <p>${ post.body }...</p>
+                <div data-post-id="${post.id}"  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+                  <div class="sc-item__left">
+                    <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
+                  </div>
+                  <div class="sc-item__right">
+                    <h4 class="sc-item__username">
+                      <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
+                      <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
+                      </h4>
+                    <p class="sc-item__content">${ post.body }...</p>
+                  </div>
                 </div>`
                 if ( post.depth > 1 ) {
                   $('.' + permlink ).prepend( template)
