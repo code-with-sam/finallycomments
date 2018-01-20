@@ -321,7 +321,7 @@
   console.log('hello')
     const CATEGORY = 'photofeed';
     const AUTHOR = 'sambillingham';
-    const PERMLINK = '20180116t130531377z-post';
+    const PERMLINK = '20180115t213529967z-post';
     const POSTTITLE = 'HELLO THIS IS THE TITLE';
     const STEEMSERVER = 'wss://rpc.buildteam.io';
     init()
@@ -377,8 +377,8 @@
       $('.sc-vote__btn').attr('href', steemconnectUrl);
     }
 
-    function setCommentUrl(parentAuthor,parentPermlink, author, message) {
-      let title = 'RE: ' + POSTTITLE
+    function setCommentUrl(parentAuthor,parentPermlink, author, message, parentTitle) {
+      let title = 'RE: ' + parentTitle
       let permlink = randomString()
       let steemconnectUrl = encodeURI(`https://v2.steemconnect.com/sign/comment?parent_author=${parentAuthor}&parent_permlink=${parentPermlink}&author=${author}&permlink=${permlink}&title=${title}&body=${message}`)
       $('.sc-comment__btn').attr('href', steemconnectUrl)
@@ -436,16 +436,19 @@
       let message = $('.sc-comment__message').val()
       let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
       let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-      setCommentUrl(parentAuthor,parentPermlink, username, message)
+      let title = topLevel ? POSTTITLE : $(e.currentTarget).closest('.sc-item').data('title')
+      setCommentUrl(parentAuthor,parentPermlink, username, message, title)
     })
+
     $('.sc-section').on('keyup', '.sc-comment__message' , (e) => {
       let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
       let username = $('.sc-comment__username').val().trim()
       let message = $('.sc-comment__message').val()
       let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
       let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-      console.log(parentPermlink, parentAuthor)
-      setCommentUrl(parentAuthor,parentPermlink, username, message)
+      let title = topLevel ? POSTTITLE : $(e.currentTarget).closest('.sc-item').data('title')
+      console.log(parentAuthor,parentPermlink, username, message, title)
+      setCommentUrl(parentAuthor,parentPermlink, username, message, title)
     })
 
     $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
@@ -467,7 +470,7 @@
 
               resultsArray.push({
                   id: result.content[post].id,
-                  title: result.content[post].title,
+                  title: result.content[post].root_title,
                   author: result.content[post].author,
                   body: html,
                   permlink: result.content[post].permlink,
@@ -494,6 +497,7 @@
                 <div data-post-id="${post.id}"
                     data-permlink="${post.permlink}"
                     data-author="${post.author}"
+                    data-title="${post.title}"
 
                   class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
                   <div class="sc-item__left">
@@ -527,6 +531,7 @@
                 <div data-post-id="${post.id}"
                     data-permlink="${post.permlink}"
                     data-author="${post.author}"
+                    data-title="${post.title}"
 
                   class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
                   <div class="sc-item__left">
