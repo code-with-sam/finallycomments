@@ -110,10 +110,16 @@
       font-size: 13px;
     }
     .sc-item__content {
-      margin: 0 0 20px 0;
+      margin: 0 0 10px 0;
+    }
+    .sc-item__meta {
+      font-size: 13px;
+      color: #868686;
+      margin-bottom: 20px;
     }
 
 
+     /*INPUT*/
     .sc-comment__message {
       width: 100%;
       margin-bottom: 20px;
@@ -452,6 +458,13 @@
                       <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
                       </h4>
                     <p class="sc-item__content">${ post.body }...</p>
+                    <div class="sc-item__meta">
+                      <span class="sc-item__upvote">[^]</span>
+                      <span class="sc-item__divider">|</span>
+                      <span class="sc-item__votecount">3 Votes</span>
+                      <span class="sc-item__upvote">|</span>
+                      <span class="sc-item__reply">Reply</span>
+                    </div>
                   </div>
                 </div>`
                 if ( post.depth === 1 ) {
@@ -474,6 +487,13 @@
                       <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
                       </h4>
                     <p class="sc-item__content">${ post.body }...</p>
+                    <div class="sc-item__meta">
+                      <span class="sc-item__upvote">[^]</span>
+                      <span class="sc-item__divider">|</span>
+                      <span class="sc-item__votecount">3 Votes</span>
+                      <span class="sc-item__upvote">|</span>
+                      <span class="sc-item__reply">Reply</span>
+                    </div>
                   </div>
                 </div>`
                 if ( post.depth > 1 ) {
