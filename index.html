@@ -347,6 +347,7 @@
     }
 
     function addCommentTemplateAfter(dest) {
+      $('.sc-comment__container').remove()
       let template = `<div class="sc-comment__container">
         <input class="sc-comment__username" placeholder="username" type="text">
         <textarea class="sc-comment__message" placeholder="Reply"></textarea>
@@ -423,18 +424,20 @@
     })
 
     $('.sc-section').on('keyup', '.sc-comment__username',(e) => {
-      console.log('user')
+      let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
       let username = $('.sc-comment__username').val().trim()
       let message = $('.sc-comment__message').val()
-      let parentPermlink = PERMLINK
-      let parentAuthor = AUTHOR
+      let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+      let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('permlink')
       setCommentUrl(parentAuthor,parentPermlink, username, message)
     })
     $('.sc-section').on('keyup', '.sc-comment__message' , (e) => {
+      let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
       let username = $('.sc-comment__username').val().trim()
       let message = $('.sc-comment__message').val()
-      let parentPermlink = PERMLINK
-      let parentAuthor = AUTHOR
+      let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+      let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+      console.log(parentPermlink, parentAuthor)
       setCommentUrl(parentAuthor,parentPermlink, username, message)
     })
 
@@ -474,12 +477,18 @@
             });
 
             resultsArray.forEach( (post, i, arr) => {
+              console.log(post.permlink)
+              // console.log(post.parent_permlink)
                 var permlink = post.parent_permlink
                 var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
                 var voteMessage = (post.votes > 1 || post.votes == 0 )? 'Votes' : 'Vote'
 
                 var  template = `
-                <div data-post-id="${post.id}"  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+                <div data-post-id="${post.id}"
+                    data-permlink="${post.permlink}"
+                    data-author="${post.author}"
+
+                  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
                   <div class="sc-item__left">
                     <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
                   </div>
@@ -508,7 +517,11 @@
                 var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
                 var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
                 var  template = `
-                <div data-post-id="${post.id}"  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+                <div data-post-id="${post.id}"
+                    data-permlink="${post.permlink}"
+                    data-author="${post.author}"
+
+                  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
                   <div class="sc-item__left">
                     <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
                   </div>
