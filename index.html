@@ -505,6 +505,18 @@
 
     })
 
+    $('.sc-section').on('click', '.sc-vote__btn, .sc-comment__btn', (e) => {
+      let url = $(e.currentTarget).attr('href');
+      let newWindow = window.open(url,'steemconnect','height=650,width=770')
+      if (window.focus)
+        newWindow.focus()
+
+      e.preventDefault()
+      return false;
+    })
+
+
+
     function getComments(){
         $('.sc-section').append('<div class="sc-comments"></div>')
 
