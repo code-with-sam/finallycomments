@@ -43,12 +43,12 @@ Also link dependencies before steemcomments javascript if your website is not al
 
 ```
 
-### Roadmap
+# Roadmap
 - Remove jQuery + Moment.js as a dependencies
 - include individual vote amounts for each comment
 - CDN host
 
-### Contributions
+# Contributions
 Ideas, sugestions and PR's welcome 
 
 created by [@sambillingham](https://steemit.com/@sambillingham)
