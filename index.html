@@ -118,6 +118,15 @@
       margin-bottom: 20px;
     }
 
+    .sc-item__divider {
+      display: inline-block;
+      margin: 0 10px;
+    }
+    .sc-item__reply,
+    .sc-item__upvote {
+      cursor: pointer;
+    }
+
 
      /*INPUT*/
     .sc-comment__message {
@@ -436,7 +445,8 @@
                   depth: result.content[post].depth,
                   root_comment: result.content[post].root_comment,
                   parent_permlink: result.content[post].parent_permlink,
-                  created: result.content[post].created
+                  created: result.content[post].created,
+                  votes: result.content[post].net_votes
               })
             }
 
@@ -447,6 +457,8 @@
             resultsArray.forEach( (post, i, arr) => {
                 var permlink = post.parent_permlink
                 var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+                var voteMessage = (post.votes > 1 || post.votes == 0 )? 'Votes' : 'Vote'
+
                 var  template = `
                 <div data-post-id="${post.id}"  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
                   <div class="sc-item__left">
@@ -461,8 +473,8 @@
                     <div class="sc-item__meta">
                       <span class="sc-item__upvote">[^]</span>
                       <span class="sc-item__divider">|</span>
-                      <span class="sc-item__votecount">3 Votes</span>
-                      <span class="sc-item__upvote">|</span>
+                      <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
+                      <span class="sc-item__divider">|</span>
                       <span class="sc-item__reply">Reply</span>
                     </div>
                   </div>
@@ -475,7 +487,7 @@
             resultsArray.forEach( (post, i, arr) => {
                 var permlink = post.parent_permlink
                 var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
-
+                var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
                 var  template = `
                 <div data-post-id="${post.id}"  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
                   <div class="sc-item__left">
@@ -490,8 +502,8 @@
                     <div class="sc-item__meta">
                       <span class="sc-item__upvote">[^]</span>
                       <span class="sc-item__divider">|</span>
-                      <span class="sc-item__votecount">3 Votes</span>
-                      <span class="sc-item__upvote">|</span>
+                      <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
+                      <span class="sc-item__divider">|</span>
                       <span class="sc-item__reply">Reply</span>
                     </div>
                   </div>
