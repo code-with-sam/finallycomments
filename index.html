@@ -19,36 +19,42 @@
     }
     .sc-comments {
       padding: 15px 0;
-      border: solid 1px #ccc;
+      /*border: solid 1px #ccc;*/
     }
     .sc-topbar__rule {
       border: none;
-      border: solid 2px #ccc;
+      margin: 0 auto 10px auto;
+      border: solid 2px #eaeaea;
     }
     .sc-topbar {
       position: relative;
-
       margin-top: 25px;
     }
-    .sc-topbar__upvote {
-      display: inline-block;
-      margin: 0 20px 10px 0;
-      cursor: pointer;
-      background: #7f8db1;
-      border-radius: 5px;
-      color: #fff;
-      box-shadow: 0 0 15px rgba(0,0,0,0.15);
-      padding: 5px 10px;
+
+    .sc-topbar__count {
+      color: #757575;
+      float: right;
     }
-    .sc-topbar__reply {
+    .sc-topbar__upvote {
+      float: left;
       display: inline-block;
-      margin: 0 20px 10px 0;
+      margin: 0;
+      height:  30px;
       cursor: pointer;
-      background: #7f8db1;
-      border-radius: 5px;
-      color: #fff;
-      box-shadow: 0 0 15px rgba(0,0,0,0.15);
-      padding: 5px 10px;
+    }
+    .sc-topbar__upvote svg circle {
+      transition: all 200ms;
+    }
+    .sc-topbar__upvote:hover svg circle {
+      fill: #759af7;
+    }
+
+    .sc-topbar__reply {
+      float: left;
+      display: inline-block;
+      cursor: pointer;
+      color: #000;
+      padding: 0 10px;
     }
     .sc-close {
       cursor: pointer;
@@ -57,12 +63,9 @@
       padding: 0 15px 10px;
     }
     .sc-item__level-1 {
-      /*border: solid 1px #4f79ff;*/
     }
     .sc-item__level-2 {
-      /*border: solid 1px green;*/
       margin-left: 20px;
-      /*padding: 0 15px 15px*/
     }
 
     .sc-item__left {
@@ -121,6 +124,9 @@
       cursor: pointer;
     }
 
+      .sc-item__upvote svg {
+          transform: translateY(4px);
+      }
 
      /*INPUT*/
      .sc-comment__container {
@@ -156,9 +162,6 @@
       text-decoration: none;
     }
 
-    /* */
-
-
     .sc-vote {
       position: absolute;
       padding: 20px;
@@ -193,9 +196,22 @@
       width: 50px;
       text-align: center;
     }
+    .sc-vote__btn {
+      display: inline-block;
+      border-radius: 50%;
+      /*border: solid 4px #333;*/
+      height: 30px;
+      width: 30px;
+      text-align: center;
+      line-height: 26px;
+      text-decoration: none;
+    }
+    .sc-vote__btn svg {
+      transform: translateY(8px);
+    }
+
     .sc-vote__slider {
       width: 150px;
-
     }
 
     input[type=range] {
@@ -283,25 +299,6 @@
     }
 
 
-
-
-    .sc-vote__btn {
-      display: inline-block;
-      border-radius: 50%;
-      border: solid 4px #333;
-      height: 30px;
-      width: 30px;
-      text-align: center;
-      line-height: 26px;
-      text-decoration: none;
-    }
-
-    .upvote-btn {
-      display: block;
-      margin-top: 20px;
-
-    }
-
   </style>
   </head>
   <body>
@@ -335,12 +332,21 @@
     }
 
     function addTopBar(){
+
       let template = `
-          <div class="sc-topbar">
-            <span class="sc-topbar__count"> !0 Comments</span>
-            <span class="sc-topbar__date"></span>
-            <span class="sc-topbar__upvote">Upvote</span>
-            <span class="sc-topbar__reply">Reply<span>
+          <div class="sc-topbar sc-cf">
+            <span class="sc-topbar__upvote">
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            viewBox="0 0 50 50" width="22px" height="22px">
+            <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
+            <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
+            <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
+            </svg>
+            </span>
+            <span class="sc-topbar__reply">Reply</span>
+
+            <span class="sc-topbar__count"> 00 Comments</span>
+
           </div>
           <hr class="sc-topbar__rule">
       `
@@ -364,7 +370,14 @@
       $('.sc-vote').remove()
       let template = `<div class="sc-vote">
             <input class="sc-vote__username" placeholder="username" type="text">
-            <a href="#" target="_blank" class="sc-vote__btn">^</a>
+            <a href="#" target="_blank" class="sc-vote__btn">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                viewBox="0 0 50 50" width="30px" height="30px">
+                <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
+                <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
+                <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
+                </svg>
+            </a>
             <span class="sc-vote__value">50%</span>
             <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
             <span class="sc-close sc-vote__close" >&#43;</span>
@@ -544,7 +557,16 @@
                       </h4>
                     <p class="sc-item__content">${ post.body }...</p>
                     <div class="sc-item__meta">
-                      <span class="sc-item__upvote">[^]</span>
+                      <span class="sc-item__upvote">
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                        viewBox="0 0 50 50" width="18px" height="18px">
+                        <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
+                        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
+                        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
+                        </svg>
+
+
+                      </span>
                       <span class="sc-item__divider">|</span>
                       <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
                       <span class="sc-item__divider">|</span>
