@@ -51,12 +51,6 @@
       padding: 5px 10px;
     }
     .sc-close {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      transform: rotate(45deg);
-      font-size: 40px;
-      line-height: 1;
       cursor: pointer;
     }
     .sc-item {
@@ -129,10 +123,24 @@
 
 
      /*INPUT*/
+     .sc-comment__container {
+      position: relative;
+      padding: 20px 0;
+     }
+    .sc-comment__username {
+      width: 200px;
+      border: solid 1px #ccc;
+      border-radius: 3px;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
     .sc-comment__message {
       width: 100%;
       margin-bottom: 20px;
-      border: solid 1px #333;
+      border: solid 1px #ccc;
+      border-radius: 3px;
+      padding: 10px;
+      height: 100px;
     }
 
     .sc-comment__btn {
@@ -147,6 +155,9 @@
       text-decoration: none;
     }
 
+    /* */
+
+
     .sc-vote {
       position: absolute;
       padding: 20px;
@@ -157,8 +168,11 @@
       z-index: 1000;
     }
     .sc-vote__close {
-      bottom: 15px;
-      top: auto;
+      position: absolute;
+      transform-origin: center;
+      transform: rotate(45deg);
+      bottom: 7px;
+      right: 10px;
       font-size: 50px;
     }
     .sc-vote__username {
@@ -333,11 +347,11 @@
     }
 
     function addCommentTemplateAfter(dest) {
-      let template = `<div class="modal__inner__comment">
+      let template = `<div class="sc-comment__container">
         <input class="sc-comment__username" placeholder="username" type="text">
-        <textarea class="sc-comment__message" placeholder="message"></textarea>
-        <a href="#" target="_blank" class="sc-comment__btn">Comment</a>
-        <span class="sc-close sc-comment__close" >&#43;</span>
+        <textarea class="sc-comment__message" placeholder="Reply"></textarea>
+        <a href="#" target="_blank" class="sc-comment__btn">Post</a>
+        <span class="sc-close sc-comment__close" >Cancel</span>
       </div>`
       $(template).insertAfter(dest)
     }
@@ -384,6 +398,11 @@
     $('.sc-topbar__reply').on('click', () => {
       addCommentTemplateAfter('.sc-section .sc-topbar__rule')
       $('.sc-vote').remove()
+    })
+
+    $('.sc-section').on('click', '.sc-item__reply', (e) => {
+      addCommentTemplateAfter(e.currentTarget)
+
     })
 
     $('.sc-vote__username').on('keyup', (e) => {
