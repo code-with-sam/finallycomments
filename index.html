@@ -19,7 +19,6 @@
     }
     .sc-comments {
       padding: 15px 0;
-      /*border: solid 1px #ccc;*/
     }
     .sc-topbar__rule {
       border: none;
@@ -62,9 +61,11 @@
     .sc-item {
       padding: 0 15px 10px;
     }
-    .sc-item__level-1 {
-    }
+
     .sc-item__level-2 {
+      margin-left: 20px;
+    }
+    .sc-item__level-3 {
       margin-left: 20px;
     }
 
@@ -315,7 +316,6 @@
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
     <script>
-  console.log('hello')
     const CATEGORY = 'photofeed';
     const AUTHOR = 'sambillingham';
     const PERMLINK = '20180115t213529967z-post';
@@ -323,16 +323,12 @@
     const STEEMSERVER = 'wss://rpc.buildteam.io';
     init()
 
-
     function init(){
-        console.log('init')
         addTopBar()
-
         getComments()
     }
 
     function addTopBar(){
-
       let template = `
           <div class="sc-topbar sc-cf">
             <span class="sc-topbar__upvote">
@@ -348,9 +344,7 @@
             <span class="sc-topbar__count"> 00 Comments</span>
 
           </div>
-          <hr class="sc-topbar__rule">
-      `
-
+          <hr class="sc-topbar__rule">`
       $('.sc-section').append(template)
     }
 
@@ -460,7 +454,6 @@
       let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
       let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
       let title = topLevel ? POSTTITLE : $(e.currentTarget).closest('.sc-item').data('title')
-      console.log(parentAuthor,parentPermlink, username, message, title)
       setCommentUrl(parentAuthor,parentPermlink, username, message, title)
     })
 
@@ -504,101 +497,79 @@
               })
             }
 
+            // Sort By Date/ID
             resultsArray = resultsArray.sort((a,b) => {
                 return b.id - a.id
             });
 
-            resultsArray.forEach( (post, i, arr) => {
-              console.log(post.permlink)
-              // console.log(post.parent_permlink)
-                var permlink = post.parent_permlink
-                var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
-                var voteMessage = (post.votes > 1 || post.votes == 0 )? 'Votes' : 'Vote'
-
-                var  template = `
-                <div data-post-id="${post.id}"
-                    data-permlink="${post.permlink}"
-                    data-author="${post.author}"
-                    data-title="${post.title}"
-
-                  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
-                  <div class="sc-item__left">
-                    <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
-                  </div>
-                  <div class="sc-item__right">
-                    <h4 class="sc-item__username">
-                      <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
-                      <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
-                      </h4>
-                    <p class="sc-item__content">${ post.body }...</p>
-                    <div class="sc-item__meta">
-                      <span class="sc-item__upvote">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                        viewBox="0 0 50 50" width="18px" height="18px">
-                        <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
-                        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
-                        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
-                        </svg>
-                      </span>
-                      <span class="sc-item__divider">|</span>
-                      <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
-                      <span class="sc-item__divider">|</span>
-                      <span class="sc-item__reply">Reply</span>
-                    </div>
-                  </div>
-                </div>`
-                if ( post.depth === 1 ) {
-                  $('.sc-comments').prepend( template)
-                }
+            // Find Deepest Comment
+            let maxDepthComment = resultsArray.reduce((prev, current) => {
+                return (prev.depth > current.depth) ? prev : current
             })
 
-            resultsArray.forEach( (post, i, arr) => {
-                var permlink = post.parent_permlink
-                var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
-                var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
-                var  template = `
-                <div data-post-id="${post.id}"
-                    data-permlink="${post.permlink}"
-                    data-author="${post.author}"
-                    data-title="${post.title}"
+            // Multi demention array by
+            let resultsByDepth = [];
+            for (var i = 0; i < maxDepthComment.depth + 1; i++) {
+              resultsByDepth.push(resultsArray.filter((elem, j, array) => {
+                  return elem.depth === i;
+              }))
+            }
 
-                  class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
-                  <div class="sc-item__left">
-                    <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
-                  </div>
-                  <div class="sc-item__right">
-                    <h4 class="sc-item__username">
-                      <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
-                      <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
-                      </h4>
-                    <p class="sc-item__content">${ post.body }...</p>
-                    <div class="sc-item__meta">
-                      <span class="sc-item__upvote">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                        viewBox="0 0 50 50" width="18px" height="18px">
-                        <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
-                        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
-                        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
-                        </svg>
+            // loop over multi array
+            resultsByDepth.forEach( (postsAtDepth, i, arr) => {
+                postsAtDepth.forEach( (post, i, arr) => {
 
-
-                      </span>
-                      <span class="sc-item__divider">|</span>
-                      <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
-                      <span class="sc-item__divider">|</span>
-                      <span class="sc-item__reply">Reply</span>
-                    </div>
-                  </div>
-                </div>`
-                if ( post.depth > 1 ) {
-                  $('.' + permlink ).append( template)
-                  console.log(permlink)
-                  console.log( $('.' + permlink ))
-                }
+                  let template = createCommentTemplate(result,post)
+                  if ( post.depth === 1 ) {
+                    $('.sc-comments').prepend( template)
+                  } else if ( post.depth  > 1) {
+                    var permlink = post.parent_permlink
+                    $('.' + permlink ).append( template)
+                  }
+                })
             })
 
           $('.sc-topbar__count').text(`${resultsArray.length} Comments`)
         });
+      }
+
+      function createCommentTemplate(result, post){
+        var permlink = post.parent_permlink
+        var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+        var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
+        var template = `
+        <div data-post-id="${post.id}"
+            data-permlink="${post.permlink}"
+            data-author="${post.author}"
+            data-title="${post.title}"
+
+          class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+          <div class="sc-item__left">
+            <img class="sc-item__image" src="${metadata.profile_image}" height="50" width="50">
+          </div>
+          <div class="sc-item__right">
+            <h4 class="sc-item__username">
+              <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
+              <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
+              </h4>
+            <p class="sc-item__content">${ post.body }...</p>
+            <div class="sc-item__meta">
+              <span class="sc-item__upvote">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                viewBox="0 0 50 50" width="18px" height="18px">
+                <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
+                <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
+                <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
+                </svg>
+              </span>
+              <span class="sc-item__divider">|</span>
+              <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
+              <span class="sc-item__divider">|</span>
+              <span class="sc-item__reply">Reply</span>
+            </div>
+          </div>
+        </div>`
+        return template;
       }
     </script>
   </body>
