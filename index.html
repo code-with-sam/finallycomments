@@ -478,10 +478,11 @@
 
     $('.sc-section').on('click', '.sc-comment__btn, .sc-vote__btn', (e) => {
       setTimeout(() => {
-          $(e.currentTarget).parent().fadeOut(400, (e)=> {
-            $(e.currentTarget).remove()
-            getComments()
+        let inputArea = $(e.currentTarget).parent()
+          inputArea.fadeOut(400, (e)=> {
+            inputArea.remove()
             $('.sc-comments').remove()
+            getComments()
           })
       }, 3000)
 
