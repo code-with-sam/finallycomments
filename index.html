@@ -473,7 +473,7 @@
       let message = $('.sc-comment__message').val()
       let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
       let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-      let title = topLevel ? POSTTITLE : $(e.currentTarget).closest('.sc-item').data('title')
+      let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
       setCommentUrl(parentAuthor,parentPermlink, username, message, title)
     })
 
@@ -483,7 +483,7 @@
       let message = $('.sc-comment__message').val()
       let parentPermlink = topLevel ? PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
       let parentAuthor = topLevel ? AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-      let title = topLevel ? POSTTITLE : $(e.currentTarget).closest('.sc-item').data('title')
+      let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
       setCommentUrl(parentAuthor,parentPermlink, username, message, title)
     })
 
