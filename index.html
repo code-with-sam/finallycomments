@@ -319,9 +319,7 @@
   </head>
   <body>
 
-    Hello world
-
-    <section class="sc-section"></section>
+    <section class="sc-section" data-steemlink="https://steemit.com/photofeed/@sambillingham/20180115t213529967z-post"></section>
 
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
@@ -331,14 +329,31 @@
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
     <script>
-    const CATEGORY = 'photofeed';
-    const AUTHOR = 'sambillingham';
-    const PERMLINK = '20180115t213529967z-post';
-    const POSTTITLE = 'HELLO THIS IS THE TITLE';
+
+    let CATEGORY;
+    let AUTHOR;
+    let PERMLINK;
+
+    function getPartsFromLink(){
+      let url = $('.sc-section').data('steemlink')
+      let lastChar = url.substr(url.length -1);
+      if (lastChar === '/')
+         url = url.slice(0, -1);
+
+      let parts = url.split('/')
+
+      PERMLINK = parts.pop();
+      AUTHOR = parts.pop().substr(1);
+      CATEGORY = parts.pop();
+      console.log(CATEGORY, AUTHOR, PERMLINK)
+    }
+
     const STEEMSERVER = 'wss://rpc.buildteam.io';
+
     init()
 
     function init(){
+        getPartsFromLink()
         addTopBar()
         getComments()
     }
