@@ -3,7 +3,7 @@
     CATEGORY: '',
     AUTHOR: '',
     PERMLINK: '',
-    STEEMSERVER: 'wss://rpc.buildteam.io',
+    STEEMSERVER: 'https://api.steemit.com',
     init: () => {
       steemComments.getPartsFromLink()
       steemComments.addTopBar()
@@ -237,7 +237,15 @@
     },
     createCommentTemplate: (result, post) => {
           var permlink = post.parent_permlink
-          var metadata = ''
+
+          try {
+            var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+          }
+          catch (e){
+            var metadata = {profile_image: '/img/default-user.jpg'}
+            console.log(e)
+          }
+
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
           var template = `
           <div data-post-id="${post.id}"
@@ -247,7 +255,7 @@
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
           <div class="sc-item__left">
-
+          <img class="sc-item__image" src="${metadata.profile_image}" height="50px" width="50px">
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">
