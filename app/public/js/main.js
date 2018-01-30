@@ -29,23 +29,23 @@
             steemComments.addVoteTemplateAfter(e.currentTarget)
           })
 
-          $('.sc-section').on('keyup', '.sc-vote__username', (e) => {
-            let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
-            let username = $('.sc-vote__username').val().trim()
-            let weight = $('.sc-vote__slider').val()
-            let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-            let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-            steemComments.setVoteUrl(username, author, permlink, weight)
-          })
+          // $('.sc-section').on('keyup', '.sc-vote__username', (e) => {
+          //   let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
+          //   let username = $('.sc-vote__username').val().trim()
+          //   let weight = $('.sc-vote__slider').val()
+          //   let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+          //   let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+          //   steemComments.setVoteUrl(username, author, permlink, weight)
+          // })
 
-          $('.sc-section').on('input', '.sc-vote__slider', (e) => {
+          $('.sc-section').on('click', '.sc-vote__btn', (e) => {
+            console.log('vote')
             let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
-            let username = $('.sc-vote__username').val().trim()
             let weight = $('.sc-vote__slider').val()
             let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
             let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
             $('.sc-vote__value').text(weight + '%')
-            steemComments.setVoteUrl(username, author, permlink, weight)
+            steemComments.sendVote(author, permlink, weight)
           })
 
           $('.sc-section').on('keyup', '.sc-comment__username',(e) => {
@@ -72,19 +72,19 @@
             $(e.currentTarget).parent().remove()
           });
 
-          $('.sc-section').on('click', '.sc-comment__btn, .sc-vote__btn', (e) => {
-            setTimeout(() => {
-              let inputArea = $(e.currentTarget).parent()
-                inputArea.fadeOut(400, (e)=> {
-                  inputArea.remove()
-                  $('.sc-comments').remove()
-                  steemComments.getComments()
-                })
-            }, 3000)
+          // $('.sc-section').on('click', '.sc-comment__btn, .sc-vote__btn', (e) => {
+          //   setTimeout(() => {
+          //     let inputArea = $(e.currentTarget).parent()
+          //       inputArea.fadeOut(400, (e)=> {
+          //         inputArea.remove()
+          //         $('.sc-comments').remove()
+          //         steemComments.getComments()
+          //       })
+          //   }, 3000)
+          //
+          // })
 
-          })
-
-          $('.sc-section').on('click', '.sc-vote__btn, .sc-comment__btn', (e) => {
+          $('.sc-section').on('click', '.sc-comment__btn', (e) => {
             let url = $(e.currentTarget).attr('href');
             let newWindow = window.open(url,'steemconnect','height=650,width=770')
             if (window.focus)
@@ -140,24 +140,31 @@
     addVoteTemplateAfter: (dest) => {
       $('.sc-vote').remove()
       let template = `<div class="sc-vote">
-      <input class="sc-vote__username" placeholder="username" type="text">
-      <a href="#" target="_blank" class="sc-vote__btn">
+      <span class="sc-vote__btn">
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
       viewBox="0 0 50 50" width="30px" height="30px">
       <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
       <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
       <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
       </svg>
-      </a>
+      </span>
       <span class="sc-vote__value">50%</span>
       <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
       <span class="sc-close sc-vote__close" >&#43;</span>
       </div>`
       $(template).insertAfter(dest)
     },
-    setVoteUrl: (username, author, permlink, weight) => {
-      let steemconnectUrl = `https://v2.steemconnect.com/sign/vote?voter=${username}&author=${author}&permlink=${permlink}&weight=${weight}`
-      $('.sc-vote__btn').attr('href', steemconnectUrl);
+    sendVote: ( author, permlink, weight) => {
+          $.post({
+            url: `/vote/${author}/${permlink}/${weight}`
+          }, (response) => {
+            if (response.error) {
+              console.log('error')
+            } else {
+              console.log('voted')
+            }
+          })
+
     },
     setCommentUrl: (parentAuthor,parentPermlink, author, message, parentTitle) =>  {
       let title = 'RE: ' + parentTitle

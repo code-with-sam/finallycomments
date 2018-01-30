@@ -35,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/thread', index);
+app.use('/vote', index);
 app.use('/auth', auth);
 app.use('/logout', auth);
 
