@@ -29,14 +29,10 @@
             steemComments.addVoteTemplateAfter(e.currentTarget)
           })
 
-          // $('.sc-section').on('keyup', '.sc-vote__username', (e) => {
-          //   let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
-          //   let username = $('.sc-vote__username').val().trim()
-          //   let weight = $('.sc-vote__slider').val()
-          //   let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-          //   let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-          //   steemComments.setVoteUrl(username, author, permlink, weight)
-          // })
+          $('.sc-section').on('input', '.sc-vote__slider', (e) => {
+            let weight = $('.sc-vote__slider').val()
+            $('.sc-vote__value').text(weight + '%')
+          })
 
           $('.sc-section').on('click', '.sc-vote__btn', (e) => {
             console.log('vote')
