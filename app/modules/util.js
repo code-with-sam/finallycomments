@@ -13,3 +13,17 @@ module.exports.isAuthenticated = (req, res, next) => {
 
   res.redirect('/');
 }
+
+module.exports.splitQueryString = (string) => {
+   let allParams = string.split('&');
+
+   let map =  allParams.map(value => {
+       let item = value.split('=');
+       return [item[0], item[1]];
+   })
+
+   return map.reduce((obj, item) => {
+     obj[item[0]] = item[1]
+     return obj
+   }, {})
+}
