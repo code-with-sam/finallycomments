@@ -44,16 +44,6 @@
             steemComments.sendVote(author, permlink, weight)
           })
 
-          // $('.sc-section').on('keyup', '.sc-comment__username',(e) => {
-          //   let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
-          //   let username = $('.sc-comment__username').val().trim()
-          //   let message = $('.sc-comment__message').val()
-          //   let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-          //   let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-          //   let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
-          //   steemComments.setCommentUrl(parentAuthor,parentPermlink, username, message, title)
-          // })
-
           $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
             e.preventDefault()
             let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
@@ -179,12 +169,6 @@
           console.log('commented')
         }
       })
-    },
-    setCommentUrl: (parentAuthor,parentPermlink, author, message, parentTitle) =>  {
-      let title = 'RE: ' + parentTitle
-      let permlink = steemComments.randomString()
-      let steemconnectUrl = encodeURI(`https://v2.steemconnect.com/sign/comment?parent_author=${parentAuthor}&parent_permlink=${parentPermlink}&author=${author}&permlink=${permlink}&title=${title}&body=${message}`)
-      $('.sc-comment__btn').attr('href', steemconnectUrl)
     },
     randomString: () => {
       let string = ''
