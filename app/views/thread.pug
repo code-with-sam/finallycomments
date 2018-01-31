@@ -1,6 +1,6 @@
 extends layout
 
 block content
-  h1= auth
-  a(href=`/auth/${thread}`) Login With Steem Connect
-  section.sc-section(data-steemlink=`${thread}`)
+  unless auth
+    a(href=`/auth/${thread}`) Login With Steem Connect
+  section.sc-section(data-steemlink=`${thread}` data-profileimage=`${profileImage}`)

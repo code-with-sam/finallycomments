@@ -4,6 +4,7 @@
     AUTHOR: '',
     PERMLINK: '',
     STEEMSERVER: 'https://api.steemit.com',
+    PROFILEIMAGE: '',
     init: () => {
       steemComments.getPartsFromLink()
       steemComments.addTopBar()
@@ -11,6 +12,10 @@
       steemComments.uiActions()
     },
     uiActions: () => {
+
+          // $('.sc-section').on('mouseover', '.sc-item__reply, .sc-item__upvote', (e) => {
+          //   $(e.currentTarget).css('cursor', 'not-allowed')
+          // })
 
           $('.sc-topbar__upvote').on('click', () => {
             steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
@@ -46,12 +51,14 @@
 
           $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
             e.preventDefault()
+            let parentElement = $(e.currentTarget).closest('.sc-item')
             let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
             let message = $('.sc-comment__message').val()
-            let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-            let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-            let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
-            steemComments.sendComment(parentAuthor,parentPermlink, message, title)
+            let parentPermlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
+            let parentAuthor = topLevel ? steemComments.AUTHOR : parentElement.data('author')
+            let title = topLevel ? '@'+parentAuthor : parentElement.data('title')
+            let parentDepth = parentElement.data('post-depth')
+            steemComments.sendComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
           })
 
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
@@ -63,10 +70,10 @@
           //     let inputArea = $(e.currentTarget).parent()
           //       inputArea.fadeOut(400, (e)=> {
           //         inputArea.remove()
-          //         $('.sc-comments').remove()
-          //         steemComments.getComments()
+          //         // $('.sc-comments').remove()
+          //         // steemComments.getComments()
           //       })
-          //   }, 3000)
+          //   }, 1000)
           //
           // })
 
@@ -152,7 +159,10 @@
           })
 
     },
-    sendComment: (parentAuthor,parentPermlink, message, parentTitle) =>  {
+    sendComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) =>  {
+      $(parentElement).find('.sc-comment__btn').text('Posting... ')
+      $(parentElement).find('.sc-comment__btn').append('<img src="/img/loader.gif">')
+
       $.post({
         url: `/comment`,
         dataType: 'json',
@@ -166,7 +176,21 @@
         if (response.error) {
           console.log('error')
         } else {
+          console.log(response)
           console.log('commented')
+
+          let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
+          console.log(parentElement)
+
+          setTimeout(() => {
+            let inputArea = $(parentElement).find('.sc-comment__container')
+              inputArea.fadeOut(400, (e) => {
+                inputArea.remove()
+              })
+          }, 1000)
+
+          $(parentElement).append(newComment)
+          $(document).scrollTop(newComment.offset().top - 50)
         }
       })
     },
@@ -257,6 +281,7 @@
           data-permlink="${post.permlink}"
           data-author="${post.author}"
           data-title="${post.title}"
+          data-post-depth="${post.depth}"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
           <div class="sc-item__left">
@@ -267,7 +292,7 @@
           <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
           <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
           </h4>
-          <p class="sc-item__content">${ post.body }...</p>
+          <p class="sc-item__content">${ post.body }</p>
           <div class="sc-item__meta">
           <span class="sc-item__upvote">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -285,6 +310,54 @@
           </div>
           </div>`
           return template;
+        },
+      singleCommentTemplate: (data, parentDepth) => {
+        console.log(data)
+        let post = {
+          id : data.result.id,
+          permlink : data.result.operations[0][1].permlink,
+          author : data.result.operations[0][1].parent_author,
+          title : data.result.operations[0][1].title,
+          body : data.result.operations[0][1].body,
+          depth: parentDepth + 1
         }
+        let metadata = {
+          profile_image: ''
+        }
+        var template = `
+        <div data-post-id="${post.id}"
+        data-permlink="${post.permlink}"
+        data-author="${post.author}"
+        data-title="${post.title}"
+        data-post-depth="${post.depth}"
+
+        class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+        <div class="sc-item__left">
+        <img class="sc-item__image" src="${metadata.profile_image}" height="50px" width="50px">
+        </div>
+        <div class="sc-item__right">
+        <h4 class="sc-item__username">
+        <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
+        <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
+        </h4>
+        <p class="sc-item__content">${ post.body }</p>
+        <div class="sc-item__meta">
+        <span class="sc-item__upvote">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        viewBox="0 0 50 50" width="18px" height="18px">
+        <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
+        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
+        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
+        </svg>
+        </span>
+        <span class="sc-item__divider">|</span>
+        <span class="sc-item__votecount">0 votes</span>
+        <span class="sc-item__divider">|</span>
+        <span class="sc-item__reply">Reply</span>
+        </div>
+        </div>
+        </div>`
+        return template;
+      }
   }
   steemComments.init()

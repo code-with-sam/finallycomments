@@ -98,7 +98,8 @@ router.post('/comment', (req, res) => {
       } else {
         res.json({
           name: author,
-          msg: 'Posted To Steem Network'
+          msg: 'Posted To Steem Network',
+          res: steemResponse
         })
       }
     });
