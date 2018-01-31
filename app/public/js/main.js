@@ -44,24 +44,24 @@
             steemComments.sendVote(author, permlink, weight)
           })
 
-          $('.sc-section').on('keyup', '.sc-comment__username',(e) => {
-            let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
-            let username = $('.sc-comment__username').val().trim()
-            let message = $('.sc-comment__message').val()
-            let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-            let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
-            let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
-            steemComments.setCommentUrl(parentAuthor,parentPermlink, username, message, title)
-          })
+          // $('.sc-section').on('keyup', '.sc-comment__username',(e) => {
+          //   let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
+          //   let username = $('.sc-comment__username').val().trim()
+          //   let message = $('.sc-comment__message').val()
+          //   let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
+          //   let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+          //   let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
+          //   steemComments.setCommentUrl(parentAuthor,parentPermlink, username, message, title)
+          // })
 
-          $('.sc-section').on('keyup', '.sc-comment__message' , (e) => {
+          $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
+            e.preventDefault()
             let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
-            let username = $('.sc-comment__username').val().trim()
             let message = $('.sc-comment__message').val()
             let parentPermlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
             let parentAuthor = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
             let title = topLevel ? '@'+parentAuthor : $(e.currentTarget).closest('.sc-item').data('title')
-            steemComments.setCommentUrl(parentAuthor,parentPermlink, username, message, title)
+            steemComments.sendComment(parentAuthor,parentPermlink, message, title)
           })
 
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
@@ -80,15 +80,15 @@
           //
           // })
 
-          $('.sc-section').on('click', '.sc-comment__btn', (e) => {
-            let url = $(e.currentTarget).attr('href');
-            let newWindow = window.open(url,'steemconnect','height=650,width=770')
-            if (window.focus)
-              newWindow.focus()
-
-            e.preventDefault()
-            return false;
-          })
+          // $('.sc-section').on('click', '.sc-comment__btn', (e) => {
+          //   let url = $(e.currentTarget).attr('href');
+          //   let newWindow = window.open(url,'steemconnect','height=650,width=770')
+          //   if (window.focus)
+          //     newWindow.focus()
+          //
+          //   e.preventDefault()
+          //   return false;
+          // })
 
     },
     getPartsFromLink: () => {
@@ -126,12 +126,12 @@
     addCommentTemplateAfter: (dest) => {
       $('.sc-comment__container').remove()
       let template = `<div class="sc-comment__container">
-      <input class="sc-comment__username" placeholder="username" type="text">
       <textarea class="sc-comment__message" placeholder="Reply"></textarea>
       <a href="#" target="_blank" class="sc-comment__btn">Post</a>
       <span class="sc-close sc-comment__close" >Cancel</span>
       </div>`
       $(template).insertAfter(dest)
+      $(dest).next().children('textarea').focus()
     },
     addVoteTemplateAfter: (dest) => {
       $('.sc-vote').remove()
@@ -161,6 +161,24 @@
             }
           })
 
+    },
+    sendComment: (parentAuthor,parentPermlink, message, parentTitle) =>  {
+      $.post({
+        url: `/comment`,
+        dataType: 'json',
+        data: {
+          parentAuthor: parentAuthor,
+          parentPermlink: parentPermlink,
+          message: message,
+          parentTitle: parentTitle
+        }
+      }, (response) => {
+        if (response.error) {
+          console.log('error')
+        } else {
+          console.log('commented')
+        }
+      })
     },
     setCommentUrl: (parentAuthor,parentPermlink, author, message, parentTitle) =>  {
       let title = 'RE: ' + parentTitle

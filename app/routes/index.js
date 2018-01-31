@@ -76,23 +76,42 @@ router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 
 });
 
+router.post('/comment', (req, res) => {
 
-// router.post('/vote/:author/:permlink/:weight', util.isAuthenticated, (req, res) => {
-//     // let postId = req.body.postId
-//     let voter = req.session.steemconnect.name
-//     let author = req.params.author
-//     let permlink = req.params.permlink
-//     let weight = req.params.weight
-//     console.log(voter, author, permlink, weight)
-//     steem.vote(voter, author, permlink, weight, function (err, steemResponse) {
-//       if (err) {
-//         console.log(err)
-//           res.json({ error: err.error_description })
-//       } else {
-//         console.log('success')
-//           res.json({ id: '1' })
-//       }
-//     });
-// })
+  if(req.session.steemconnect) {
+    let author = req.session.steemconnect.name
+
+    let permlink = req.body.parentPermlink + '-' + util.urlString()
+    let title = 'RE: ' + req.body.parentTitle
+    let body = req.body.message
+    let parentAuthor = req.body.parentAuthor
+    let parentPermlink = req.body.parentPermlink
+
+
+    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, '', (err, steemResponse) => {
+      if (err) {
+        console.log(err)
+        res.json({
+          name: author,
+          msg: 'Error'
+        })
+      } else {
+        res.json({
+          name: author,
+          msg: 'Posted To Steem Network'
+        })
+      }
+    });
+
+  } else {
+    res.json({
+      status: 'fail',
+      message: 'Please Log In'
+   })
+  }
+
+});
+
+
 
 module.exports = router;
