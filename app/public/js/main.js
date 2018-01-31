@@ -102,6 +102,10 @@
       steemComments.CATEGORY = parts.pop();
     },
     addTopBar: () => {
+      let username = $('.sc-section').data('username')
+      let profileImage = $('.sc-section').data('profileimage')
+      let loggedIn = $('.sc-section').data('auth')
+      console.log(profileImage)
       let template = `
           <div class="sc-topbar sc-cf">
             <span class="sc-topbar__upvote">
@@ -115,6 +119,10 @@
             <span class="sc-topbar__reply">Reply</span>
 
             <span class="sc-topbar__count"> 00 Comments</span>
+            <span class="sc-profile sc-profile--${loggedIn}">
+              <h3 class="sc-profile__name">${username}</h3>
+              <img class="sc-profile__image" src="${profileImage}">
+            </span>
 
           </div>
           <hr class="sc-topbar__rule">`

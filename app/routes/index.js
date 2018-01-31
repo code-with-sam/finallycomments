@@ -13,30 +13,35 @@ router.get('/login', (req, res, next) =>  {
 });
 
 router.get('/thread/:tag/:author/:permlink?', (req, res, next) => {
-  console.log(' auth', req.session.steemconnect)
-
-  // if(!req.session.steemconnect){
-  //   let tag = req.params.tag
-  //   let author = req.params.author
-  //   let permlink = req.params.permlink
-  //   let state = `tag=${tag}&author=${author}&permlink=${permlink}`
-  //   let uri = steem.getLoginURL(state);
-  //   res.redirect(uri);
-  // } else {
-  //  logged in
-  // }
       let status;
+      let username;
+      let profileImage;
       if(!req.session.steemconnect){
         status = false;
       } else {
         status = true
+        if (req.session.steemconnect.json_metadata == '' ||
+            req.session.steemconnect.json_metadata == 'undefined' ||
+            req.session.steemconnect.json_metadata === undefined ) {
+          req.session.steemconnect.meta = { profile_image : '/img/default-user.jpg'}
+        } else {
+          req.session.steemconnect.meta = req.session.steemconnect.json_metadata ? JSON.parse(req.session.steemconnect.json_metadata).profile : {};
+        }
+
+        profileImage = req.session.steemconnect.meta.profile_image ? 'https://steemitimages.com/512x512/' + req.session.steemconnect.meta.profile_image : '';
+        console.log(profileImage)
+        username = req.session.steemconnect.name
       }
+
+
       let tag = req.params.tag
       let author = req.params.author
       let permlink = req.params.permlink
       let url = `${tag}/${author}/${permlink}`
 
       res.render('thread', {
+        username: username || '',
+        profileImage: profileImage || '',
         thread: url,
         auth: status,
         tag: tag,

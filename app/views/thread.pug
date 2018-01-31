@@ -3,4 +3,4 @@ extends layout
 block content
   unless auth
     a(href=`/auth/${thread}`) Login With Steem Connect
-  section.sc-section(data-steemlink=`${thread}` data-profileimage=`${profileImage}`)
+  section.sc-section(data-auth=`${auth}` data-profileimage=`${profileImage}` data-steemlink=`${thread}` data-username=`${username}` )

@@ -24,9 +24,35 @@
   margin-top: 25px;
 }
 
-.sc-topbar__count {
+.sc-profile {
   color: #757575;
   float: right;
+  font-size: 14px;
+}
+.sc-profile--true {
+
+}
+.sc-profile--false {
+  display: none;
+}
+.sc-profile__image {
+  border: solid 3px #ccc;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  float: right;
+}
+.sc-profile__name {
+  font-size: 14px;
+  float: left;
+  line-height: 35px;
+  margin-right: 15px;
+
+}
+
+.sc-topbar__count {
+  color: #757575;
+  float: left;
 }
 .sc-topbar__upvote {
   float: left;
