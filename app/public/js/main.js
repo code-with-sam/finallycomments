@@ -45,6 +45,12 @@
           })
 
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
+            if ( $(e.currentTarget).hasClass('sc-item__upvote--voted-true') ){
+              $(e.currentTarget).closest('.sc-item__right').append(steemComments.notificationTemplate('You have already voted.'))
+              steemComments.timeoutNotifications()
+
+              return false
+            }
             $('.sc-notification').remove()
             if ( steemComments.ISAUTHENTICATED){
               steemComments.addVoteTemplateAfter(e.currentTarget)
@@ -408,6 +414,14 @@
         <div class="sc-notification">${message}</>
         `
         return template;
+      },
+      timeoutNotifications: () => {
+        setTimeout(() => {
+          let n = $('.sc-notification')
+            n.fadeOut(400, (e)=> {
+              n.remove()
+            })
+        }, 3000)
       }
   }
   steemComments.init()
