@@ -35,11 +35,22 @@
           })
 
           $('.sc-section').on('click', '.sc-item__reply', (e) => {
-            steemComments.addCommentTemplateAfter(e.currentTarget)
+
+            $('.sc-notification').remove()
+            if ( steemComments.ISAUTHENTICATED){
+              steemComments.addCommentTemplateAfter(e.currentTarget)
+            } else {
+              $(e.currentTarget).closest('.sc-item__right').append(steemComments.notificationTemplate('Please sign in to comment.'))
+            }
           })
 
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
-            steemComments.addVoteTemplateAfter(e.currentTarget)
+            $('.sc-notification').remove()
+            if ( steemComments.ISAUTHENTICATED){
+              steemComments.addVoteTemplateAfter(e.currentTarget)
+            } else {
+              $(e.currentTarget).closest('.sc-item__right').append(steemComments.notificationTemplate('Please sign in to vote.'))
+            }
           })
 
           $('.sc-section').on('input', '.sc-vote__slider', (e) => {
@@ -48,13 +59,14 @@
           })
 
           $('.sc-section').on('click', '.sc-vote__btn', (e) => {
-            console.log('vote')
+            let parentElement = $(e.currentTarget).closest('.sc-item')
+
             let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
             let weight = $('.sc-vote__slider').val()
-            let permlink = topLevel ? steemComments.PERMLINK : $(e.currentTarget).closest('.sc-item').data('permlink')
-            let author = topLevel ? steemComments.AUTHOR : $(e.currentTarget).closest('.sc-item').data('author')
+            let permlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
+            let author = topLevel ? steemComments.AUTHOR : parentElement.data('author')
             $('.sc-vote__value').text(weight + '%')
-            steemComments.sendVote(author, permlink, weight)
+            steemComments.sendVote(parentElement, author, permlink, weight)
           })
 
           $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
@@ -103,7 +115,6 @@
       url = url.slice(0, -1);
 
       let parts = url.split('/')
-      console.log(parts)
 
       steemComments.PERMLINK = parts.pop();
       steemComments.AUTHOR = parts.pop().substr(1);
@@ -112,9 +123,7 @@
     addTopBar: () => {
       let username = $('.sc-section').data('username')
       let profileImage = $('.sc-section').data('profileimage')
-      let loggedIn = $('.sc-section').data('auth')
       let authUrl = $('.sc-section').data('auth-url')
-      console.log(profileImage)
       let template = `
           <div class="sc-topbar sc-cf">
             <span class="sc-topbar__upvote">
@@ -216,6 +225,7 @@
           }, 1000)
 
           $(parentElement).append(newComment)
+          $(parentElement).append(newComment)
           $(document).scrollTop(newComment.offset().top - 50)
         }
       })
@@ -307,7 +317,6 @@
           }
           catch (err){
             var metadata = {profile_image: '/img/default-user.jpg'}
-            console.log(err)
           }
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
@@ -347,7 +356,6 @@
           return template;
         },
       singleCommentTemplate: (data, parentDepth) => {
-        console.log(data)
         let post = {
           id : data.result.id,
           permlink : data.result.operations[0][1].permlink,
@@ -392,6 +400,13 @@
         </div>
         </div>
         </div>`
+        return template;
+      },
+      notificationTemplate: (message) => {
+        $('.sc-notification').remove()
+        let template = `
+        <div class="sc-notification">${message}</>
+        `
         return template;
       }
   }

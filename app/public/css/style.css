@@ -4,8 +4,8 @@
 }
 
 .sc-cf:after {
+  display: block;
   content: "";
-  display: table;
   clear: both;
 }
 .sc-section {
@@ -108,6 +108,7 @@
 }
 .sc-item {
   padding: 0 15px 10px;
+  float: left;
 }
 
 .sc-item__level-2 {
@@ -362,4 +363,9 @@
 }
 .sc-comments input[type=range]:focus::-ms-fill-upper {
   background: #ccc;
+}
+
+.sc-notification {
+  margin-bottom: 30px;
+  color: #2167ef;
 }

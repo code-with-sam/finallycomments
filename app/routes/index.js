@@ -55,7 +55,6 @@ router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
   // console.log(' auth', req.session.steemconnect)
 
     if(req.session.steemconnect) {
-      console.log(req.session.steemconnect)
       let voter;
       steem.me((err, steemResponse) => {
         voter =  steemResponse.account.name;
