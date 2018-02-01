@@ -105,6 +105,7 @@
       let username = $('.sc-section').data('username')
       let profileImage = $('.sc-section').data('profileimage')
       let loggedIn = $('.sc-section').data('auth')
+      let authUrl = $('.sc-section').data('auth-url')
       console.log(profileImage)
       let template = `
           <div class="sc-topbar sc-cf">
@@ -123,7 +124,7 @@
               <h3 class="sc-profile__name">${username}</h3>
               <img class="sc-profile__image" src="${profileImage}">
             </span>
-
+            <a href="${authUrl}"" class="sc-login sc-login--${loggedIn}">Sign In</a>
           </div>
           <hr class="sc-topbar__rule">`
       $('.sc-section').append(template)

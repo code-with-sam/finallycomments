@@ -35,6 +35,25 @@
 .sc-profile--false {
   display: none;
 }
+
+.sc-login {
+  float: right;
+  background-color: #6eafff;
+  padding: 5px 10px;
+  border-radius: 3px;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+.sc-login:hover {
+  text-decoration: none;
+  color: #fff;
+}
+
+.sc-login--true {
+  display: none;
+}
+
 .sc-profile__image {
   border: solid 3px #ccc;
   border-radius: 50%;
