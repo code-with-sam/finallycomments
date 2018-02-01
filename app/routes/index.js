@@ -75,7 +75,7 @@ router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
   } else {
     res.json({
       status: 'fail',
-      message: 'Please Log In'
+      message: 'Please sign in to vote.'
    })
   }
 

@@ -87,6 +87,15 @@
   fill: #759af7;
 }
 
+.sc-item__upvote--voted-true svg circle {
+  fill: #525252;
+  stroke: #525252;
+}
+.sc-item__upvote--voted-true svg line {
+  stroke: #fff;
+}
+
+
 .sc-topbar__reply {
   float: left;
   display: inline-block;

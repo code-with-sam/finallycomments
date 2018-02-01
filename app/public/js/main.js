@@ -5,6 +5,14 @@
     PERMLINK: '',
     STEEMSERVER: 'https://api.steemit.com',
     PROFILEIMAGE: '',
+    ISAUTHENTICATED: $('.sc-section').data('auth'),
+    authenticatedUser: () => {
+      if (steemComments.ISAUTHENTICATED){
+        return $('.sc-section').data('username');
+      } else {
+        return false
+      }
+    },
     init: () => {
       steemComments.getPartsFromLink()
       steemComments.addTopBar()
@@ -120,11 +128,11 @@
             <span class="sc-topbar__reply">Reply</span>
 
             <span class="sc-topbar__count"> 00 Comments</span>
-            <span class="sc-profile sc-profile--${loggedIn}">
+            <span class="sc-profile sc-profile--${steemComments.ISAUTHENTICATED}">
               <h3 class="sc-profile__name">${username}</h3>
               <img class="sc-profile__image" src="${profileImage}">
             </span>
-            <a href="${authUrl}"" class="sc-login sc-login--${loggedIn}">Sign In</a>
+            <a href="${authUrl}"" class="sc-login sc-login--${steemComments.ISAUTHENTICATED}">Sign In</a>
           </div>
           <hr class="sc-topbar__rule">`
       $('.sc-section').append(template)
@@ -156,14 +164,23 @@
       </div>`
       $(template).insertAfter(dest)
     },
-    sendVote: ( author, permlink, weight) => {
+    sendVote: (parentElement, author, permlink, weight) => {
+
           $.post({
             url: `/vote/${author}/${permlink}/${weight}`
           }, (response) => {
             if (response.error) {
-              console.log('error')
+              $(parentElement).find('.sc-vote').remove()
+              $(parentElement).children('.sc-item__right').append(steemComments.notificationTemplate(response.error))
             } else {
-              console.log('voted')
+              if (response.status == 'fail'){
+                $(parentElement).find('.sc-vote').remove()
+                $(parentElement).children('.sc-item__right').append(steemComments.notificationTemplate(response.message))
+              } else {
+                let count = $(parentElement).find('.sc-item__votecount').first()
+                $(parentElement).find('.sc-item__upvote').addClass('sc-item__upvote--voted')
+                count.text( parseInt( count.text().split(' ')[0] ) + 1 + ' votes')
+              }
             }
           })
 
@@ -183,13 +200,13 @@
         }
       }, (response) => {
         if (response.error) {
-          console.log('error')
+          $(parentElement).append(
+            notificationTemplate('Error posting comment please try again after 20 seconds')
+          )
+
         } else {
-          console.log(response)
-          console.log('commented')
 
           let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
-          console.log(parentElement)
 
           setTimeout(() => {
             let inputArea = $(parentElement).find('.sc-comment__container')
@@ -233,7 +250,8 @@
             root_comment: result.content[post].root_comment,
             parent_permlink: result.content[post].parent_permlink,
             created: result.content[post].created,
-            votes: result.content[post].net_votes
+            votes: result.content[post].net_votes,
+            voters: result.content[post].active_votes.map(vote => vote.voter)
           })
         }
 
@@ -255,12 +273,18 @@
           }))
         }
 
+        console.log(resultsByDepth)
         // loop over multi array
-        console.log(resultsByDepth);
         resultsByDepth.forEach( (postsAtDepth, i, arr) => {
-          console.log(postsAtDepth)
           postsAtDepth.forEach( (post, i, arr) => {
-            let template = steemComments.createCommentTemplate(result,post)
+            let voted = false
+            if( steemComments.ISAUTHENTICATED ){
+              console.log(steemComments.authenticatedUser())
+              console.log(post.voters)
+              voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
+            }
+
+            let template = steemComments.createCommentTemplate(result,post, voted)
             if ( post.depth === 1 ) {
               $('.sc-comments').prepend( template)
             } else if ( post.depth  > 1) {
@@ -273,7 +297,7 @@
         $('.sc-topbar__count').text(`${resultsArray.length} Comments`)
       });
     },
-    createCommentTemplate: (result, post) => {
+    createCommentTemplate: (result, post, voted) => {
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
@@ -305,7 +329,7 @@
           </h4>
           <p class="sc-item__content">${ html }</p>
           <div class="sc-item__meta">
-          <span class="sc-item__upvote">
+          <span class="sc-item__upvote sc-item__upvote--voted-${voted}">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
           viewBox="0 0 50 50" width="18px" height="18px">
           <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
