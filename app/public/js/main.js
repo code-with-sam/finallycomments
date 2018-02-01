@@ -275,13 +275,15 @@
     },
     createCommentTemplate: (result, post) => {
           var permlink = post.parent_permlink
+          var converter = new showdown.Converter();
+          var html = converter.makeHtml(post.body);;
 
           try {
             var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
           }
-          catch (e){
+          catch (err){
             var metadata = {profile_image: '/img/default-user.jpg'}
-            console.log(e)
+            console.log(err)
           }
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
@@ -301,7 +303,7 @@
           <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
           <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
           </h4>
-          <p class="sc-item__content">${ post.body }</p>
+          <p class="sc-item__content">${ html }</p>
           <div class="sc-item__meta">
           <span class="sc-item__upvote">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
