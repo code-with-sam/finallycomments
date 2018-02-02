@@ -3,7 +3,12 @@ let router = express.Router();
 let util = require('../modules/util');
 let steem = require('../modules/steemconnect')
 
-/* GET home page. */
+router.get('/', (req, res, next) =>  {
+  res.render('index', {
+    css : 'bulma'
+  });
+});
+
 router.get('/login', (req, res, next) =>  {
   if(req.session.steemconnect){
     res.redirect(`/`)
@@ -40,6 +45,7 @@ router.get('/thread/:tag/:author/:permlink?', (req, res, next) => {
       let url = `${tag}/${author}/${permlink}`
 
       res.render('thread', {
+        path: 'thread',
         username: username || '',
         profileImage: profileImage || '',
         thread: url,
@@ -95,10 +101,9 @@ router.post('/comment', (req, res) => {
     steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, '', (err, steemResponse) => {
       if (err) {
         console.log(err)
-        res.json({
-          name: author,
-          msg: 'Error'
-        })
+
+        res.json({ error: err.error_description })
+
       } else {
         res.json({
           name: author,

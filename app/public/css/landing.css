@@ -1,0 +1,58 @@
+header {
+  padding: 50px 0;
+}
+h1 {
+  font-size: 9rem;
+}
+h2 {
+  font-size: 5rem;
+  line-height: 1;
+}
+.header__links {
+  margin:  50px 0
+}
+.button {
+  display: inline-block;
+  margin-right: 20px
+}
+
+section.intro {
+  padding: 100px 0;
+  background: #eff6fd;
+}
+section.generate {
+    padding: 100px 0
+}
+
+section.generate {
+  background: #01d1b2;
+}
+section.generate p,
+section.generate h3 {
+  color: #fff;
+  font-weight: 600;
+}
+.sub-content {
+  max-width: 50%;
+}
+
+.generator {
+  max-width: 50%;
+  margin: 15px 0;
+}
+
+
+.example {
+  width: 80%;
+  margin: 50px auto;
+}
+
+iframe {
+  min-height: 800px;
+}
+
+
+footer {
+  padding: 25px;
+  text-align: center;
+}

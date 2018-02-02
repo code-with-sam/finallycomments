@@ -91,17 +91,6 @@
             $(e.currentTarget).parent().remove()
           });
 
-          // $('.sc-section').on('click', '.sc-comment__btn, .sc-vote__btn', (e) => {
-          //   setTimeout(() => {
-          //     let inputArea = $(e.currentTarget).parent()
-          //       inputArea.fadeOut(400, (e)=> {
-          //         inputArea.remove()
-          //         // $('.sc-comments').remove()
-          //         // steemComments.getComments()
-          //       })
-          //   }, 1000)
-          //
-          // })
 
           // $('.sc-section').on('click', '.sc-comment__btn', (e) => {
           //   let url = $(e.currentTarget).attr('href');
@@ -190,11 +179,19 @@
             } else {
               if (response.status == 'fail'){
                 $(parentElement).find('.sc-vote').remove()
-                $(parentElement).children('.sc-item__right').append(steemComments.notificationTemplate(response.message))
+                let msg = 'You have already voted in a similar way'
+                if (response.status.includes(msg)){
+                  $(parentElement).children('.sc-item__right').append(steemComments.notificationTemplate(msg))
+
+                } else {
+                  $(parentElement).children('.sc-item__right').append(steemComments.notificationTemplate('Unknown error, please try again.'))
+                }
               } else {
                 let count = $(parentElement).find('.sc-item__votecount').first()
-                $(parentElement).find('.sc-item__upvote').addClass('sc-item__upvote--voted')
+                $(parentElement).find('.sc-item__upvote').addClass('sc-item__upvote--voted-true')
                 count.text( parseInt( count.text().split(' ')[0] ) + 1 + ' votes')
+                $(parentElement).find('.sc-vote').remove()
+
               }
             }
           })
@@ -215,24 +212,22 @@
         }
       }, (response) => {
         if (response.error) {
-          $(parentElement).append(
-            notificationTemplate('Error posting comment please try again after 20 seconds')
-          )
-
+          $(parentElement).append(steemComments.notificationTemplate('Error posting comment please try again after 20 seconds'))
         } else {
-
-          let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
-
-          setTimeout(() => {
-            let inputArea = $(parentElement).find('.sc-comment__container')
+          if (response.status == 'fail'){
+            $(parentElement).append(steemComments.notificationTemplate(response.message))
+          } else {
+            let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
+            setTimeout(() => {
+              let inputArea = $(parentElement).find('.sc-comment__container')
               inputArea.fadeOut(400, (e) => {
                 inputArea.remove()
               })
-          }, 1000)
+            }, 1000)
 
-          $(parentElement).append(newComment)
-          $(parentElement).append(newComment)
-          $(document).scrollTop(newComment.offset().top - 50)
+            $(parentElement).append(newComment)
+            $(document).scrollTop(newComment.offset().top - 50)
+          }
         }
       })
     },
@@ -371,7 +366,7 @@
           depth: parentDepth + 1
         }
         let metadata = {
-          profile_image: ''
+          profile_image: $('.sc-section').data('profileimage')
         }
         var template = `
         <div data-post-id="${post.id}"

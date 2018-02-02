@@ -84,7 +84,6 @@
   transition: all 200ms;
 }
 .sc-topbar__upvote:hover svg circle {
-  fill: #759af7;
 }
 
 .sc-item__upvote--voted-true svg circle {
@@ -95,7 +94,9 @@
   stroke: #fff;
 }
 
-
+.sc-topbar__rule + .sc-comment__container  {
+  padding: 0 15px;
+}
 .sc-topbar__reply {
   float: left;
   display: inline-block;
@@ -109,6 +110,7 @@
 .sc-item {
   padding: 0 15px 10px;
   float: left;
+  width: 100%;
 }
 
 .sc-item__level-2 {
@@ -226,7 +228,11 @@
   padding: 5px 10px;
   text-decoration: none;
 }
-
+a.sc-comment__btn:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #16191f;
+}
 .sc-vote {
   position: absolute;
   padding: 20px;

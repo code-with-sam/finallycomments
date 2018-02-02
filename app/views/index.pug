@@ -1,5 +1,43 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  header
+    .container
+      h1 Finally.
+      h2 A comments system that <br> rewards its authors.
+      .header__links
+        a.button.is-primary Get Started
+        a.button Learn More
+  main
+    section.intro
+      .container
+        h3.title How it Works
+        p.sub-content Finally is an evolution of #[a.content-link() Steemcomments.js] and at its core uses the  #[a.content-link(src="https://steem.io") Steem blockchain] to provide posting and curation rewards to its users. Similar to other popular plug and play comment systems Finally requires only a single html tag while our javascript library &amp; backend system take care of the rest.
+        br
+        p.sub-content Finally uses #[a.content-link(src="https://steemconnect.com/") Steemconnect authentication] to allow users to post comments and upvotes directly, from anywhere Finally is embeded. Once authenticated with Finally users will not have to log in again when visiting other sites that also use Finally.
+
+    section.generate
+      .container
+        h3.title Get Started
+        p.sub-content Generate embedable code using a Steemit, Busy or Utopian url.
+
+
+        .generator
+          .field.has-addons
+            .control
+              input.input.generate-url(placeholder="url")
+            .control
+              a.button.is-info.generate-embded(type="text") Create
+
+
+        p.sub-content *Currently Finally only supports content already posted to the steem network. Sites such as Steemit, Busy or Utopian. Suporrt for more sites (dmania/dsound/dtube/dlive) will be added shortly and in the comming weeks support for content outside of the Steem blockchain will be enabled.
+
+
+
+    section.example
+      h3.title Example
+      iframe(id="example" width="100%" src="http://localhost:3000/thread/utopian-io/@sambillingham/introducing-steemcomments-js-add-steem-comments-to-any-website-or-blog")
+
+
+  footer
+    p Created by [Sam billingham]() for the [Steem Blockchain](h) ✌️
