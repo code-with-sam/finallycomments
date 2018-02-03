@@ -10,7 +10,7 @@
 
 
 /*! Finally Comments System
- * <div class="finally-comments" data-id=""></>
+ * <div class="finally-comments" data-id=""></div>
 */
 
 let finallyCommentsSystem = {
