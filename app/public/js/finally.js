@@ -30,12 +30,14 @@ iFrameResize( {}, '.finally-comments iframe' );
 
 
 
-window.addEventListener("message", receiveMessage, false);
+window.addEventListener('message', receiveMessage, false);
 
 function receiveMessage(event)
 {
-  // if (event.origin !== "http://example.org:8080")
-  //   return;
+  if (event.origin !== 'https://finallycomments.com'){
+    console.log('not finallycomments.com')
+    return;
+  }
 
   console.log(event);
   if (event.data.message == 'new-comment'){

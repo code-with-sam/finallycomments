@@ -12,7 +12,7 @@ $('.generate-embded').on('click', () => {
 
   let embedTemplate = `
   <section class="finally-comments" data-id="${url}"></section>
-  <script src="http://finallycomments.net/js/finally.min.js"></script>
+  <script src="http://finallycomments.com/js/finally.min.js"></script>
   `
   $('.embed-code').empty()
   if (url) {
