@@ -10,7 +10,6 @@ $('.generate-embded').on('click', () => {
   </pre>
   `
 
-
   let embedTemplate = `
   <section class="finally-comments" data-id="${url}"></section>
   <script src="http://finallycomments.net/js/finally.min.js"></script>
@@ -22,5 +21,3 @@ $('.generate-embded').on('click', () => {
   }
 
 })
-
-$('iframe').iFrameResize();

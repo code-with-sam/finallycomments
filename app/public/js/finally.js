@@ -26,3 +26,22 @@ let finallyCommentsSystem = {
 }
 
 finallyCommentsSystem.init();
+iFrameResize( {}, '.finally-comments iframe' );
+
+
+
+window.addEventListener("message", receiveMessage, false);
+
+function receiveMessage(event)
+{
+  // if (event.origin !== "http://example.org:8080")
+  //   return;
+
+  console.log(event);
+  if (event.data.message == 'new-comment'){
+    let frameoffset = document.querySelector('.finally-comments').getBoundingClientRect().top;
+    console.log( event.data.offset + frameoffset )
+
+    document.documentElement.scrollTop = ( document.querySelector('.finally-comments') +  frameoffset )
+  }
+}

@@ -21,10 +21,6 @@
     },
     uiActions: () => {
 
-          // $('.sc-section').on('mouseover', '.sc-item__reply, .sc-item__upvote', (e) => {
-          //   $(e.currentTarget).css('cursor', 'not-allowed')
-          // })
-
           $('.sc-topbar__upvote').on('click', () => {
             steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
           })
@@ -77,7 +73,8 @@
 
           $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
             e.preventDefault()
-            let parentElement = $(e.currentTarget).closest('.sc-item')
+            let parentElement = $(e.currentTarget).closest('.sc-item') || $('.sc-comments')
+
             let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
             let message = $('.sc-comment__message').val()
             let parentPermlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
@@ -198,8 +195,15 @@
 
     },
     sendComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) =>  {
-      $(parentElement).find('.sc-comment__btn').text('Posting... ')
-      $(parentElement).find('.sc-comment__btn').append('<img src="/img/loader.gif">')
+      let replytoThread = $(parentElement).hasClass('sc-item')
+      if( !replytoThread ){
+        $('.sc-comment__container').find('.sc-comment__btn').text('Posting... ')
+        $('.sc-comment__container').find('.sc-comment__btn').append('<img src="/img/loader.gif">')
+        parentElement = $('.sc-comments')
+      } else {
+        $(parentElement).find('.sc-comment__btn').text('Posting... ')
+        $(parentElement).find('.sc-comment__btn').append('<img src="/img/loader.gif">')
+      }
 
       $.post({
         url: `/comment`,
@@ -218,15 +222,19 @@
             $(parentElement).append(steemComments.notificationTemplate(response.message))
           } else {
             let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
-            setTimeout(() => {
-              let inputArea = $(parentElement).find('.sc-comment__container')
-              inputArea.fadeOut(400, (e) => {
-                inputArea.remove()
-              })
-            }, 1000)
+            let inputArea = $('.sc-comment__container')
+            inputArea.fadeOut(400, (e) => {
+              inputArea.remove()
+            })
 
             $(parentElement).append(newComment)
             $(document).scrollTop(newComment.offset().top - 50)
+            let offset = newComment.offset().top
+            parent.postMessage({
+              message: 'new-comment',
+              offset: offset
+            }, '*')
+
           }
         }
       })
@@ -245,7 +253,6 @@
       steem.api.setOptions({ url: steemComments.STEEMSERVER });
       steem.api.getState(`/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}`, function(err, result) {
         let resultsArray = [];
-        console.log(result);
 
         for ( post in result.content ){
 
@@ -284,14 +291,11 @@
           }))
         }
 
-        console.log(resultsByDepth)
         // loop over multi array
         resultsByDepth.forEach( (postsAtDepth, i, arr) => {
           postsAtDepth.forEach( (post, i, arr) => {
             let voted = false
             if( steemComments.ISAUTHENTICATED ){
-              console.log(steemComments.authenticatedUser())
-              console.log(post.voters)
               voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
             }
 

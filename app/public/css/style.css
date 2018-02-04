@@ -3,7 +3,9 @@
   box-sizing: border-box;
 }
 
-
+img {
+  max-width: 100%;
+}
 .sc-cf:after {
   display: block;
   content: "";
@@ -169,7 +171,7 @@
   transition: all 200ms;
 }
 .sc-item__author-link:hover {
-  background: rgba(141, 141, 243, 0.2);
+  background: rgba(141, 205, 243, 0.2)
 }
 .sc-item__middot {
   padding: 0 4px 0 0px;
@@ -241,7 +243,7 @@ a.sc-comment__btn:hover {
 }
 .sc-vote {
   position: absolute;
-  padding: 20px;
+  padding: 20px 40px 20px 20px;
   background-color: #fff;
   max-width: 300px;
   border-radius: 3px;
