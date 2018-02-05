@@ -42,6 +42,7 @@ let finallyCommentsSystem = {
 }
 
 finallyCommentsSystem.init();
+
 iFrameResize( {}, '.finally-comments iframe' );
 
 
@@ -50,16 +51,39 @@ window.addEventListener('message', receiveMessage, false);
 
 function receiveMessage(event)
 {
-  if (event.origin !== 'https://finallycomments.com' || event.origin !== 'https://v2.steemconnect.com'){
-    console.log('not finallycomments.com')
-    return;
+  if (event.data.message == 'sign-in'){
+    if (event.origin !== 'https://finallycomments.com' )
+      return;
+    $('.finally-comments iframe').css('height', 00)
   }
 
-  console.log(event);
   if (event.data.message == 'new-comment'){
-    let frameoffset = document.querySelector('.finally-comments').getBoundingClientRect().top;
-    console.log( event.data.offset + frameoffset )
+    if (event.origin !== 'https://finallycomments.com' )
+      return;
 
-    document.documentElement.scrollTop = ( document.querySelector('.finally-comments') +  frameoffset )
+
+    let frameOffset = getDistanceFromTop(document.querySelector('.finally-comments'))
+    let frameHeight = document.querySelector('.finally-comments').getBoundingClientRect().height;
+    console.log( frameOffset +  frameHeight )
+    console.log( event.data.offset )
+    if ( event.data.depth === undefined || event.data.depth === 0 ){
+      console.log('top level comment')
+
+      document.documentElement.scrollTop = ( frameOffset +  frameHeight )
+    } else {
+      document.documentElement.scrollTop = ( event.data.offset +  frameoffset )
+    }
+
   }
+}
+
+function getDistanceFromTop(element) {
+    var yPos = 0;
+
+    while(element) {
+        yPos += (element.offsetTop);
+        element = element.offsetParent;
+    }
+
+    return yPos;
 }

@@ -20,7 +20,14 @@
       steemComments.uiActions()
     },
     uiActions: () => {
+          $('.sc-login').on('click', () => {
+            console.log('login')
+            parent.postMessage({
+              message: 'sign-in'
+            }, '*')
 
+            return true
+          })
           $('.sc-topbar__upvote').on('click', () => {
             steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
           })
@@ -87,17 +94,6 @@
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
             $(e.currentTarget).parent().remove()
           });
-
-
-          // $('.sc-section').on('click', '.sc-comment__btn', (e) => {
-          //   let url = $(e.currentTarget).attr('href');
-          //   let newWindow = window.open(url,'steemconnect','height=650,width=770')
-          //   if (window.focus)
-          //     newWindow.focus()
-          //
-          //   e.preventDefault()
-          //   return false;
-          // })
 
     },
     getPartsFromLink: () => {
@@ -222,17 +218,19 @@
             $(parentElement).append(steemComments.notificationTemplate(response.message))
           } else {
             let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
+            console.log('depth: ', parentDepth)
             let inputArea = $('.sc-comment__container')
             inputArea.fadeOut(400, (e) => {
               inputArea.remove()
             })
 
             $(parentElement).append(newComment)
-            $(document).scrollTop(newComment.offset().top - 50)
+
             let offset = newComment.offset().top
             parent.postMessage({
               message: 'new-comment',
-              offset: offset
+              offset: offset,
+              depth: parentDepth || 0
             }, '*')
 
           }
