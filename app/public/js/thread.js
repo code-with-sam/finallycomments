@@ -29,11 +29,21 @@
             return true
           })
           $('.sc-topbar__upvote').on('click', () => {
-            steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
+
+            if ( steemComments.ISAUTHENTICATED){
+              steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
+            } else {
+              $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to vote.'))
+            }
+
           })
 
           $('.sc-topbar__reply').on('click', () => {
-            steemComments.addCommentTemplateAfter('.sc-section .sc-topbar__rule')
+            if ( steemComments.ISAUTHENTICATED){
+              steemComments.addCommentTemplateAfter('.sc-section .sc-topbar__rule')
+            } else {
+              $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to comment.'))
+            }
             $('.sc-vote').remove()
           })
 
