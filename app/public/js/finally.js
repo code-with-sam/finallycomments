@@ -18,11 +18,27 @@ let finallyCommentsSystem = {
     let container = document.querySelector('.finally-comments')
     console.log(container.dataset.id)
     let url = container.dataset.id
+    let urlParts = finallyCommentsSystem.getPartsFromLink(url)
+    let finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
     let iframe = document.createElement('iframe', { scrolling: 'no' });
-    iframe.src = url;
+    iframe.src = finallyUrl;
     iframe.width = '100%';
+    iframe.style = 'border: none;'
     container.appendChild(iframe)
-  }
+  },
+  getPartsFromLink: (url) => {
+    let lastChar = url.substr(url.length -1);
+    if (lastChar === '/')
+    url = url.slice(0, -1);
+
+    let parts = url.split('/')
+
+    return {
+      permlink: parts.pop(),
+      author: parts.pop(),
+      category: parts.pop()
+    }
+  },
 }
 
 finallyCommentsSystem.init();
@@ -34,7 +50,7 @@ window.addEventListener('message', receiveMessage, false);
 
 function receiveMessage(event)
 {
-  if (event.origin !== 'https://finallycomments.com'){
+  if (event.origin !== 'https://finallycomments.com' || event.origin !== 'https://v2.steemconnect.com'){
     console.log('not finallycomments.com')
     return;
   }
