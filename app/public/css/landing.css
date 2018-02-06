@@ -1,0 +1,125 @@
+.finally-logo {
+  width: 107px;
+  position: fixed;
+  top: 0;
+  right: 20px;
+  z-index: 1000;
+}
+
+a.content-link {
+  color: #0e0e0e;
+  border-bottom: solid 2px #01d1b2;
+}
+a.content-link:hover {
+  color: #01d1b2;
+  border-bottom: none;
+}
+.button.is-info {
+  background-color: #212121;
+  color: #fff;
+}
+.button.is-info:hover {
+  background-color: #010101;
+}
+header {
+  padding: 30px 0 ;
+}
+
+@media( min-width: 700px){
+  header {
+  padding: 50px;
+  }
+}
+
+.container {
+  padding: 0 30px;
+}
+h1 {
+  font-size: 5rem;
+}
+
+h2 {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+@media( min-width: 600px){
+  h1 {
+    font-size: 6rem;
+  }
+  h2 {
+    font-size: 3rem;
+  }
+}
+
+@media( min-width: 800px){
+  h1 {
+    font-size: 8rem;
+  }
+}
+@media( min-width: 1000px){
+  h1 {
+    font-size: 9rem;
+  }
+  h2 {
+    font-size: 5rem;
+    line-height: 1;
+  }
+}
+
+
+
+
+
+.header__links {
+  margin:  50px 0
+}
+.button {
+  display: inline-block;
+  margin-right: 15px
+}
+
+section.intro {
+  padding: 100px 0;
+  background: #eff6fd;
+}
+section.generate {
+    padding: 100px 0
+}
+
+section.generate {
+  background: #01d1b2;
+}
+section.generate p,
+section.generate h3 {
+  color: #fff;
+  font-weight: 600;
+}
+
+@media(min-width: 600px){
+  .sub-content {
+    max-width: 80%;
+  }
+}
+
+.generator {
+  max-width: 50%;
+  margin: 15px 0;
+}
+.control {
+  min-width: 200px;
+}
+
+.example {
+  /*width: 80%;*/
+  margin: 50px auto;
+}
+
+iframe {
+  min-height: 600px;
+}
+
+
+footer {
+  padding: 25px;
+  text-align: center;
+}

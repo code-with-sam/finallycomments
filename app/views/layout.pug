@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title Finally Comments System
+    link(rel='stylesheet', href='/css/style.css')
+
+    if css == 'bulma'
+      link(rel='stylesheet', href='/css/bulma.css')
+      link(rel='stylesheet', href='/css/landing.css')
+
+  body
+    block content
+
+    script(src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous")
+
+    if path == 'thread'
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js")
+      script(src="https://cdn.steemjs.com/lib/latest/steem.min.js")
+      script(src="/js/iframeResizer.contentWindow.min.js")
+      script(src="/js/thread.js")
+    else
+      script(src="/js/finally.js")
+      script(src="/js/default.js")
