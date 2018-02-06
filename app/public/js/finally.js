@@ -54,7 +54,7 @@ function receiveMessage(event)
   if (event.data.message == 'sign-in'){
     if (event.origin !== 'https://finallycomments.com' )
       return;
-    $('.finally-comments iframe').css('height', 00)
+    $('.finally-comments iframe').css('height', 600)
   }
 
   if (event.data.message == 'new-comment'){
