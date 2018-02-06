@@ -6,11 +6,11 @@
   z-index: 1000;
 }
 
-a {
+a.content-link {
   color: #0e0e0e;
   border-bottom: solid 2px #01d1b2;
 }
-a:hover {
+a.content-link:hover {
   color: #01d1b2;
   border-bottom: none;
 }
