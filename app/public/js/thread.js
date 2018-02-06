@@ -239,6 +239,7 @@
             let offset = newComment.offset().top
             parent.postMessage({
               message: 'new-comment',
+              inputAreaHeight: 100,
               offset: offset,
               depth: parentDepth || 0
             }, '*')

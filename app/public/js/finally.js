@@ -64,14 +64,13 @@ function receiveMessage(event)
 
     let frameOffset = getDistanceFromTop(document.querySelector('.finally-comments'))
     let frameHeight = document.querySelector('.finally-comments').getBoundingClientRect().height;
-    console.log( frameOffset +  frameHeight )
-    console.log( event.data.offset )
-    if ( event.data.depth === undefined || event.data.depth === 0 ){
-      console.log('top level comment')
 
+    if ( event.data.depth === undefined || event.data.depth === 0 ){
       document.documentElement.scrollTop = ( frameOffset +  frameHeight )
     } else {
-      document.documentElement.scrollTop = ( event.data.offset +  frameoffset )
+      document.documentElement.scrollTop = ( event.data.offset +  frameOffset - 300)
+      console.log('Data offset: ', event.data.offset )
+      console.log('Frame offset: ', frameOffset )
     }
 
   }
