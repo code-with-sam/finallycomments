@@ -28,6 +28,9 @@ You'll need to create an account on steemconnect.com to work on this project (cu
 
 start by passing enviroment varibles to the node process for example
 ```
+git clone
+cd app/
+npm install
 NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SESSION_SECRET="supersecret27" node ./bin/www
 ```
 
