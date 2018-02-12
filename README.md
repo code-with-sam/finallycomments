@@ -1,5 +1,5 @@
 
-# Finally Comments &  Steemcomments.js
+# Finally Comments
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
@@ -43,9 +43,3 @@ NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SE
 - edit/delete/flag comments
 - wordpress plugin
 - non logged in user comments (not expected for some time)
-
-
-## Steemcomments.js
-A proof of concept using steemconnect transaction signing
-
-[see full readme](https://github.com/code-with-sam/s-c-plugin/tree/master/steemconnect-sign-transactions)
