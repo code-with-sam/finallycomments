@@ -194,6 +194,14 @@ a.sc-settings__logout {
 .sc-item__author-link:hover {
   background: rgba(141, 205, 243, 0.2)
 }
+
+.sc-item__reputation {
+  font-size: 13px;
+  display: inline-block;
+  transform: translateX(-6px);
+}
+
+
 .sc-item__middot {
   padding: 0 4px 0 0px;
 }

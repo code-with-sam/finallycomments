@@ -1,11 +1,12 @@
 
-  const steemComments = {
+const steemComments = {
     CATEGORY: '',
     AUTHOR: '',
     PERMLINK: '',
     STEEMSERVER: 'https://api.steemit.com',
     PROFILEIMAGE: '',
     ISAUTHENTICATED: $('.sc-section').data('auth'),
+    USERACCOUNTS: [],
     authenticatedUser: () => {
       if (steemComments.ISAUTHENTICATED){
         return $('.sc-section').data('username');
@@ -273,6 +274,7 @@
 
       steem.api.setOptions({ url: steemComments.STEEMSERVER });
       steem.api.getState(`/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}`, function(err, result) {
+        steemComments.USERACCOUNTS = result.accounts
         let resultsArray = [];
 
         for ( post in result.content ){
@@ -360,6 +362,9 @@
           <div class="sc-item__right">
           <h4 class="sc-item__username">
           <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
+
+          <span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>
+
           <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
           </h4>
           <p class="sc-item__content">${ html }</p>
