@@ -292,7 +292,8 @@ const steemComments = {
             parent_permlink: result.content[post].parent_permlink,
             created: result.content[post].created,
             votes: result.content[post].net_votes,
-            voters: result.content[post].active_votes.map(vote => vote.voter)
+            voters: result.content[post].active_votes.map(vote => vote.voter),
+            value: Math.round( parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100) / 100
           })
         }
 
@@ -348,6 +349,7 @@ const steemComments = {
           }
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
+          var voteValue = (post.value > 0) ? '</span> <span class="sc-item__divider">|</span> <span class="sc-item__votecount">$' + post.value  + '</span><span class="sc-item__votecount">': ''
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
@@ -378,7 +380,7 @@ const steemComments = {
           </svg>
           </span>
           <span class="sc-item__divider">|</span>
-          <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
+          <span class="sc-item__votecount">${post.votes} ${voteMessage} ${voteValue}</span>
           <span class="sc-item__divider">|</span>
           <span class="sc-item__reply">Reply</span>
           </div>
