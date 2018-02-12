@@ -6,6 +6,10 @@
 img {
   max-width: 100%;
 }
+
+a {
+    color: #2167ef;
+}
 .sc-cf:after {
   display: block;
   content: "";
@@ -71,6 +75,23 @@ img {
   line-height: 35px;
   margin: 0;
   margin-right: 15px;
+  cursor: pointer;
+}
+
+.sc-settings {
+  position: absolute;
+  top: 40px;
+  right: 5px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  border-radius: 3px;
+  border: solid 1px #dedede;
+}
+
+a.sc-settings__logout {
+  color: #2167ef;
+  text-decoration: none;
 
 }
 
@@ -280,7 +301,6 @@ a.sc-comment__btn:hover {
 .sc-vote__btn {
   display: inline-block;
   border-radius: 50%;
-  /*border: solid 4px #333;*/
   height: 30px;
   width: 30px;
   text-align: center;

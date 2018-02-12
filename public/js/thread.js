@@ -28,14 +28,26 @@
 
             return true
           })
-          $('.sc-topbar__upvote').on('click', () => {
+          $('.sc-topbar').on('click', '.sc-profile__image', () => {
+            console.log('click profile image')
+            let template = `
+            <div class="sc-settings sc-settings--active">
+              <a class="sc-settings__logout" href="/auth/logout">Logout</a>
+            </div>
+            `
+            if( $('.sc-settings').hasClass('sc-settings--active') ){
+              $('.sc-settings').remove()
+            } else {
+              $('.sc-profile').append(template);
+            }
+          })
 
+          $('.sc-topbar__upvote').on('click', () => {
             if ( steemComments.ISAUTHENTICATED){
               steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
             } else {
               $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to vote.'))
             }
-
           })
 
           $('.sc-topbar__reply').on('click', () => {
