@@ -32,14 +32,19 @@ let finallyCommentsSystem = {
   },
   setupIframe: () => {
     let container = document.querySelector('.finally-comments')
+    console.log(container.dataset)
     let url = container.dataset.id
     let urlParts = finallyCommentsSystem.getPartsFromLink(url)
-    let finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    let finallyUrl = `http://localhost:3000/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
     let iframe = document.createElement('iframe', { scrolling: 'no' });
     iframe.src = finallyUrl;
     iframe.width = '100%';
     iframe.style = 'border: none;'
+    iframe.dataset['reputation'] = container.dataset.reputation
+    iframe.dataset['profile'] = container.dataset.profile
+    iframe.dataset['values'] = container.dataset.values
     container.appendChild(iframe)
+
   }
 }
 

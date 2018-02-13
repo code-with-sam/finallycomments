@@ -7,6 +7,7 @@ const steemComments = {
     PROFILEIMAGE: '',
     ISAUTHENTICATED: $('.sc-section').data('auth'),
     USERACCOUNTS: [],
+    OPTIONS: {},
     authenticatedUser: () => {
       if (steemComments.ISAUTHENTICATED){
         return $('.sc-section').data('username');
@@ -19,10 +20,18 @@ const steemComments = {
       steemComments.addTopBar()
       steemComments.getComments()
       steemComments.uiActions()
+      steemComments.setOptions()
+    },
+    setOptions: () => {
+      let options = window.frameElement.dataset
+      steemComments.OPTIONS.reputation = options.reputation === 'true' ? true : false
+      steemComments.OPTIONS.values = options.values === 'true' ? true : false
+      steemComments.OPTIONS.profile = options.profile === 'true' ? true : false
+      console.log(steemComments.OPTIONS)
+
     },
     uiActions: () => {
           $('.sc-login').on('click', () => {
-            console.log('login')
             parent.postMessage({
               message: 'sign-in'
             }, '*')
@@ -30,7 +39,6 @@ const steemComments = {
             return true
           })
           $('.sc-topbar').on('click', '.sc-profile__image', () => {
-            console.log('click profile image')
             let template = `
             <div class="sc-settings sc-settings--active">
               <a class="sc-settings__logout" href="/auth/logout">Logout</a>
@@ -118,7 +126,8 @@ const steemComments = {
             $(e.currentTarget).parent().remove()
           });
 
-          $('.sc-section').on('click', '.sc-item__image', (e) => {
+
+          $('.sc-section').on('click', '.sc-item__image--profile-enabled', (e) => {
             $('.sc-item__overlay').remove()
             let item = $(e.currentTarget)
             let username = $(e.currentTarget).data('username')
@@ -388,6 +397,7 @@ const steemComments = {
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
           var voteValue = (post.value > 0) ? '</span> <span class="sc-item__divider">|</span> <span class="sc-item__votecount">$' + post.value  + '</span><span class="sc-item__votecount">': ''
+          var reputation = `<span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>`
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
@@ -398,13 +408,13 @@ const steemComments = {
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
           <div class="sc-item__left">
-          <img class="sc-item__image" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px">
+          <img class="sc-item__image ${ steemComments.OPTIONS.profile ? 'sc-item__image--profile-enabled' : '' }" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px">
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">
           <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
 
-          <span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>
+          ${steemComments.OPTIONS.reputation ? reputation : ''}
 
           <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
           </h4>
@@ -419,7 +429,7 @@ const steemComments = {
           </svg>
           </span>
           <span class="sc-item__divider">|</span>
-          <span class="sc-item__votecount">${post.votes} ${voteMessage} ${voteValue}</span>
+          <span class="sc-item__votecount">${post.votes} ${voteMessage} ${ steemComments.OPTIONS.values ? voteValue : ''}</span>
           <span class="sc-item__divider">|</span>
           <span class="sc-item__reply">Reply</span>
           </div>
