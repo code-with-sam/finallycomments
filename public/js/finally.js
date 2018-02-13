@@ -15,16 +15,7 @@
 
 let finallyCommentsSystem = {
   init: () => {
-    let container = document.querySelector('.finally-comments')
-    console.log(container.dataset.id)
-    let url = container.dataset.id
-    let urlParts = finallyCommentsSystem.getPartsFromLink(url)
-    let finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
-    let iframe = document.createElement('iframe', { scrolling: 'no' });
-    iframe.src = finallyUrl;
-    iframe.width = '100%';
-    iframe.style = 'border: none;'
-    container.appendChild(iframe)
+      finallyCommentsSystem.setupIframe();
   },
   getPartsFromLink: (url) => {
     let lastChar = url.substr(url.length -1);
@@ -39,6 +30,22 @@ let finallyCommentsSystem = {
       category: parts.pop()
     }
   },
+  setupIframe: () => {
+    let container = document.querySelector('.finally-comments')
+    console.log(container.dataset)
+    let url = container.dataset.id
+    let urlParts = finallyCommentsSystem.getPartsFromLink(url)
+    let finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    let iframe = document.createElement('iframe', { scrolling: 'no' });
+    iframe.src = finallyUrl;
+    iframe.width = '100%';
+    iframe.style = 'border: none;'
+    iframe.dataset['reputation'] = container.dataset.reputation
+    iframe.dataset['profile'] = container.dataset.profile
+    iframe.dataset['values'] = container.dataset.values
+    container.appendChild(iframe)
+
+  }
 }
 
 finallyCommentsSystem.init();
@@ -69,8 +76,6 @@ function receiveMessage(event)
       document.documentElement.scrollTop = ( frameOffset +  frameHeight )
     } else {
       document.documentElement.scrollTop = ( event.data.offset +  frameOffset - 300)
-      console.log('Data offset: ', event.data.offset )
-      console.log('Frame offset: ', frameOffset )
     }
 
   }

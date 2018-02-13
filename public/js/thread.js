@@ -1,11 +1,13 @@
 
-  const steemComments = {
+const steemComments = {
     CATEGORY: '',
     AUTHOR: '',
     PERMLINK: '',
     STEEMSERVER: 'https://api.steemit.com',
     PROFILEIMAGE: '',
     ISAUTHENTICATED: $('.sc-section').data('auth'),
+    USERACCOUNTS: [],
+    OPTIONS: {},
     authenticatedUser: () => {
       if (steemComments.ISAUTHENTICATED){
         return $('.sc-section').data('username');
@@ -18,24 +20,42 @@
       steemComments.addTopBar()
       steemComments.getComments()
       steemComments.uiActions()
+      steemComments.setOptions()
+    },
+    setOptions: () => {
+      let options = window.frameElement.dataset
+      steemComments.OPTIONS.reputation = options.reputation === 'false' ? false : true
+      steemComments.OPTIONS.values = options.values === 'false' ? false : true
+      steemComments.OPTIONS.profile = options.profile === 'false' ? false : true
+
     },
     uiActions: () => {
           $('.sc-login').on('click', () => {
-            console.log('login')
             parent.postMessage({
               message: 'sign-in'
             }, '*')
 
             return true
           })
-          $('.sc-topbar__upvote').on('click', () => {
+          $('.sc-topbar').on('click', '.sc-profile__image', () => {
+            let template = `
+            <div class="sc-settings sc-settings--active">
+              <a class="sc-settings__logout" href="/auth/logout">Logout</a>
+            </div>
+            `
+            if( $('.sc-settings').hasClass('sc-settings--active') ){
+              $('.sc-settings').remove()
+            } else {
+              $('.sc-profile').append(template);
+            }
+          })
 
+          $('.sc-topbar__upvote').on('click', () => {
             if ( steemComments.ISAUTHENTICATED){
               steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
             } else {
               $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to vote.'))
             }
-
           })
 
           $('.sc-topbar__reply').on('click', () => {
@@ -104,6 +124,42 @@
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
             $(e.currentTarget).parent().remove()
           });
+
+
+          $('.sc-section').on('click', '.sc-item__image--profile-enabled', (e) => {
+            $('.sc-item__overlay').remove()
+            let item = $(e.currentTarget)
+            let username = $(e.currentTarget).data('username')
+            let bio = $(e.currentTarget).parent().parent().data('bio')
+            let profileImage = $(e.currentTarget).attr('src')
+            let accountValue;
+            let socialStats;
+            steem.formatter.estimateAccountValue(steemComments.USERACCOUNTS[username])
+            .then( data => {
+              accountValue = data
+              steem.api.getFollowCountAsync(username)
+              .then( data => {
+                socialStats = data
+
+                item.parent().append(`
+                  <div class="sc-item__overlay sc-item__overlay--open">
+                  <img width="100" height="100" src="${profileImage}">
+                  <h3>@${username} [${steem.formatter.reputation(steemComments.USERACCOUNTS[username].reputation)}]</h3>
+
+                  <h4>Posts: ${steemComments.USERACCOUNTS[username].post_count} | Followers: ${socialStats.follower_count} | Following ${socialStats.following_count} </h4>
+                  <p class="sc-item__account-value">$${accountValue}</p>
+                  <p>${(bio !== 'undefined' ? bio : '')}</p>
+                  </div>
+                  `)
+              })
+            })
+
+          });
+          $('.sc-section').on('click', (e) => {
+                if(!$(e.target).closest('.sc-item__left').length) {
+                    $('.sc-item__overlay').remove()
+                }
+          })
 
     },
     getPartsFromLink: () => {
@@ -228,7 +284,6 @@
             $(parentElement).append(steemComments.notificationTemplate(response.message))
           } else {
             let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
-            console.log('depth: ', parentDepth)
             let inputArea = $('.sc-comment__container')
             inputArea.fadeOut(400, (e) => {
               inputArea.remove()
@@ -261,6 +316,7 @@
 
       steem.api.setOptions({ url: steemComments.STEEMSERVER });
       steem.api.getState(`/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}`, function(err, result) {
+        steemComments.USERACCOUNTS = result.accounts
         let resultsArray = [];
 
         for ( post in result.content ){
@@ -278,7 +334,8 @@
             parent_permlink: result.content[post].parent_permlink,
             created: result.content[post].created,
             votes: result.content[post].net_votes,
-            voters: result.content[post].active_votes.map(vote => vote.voter)
+            voters: result.content[post].active_votes.map(vote => vote.voter),
+            value: Math.round( parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100) / 100
           })
         }
 
@@ -334,20 +391,26 @@
           }
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
+          var voteValue = (post.value > 0) ? '</span> <span class="sc-item__divider">|</span> <span class="sc-item__votecount">$' + post.value  + '</span><span class="sc-item__votecount">': ''
+          var reputation = `<span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>`
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
           data-author="${post.author}"
           data-title="${post.title}"
           data-post-depth="${post.depth}"
+          data-bio="${metadata.about}"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
           <div class="sc-item__left">
-          <img class="sc-item__image" src="${metadata.profile_image}" height="50px" width="50px">
+          <img class="sc-item__image ${ steemComments.OPTIONS.profile ? 'sc-item__image--profile-enabled' : '' }" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px">
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">
           <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
+
+          ${steemComments.OPTIONS.reputation ? reputation : ''}
+
           <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
           </h4>
           <p class="sc-item__content">${ html }</p>
@@ -361,7 +424,7 @@
           </svg>
           </span>
           <span class="sc-item__divider">|</span>
-          <span class="sc-item__votecount">${post.votes} ${voteMessage}</span>
+          <span class="sc-item__votecount">${post.votes} ${voteMessage} ${ steemComments.OPTIONS.values ? voteValue : ''}</span>
           <span class="sc-item__divider">|</span>
           <span class="sc-item__reply">Reply</span>
           </div>
@@ -373,7 +436,7 @@
         let post = {
           id : data.result.id,
           permlink : data.result.operations[0][1].permlink,
-          author : data.result.operations[0][1].parent_author,
+          author : data.result.operations[0][1].author,
           title : data.result.operations[0][1].title,
           body : data.result.operations[0][1].body,
           depth: parentDepth + 1

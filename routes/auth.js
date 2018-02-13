@@ -45,8 +45,10 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/logout', (req, res) => {
-   req.session.destroy();
-   res.redirect("/")
+  steem.revokeToken((err, steemResponse) => {
+      req.session.destroy();
+      res.redirect("/")
+  });
 });
 
 module.exports = router;

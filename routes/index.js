@@ -98,7 +98,7 @@ router.post('/comment', (req, res) => {
     let parentPermlink = req.body.parentPermlink
 
 
-    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, '', (err, steemResponse) => {
+    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, (err, steemResponse) => {
       if (err) {
         console.log(err)
 
