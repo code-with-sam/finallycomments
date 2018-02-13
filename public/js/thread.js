@@ -151,11 +151,9 @@ const steemComments = {
 
           });
           $('.sc-section').on('click', (e) => {
-
-
-            if( $('.sc-item__overlay').hasClass('sc-item__overlay--open')) {
-              // $('.sc-item__overlay').remove()
-            }
+                if(!$(e.target).closest('.sc-item__left').length) {
+                    $('.sc-item__overlay').remove()
+                }
           })
 
     },

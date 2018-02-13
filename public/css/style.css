@@ -181,6 +181,7 @@ a.sc-settings__logout {
 .sc-item__image {
   border-radius: 50%;
   border: solid 2px #ccc;
+  cursor: pointer;
 }
 .sc-item__username {
   margin: 0 0 10px 0
