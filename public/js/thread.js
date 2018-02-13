@@ -118,6 +118,46 @@ const steemComments = {
             $(e.currentTarget).parent().remove()
           });
 
+          $('.sc-section').on('click', '.sc-item__image', (e) => {
+            $('.sc-item__overlay').remove()
+            let item = $(e.currentTarget)
+            let username = $(e.currentTarget).data('username')
+            let bio = $(e.currentTarget).parent().parent().data('bio')
+            let profileImage = $(e.currentTarget).attr('src')
+            let accountValue;
+            let socialStats;
+            steem.formatter.estimateAccountValue(steemComments.USERACCOUNTS[username])
+            .then( data => {
+              accountValue = data
+              steem.api.getFollowCountAsync(username)
+              .then( data => {
+                socialStats = data
+
+                console.log(accountValue)
+                console.log(socialStats)
+
+                item.parent().append(`
+                  <div class="sc-item__overlay sc-item__overlay--open">
+                  <img width="100" height="100" src="${profileImage}">
+                  <h3>@${username} [${steem.formatter.reputation(steemComments.USERACCOUNTS[username].reputation)}]</h3>
+
+                  <h4>Posts: ${steemComments.USERACCOUNTS[username].post_count} | Followers: ${socialStats.follower_count} | Following ${socialStats.following_count} </h4>
+                  <p class="sc-item__account-value">$${accountValue}</p>
+                  <p>${(bio !== 'undefined' ? bio : '')}</p>
+                  </div>
+                  `)
+              })
+            })
+
+          });
+          $('.sc-section').on('click', (e) => {
+
+
+            if( $('.sc-item__overlay').hasClass('sc-item__overlay--open')) {
+              // $('.sc-item__overlay').remove()
+            }
+          })
+
     },
     getPartsFromLink: () => {
       let url = $('.sc-section').data('steemlink')
@@ -356,10 +396,11 @@ const steemComments = {
           data-author="${post.author}"
           data-title="${post.title}"
           data-post-depth="${post.depth}"
+          data-bio="${metadata.about}"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
           <div class="sc-item__left">
-          <img class="sc-item__image" src="${metadata.profile_image}" height="50px" width="50px">
+          <img class="sc-item__image" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px">
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">

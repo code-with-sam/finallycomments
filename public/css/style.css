@@ -152,11 +152,15 @@ a.sc-settings__logout {
 .sc-item__left {
   float: left;
   min-width: 50px;
+  position: relative;
+
 }
 .sc-item__right {
   float: left;
   padding: 0 20px;
-  width: calc(100% - 50px)
+  width: calc(100% - 50px);
+  position: relative;
+
 }
 @media (max-width: 480px){
 
@@ -228,10 +232,45 @@ a.sc-settings__logout {
   cursor: pointer;
 }
 
-  .sc-item__upvote svg {
-      transform: translateY(4px);
-  }
+.sc-item__upvote svg {
+    transform: translateY(4px);
+}
 
+
+
+.sc-item__overlay {
+  border-radius: 3px;
+  padding: 15px;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 300px;
+  background: #fff;
+  border: solid 1px #e6e4e4;
+  box-shadow: 0 0 30px rgba(0,0,0,0.09);
+}
+@media (max-width: 460px) {
+  .sc-item__overlay {
+    width: 250px;
+  }
+}
+
+.sc-item__overlay img {
+  border-radius: 50%;
+      border: solid 2px #ccc;
+}
+.sc-item__overlay h4 {
+      font-size: 12px;
+}
+.sc-item__overlay .sc-item__account-value {
+  font-size: 12px;
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  border-bottom: dotted 1px #333;
+}
  /*INPUT*/
  .sc-comment__container {
   position: relative;
