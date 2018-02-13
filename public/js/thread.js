@@ -24,10 +24,9 @@ const steemComments = {
     },
     setOptions: () => {
       let options = window.frameElement.dataset
-      steemComments.OPTIONS.reputation = options.reputation === 'true' ? true : false
-      steemComments.OPTIONS.values = options.values === 'true' ? true : false
-      steemComments.OPTIONS.profile = options.profile === 'true' ? true : false
-      console.log(steemComments.OPTIONS)
+      steemComments.OPTIONS.reputation = options.reputation === 'false' ? false : true
+      steemComments.OPTIONS.values = options.values === 'false' ? false : true
+      steemComments.OPTIONS.profile = options.profile === 'false' ? false : true
 
     },
     uiActions: () => {
