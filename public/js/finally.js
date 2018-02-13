@@ -76,8 +76,6 @@ function receiveMessage(event)
       document.documentElement.scrollTop = ( frameOffset +  frameHeight )
     } else {
       document.documentElement.scrollTop = ( event.data.offset +  frameOffset - 300)
-      console.log('Data offset: ', event.data.offset )
-      console.log('Frame offset: ', frameOffset )
     }
 
   }

@@ -141,9 +141,6 @@ const steemComments = {
               .then( data => {
                 socialStats = data
 
-                console.log(accountValue)
-                console.log(socialStats)
-
                 item.parent().append(`
                   <div class="sc-item__overlay sc-item__overlay--open">
                   <img width="100" height="100" src="${profileImage}">
@@ -287,7 +284,6 @@ const steemComments = {
             $(parentElement).append(steemComments.notificationTemplate(response.message))
           } else {
             let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
-            console.log('depth: ', parentDepth)
             let inputArea = $('.sc-comment__container')
             inputArea.fadeOut(400, (e) => {
               inputArea.remove()
