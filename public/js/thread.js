@@ -436,7 +436,7 @@ const steemComments = {
         let post = {
           id : data.result.id,
           permlink : data.result.operations[0][1].permlink,
-          author : data.result.operations[0][1].parent_author,
+          author : data.result.operations[0][1].author,
           title : data.result.operations[0][1].title,
           body : data.result.operations[0][1].body,
           depth: parentDepth + 1
