@@ -3,8 +3,8 @@
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
-## Finally comments
-An embededable version of steem (steemit/busy/utopian) comments with comment and vote functionality 
+## Finally comments - V0.3.0
+An embededable version of steem (steemit/utopian) comments with comment and vote functionality
 
 ### How It Works
 [Please visit the site for more detaails](http://finallycomments.com)
@@ -37,8 +37,7 @@ NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SE
 ### Feature Roadmap
 - code/link generation dtube/dmania/dlive/dsound etc
 - can use on non steem top level comments - auto generated for user. (will need to sign into finally and have page for creating threads)
-- sorting comments
-- comment value (with ability to enable/disable) 
+- sorting comments 
 - auto hide posts from rep less than X
 - edit/delete/flag comments
 - wordpress plugin
