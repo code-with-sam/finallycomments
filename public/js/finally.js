@@ -16,6 +16,7 @@
 let finallyCommentsSystem = {
   init: () => {
       finallyCommentsSystem.setupIframe();
+      iFrameResize( {}, '.finally-comments iframe' );
   },
   getPartsFromLink: (url) => {
     let lastChar = url.substr(url.length -1);
@@ -50,7 +51,8 @@ let finallyCommentsSystem = {
 
 finallyCommentsSystem.init();
 
-iFrameResize( {}, '.finally-comments iframe' );
+
+
 
 
 
