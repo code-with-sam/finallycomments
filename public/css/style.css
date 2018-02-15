@@ -108,19 +108,24 @@ a.sc-settings__logout {
   cursor: pointer;
       margin-top: 5px;
 }
+
+
 .sc-topbar__upvote svg circle {
   transition: all 200ms;
 }
 .sc-topbar__upvote:hover svg circle {
 }
 
-.sc-item__upvote--voted-true svg circle {
+.sc-item__upvote--voted-true svg circle,
+.sc-topbar__upvote--voted-true svg circle {
   fill: #525252;
   stroke: #525252;
 }
-.sc-item__upvote--voted-true svg line {
+.sc-item__upvote--voted-true svg line,
+.sc-topbar__upvote--voted-true svg line  {
   stroke: #fff;
 }
+
 
 .sc-topbar__rule + .sc-comment__container  {
   padding: 0 15px;

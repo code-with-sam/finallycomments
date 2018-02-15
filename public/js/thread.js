@@ -52,7 +52,9 @@ const steemComments = {
           })
 
           $('.sc-topbar__upvote').on('click', () => {
-            if ( steemComments.ISAUTHENTICATED){
+            if ( steemComments.ISAUTHENTICATED && $('.sc-topbar__upvote').hasClass('sc-topbar__upvote--voted-true')){
+              $('.sc-comments').prepend(steemComments.notificationTemplate('You have already voted.'))
+            } else if ( steemComments.ISAUTHENTICATED ){
               steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
             } else {
               $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to vote.'))
@@ -377,6 +379,12 @@ const steemComments = {
         })
 
         $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
+        if( steemComments.ISAUTHENTICATED ){
+          let topLevelPost = resultsArray[resultsArray.length -1]
+          voted = topLevelPost.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
+          $('.sc-topbar__upvote').addClass(`sc-topbar__upvote--voted-${voted}`)
+        }
+
       });
     },
     createCommentTemplate: (result, post, voted) => {
