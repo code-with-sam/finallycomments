@@ -376,7 +376,7 @@ const steemComments = {
           })
         })
 
-        $('.sc-topbar__count').text(`${resultsArray.length} Comments`)
+        $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
       });
     },
     createCommentTemplate: (result, post, voted) => {
