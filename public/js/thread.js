@@ -41,7 +41,7 @@ const steemComments = {
           $('.sc-topbar').on('click', '.sc-profile__image', () => {
             let template = `
             <div class="sc-settings sc-settings--active">
-              <a class="sc-settings__logout" href="/auth/logout">Logout</a>
+              <a class="sc-settings__logout" href="/auth/logout/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}">Logout</a>
             </div>
             `
             if( $('.sc-settings').hasClass('sc-settings--active') ){
