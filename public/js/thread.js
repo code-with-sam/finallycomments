@@ -165,6 +165,12 @@ const steemComments = {
                     $('.sc-item__overlay').remove()
                 }
           })
+          $('.sc-topbar__sort-order').on('click', (e) => {
+            let order = $(e.currentTarget).data('order')
+            console.log(order);
+              steemComments.sortComments(order);
+
+          })
 
     },
     getPartsFromLink: () => {
@@ -369,9 +375,10 @@ const steemComments = {
             if( steemComments.ISAUTHENTICATED ){
               voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
             }
-
-            let template = steemComments.createCommentTemplate(result,post, voted)
+            let order = post.depth === 1 ? i : false
+            let template = steemComments.createCommentTemplate(result,post, voted, order)
             if ( post.depth === 1 ) {
+
               $('.sc-comments').prepend( template)
             } else if ( post.depth  > 1) {
               var permlink = post.parent_permlink
@@ -389,7 +396,7 @@ const steemComments = {
 
       });
     },
-    createCommentTemplate: (result, post, voted) => {
+    createCommentTemplate: (result, post, voted, order) => {
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
@@ -504,6 +511,33 @@ const steemComments = {
               n.remove()
             })
         }, 3000)
+      },
+      sortComments: (order) => {
+        let $comments = $('*[data-post-depth="1"]')
+        let newest = (a,b) => {
+          var a = a.getAttribute('data-order')
+          var b = b.getAttribute('data-order')
+          return a - b
+        }
+        let oldest = (a,b) => {
+          var a = a.getAttribute('data-order')
+          var b = b.getAttribute('data-order')
+          return  b - a
+        }
+        let top = (a,b) => {
+          var a = a.getAttribute('data-value')
+          var b = b.getAttribute('data-value')
+          return b - a
+        }
+
+        if( order === 'newest') {
+          $comments.sort(newest);
+        } else if (order === 'oldest'){
+          $comments.sort(oldest);
+        } else if (order === 'top'){
+          $comments.sort(top);
+        }
+        $comments.detach().appendTo('.sc-comments');
       }
   }
   steemComments.init()
