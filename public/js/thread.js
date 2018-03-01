@@ -340,7 +340,7 @@ const steemComments = {
             created: result.content[post].created,
             votes: result.content[post].net_votes,
             voters: result.content[post].active_votes.map(vote => vote.voter),
-            value: Math.round( parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100) / 100
+            value: Math.round(parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100 + parseFloat(result.content[post].total_payout_value.substring(0,5)) * 100) / 100
           })
         }
 
