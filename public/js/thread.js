@@ -20,15 +20,17 @@ const steemComments = {
       steemComments.addTopBar()
       steemComments.getComments()
       steemComments.uiActions()
-      steemComments.setOptions()
+      window.addEventListener('message', steemComments.frameLoad, false);
     },
-    setOptions: () => {
-      console.log(window.frameElement)
-      let options = window.frameElement.dataset || {}
-      steemComments.OPTIONS.reputation = options.reputation === 'false' ? false : true
-      steemComments.OPTIONS.values = options.values === 'false' ? false : true
-      steemComments.OPTIONS.profile = options.profile === 'false' ? false : true
-
+    setOptions: (data) => {
+      steemComments.OPTIONS.reputation = data.reputation === 'false' ? false : true
+      steemComments.OPTIONS.values = data.values === 'false' ? false : true
+      steemComments.OPTIONS.profile = data.profile === 'false' ? false : true
+    },
+    frameLoad: (event) => {
+      if (event.data.message == 'finally-frame-load'){
+        steemComments.setOptions(event.data)
+      }
     },
     uiActions: () => {
           $('.sc-login').on('click', () => {
