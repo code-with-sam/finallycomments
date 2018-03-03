@@ -20,14 +20,17 @@ const steemComments = {
       steemComments.addTopBar()
       steemComments.getComments()
       steemComments.uiActions()
-      steemComments.setOptions()
+      window.addEventListener('message', steemComments.frameLoad, false);
     },
-    setOptions: () => {
-      let options = window.frameElement.dataset
-      steemComments.OPTIONS.reputation = options.reputation === 'false' ? false : true
-      steemComments.OPTIONS.values = options.values === 'false' ? false : true
-      steemComments.OPTIONS.profile = options.profile === 'false' ? false : true
-
+    setOptions: (data) => {
+      steemComments.OPTIONS.reputation = data.reputation === 'false' ? false : true
+      steemComments.OPTIONS.values = data.values === 'false' ? false : true
+      steemComments.OPTIONS.profile = data.profile === 'false' ? false : true
+    },
+    frameLoad: (event) => {
+      if (event.data.message == 'finally-frame-load'){
+        steemComments.setOptions(event.data)
+      }
     },
     uiActions: () => {
           $('.sc-login').on('click', () => {
@@ -40,7 +43,7 @@ const steemComments = {
           $('.sc-topbar').on('click', '.sc-profile__image', () => {
             let template = `
             <div class="sc-settings sc-settings--active">
-              <a class="sc-settings__logout" href="/auth/logout">Logout</a>
+              <a class="sc-settings__logout" href="/auth/logout/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}">Logout</a>
             </div>
             `
             if( $('.sc-settings').hasClass('sc-settings--active') ){
@@ -51,7 +54,9 @@ const steemComments = {
           })
 
           $('.sc-topbar__upvote').on('click', () => {
-            if ( steemComments.ISAUTHENTICATED){
+            if ( steemComments.ISAUTHENTICATED && $('.sc-topbar__upvote').hasClass('sc-topbar__upvote--voted-true')){
+              $('.sc-comments').prepend(steemComments.notificationTemplate('You have already voted.'))
+            } else if ( steemComments.ISAUTHENTICATED ){
               steemComments.addVoteTemplateAfter('.sc-topbar__upvote')
             } else {
               $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to vote.'))
@@ -161,6 +166,12 @@ const steemComments = {
                 }
           })
 
+          $('.sc-topbar__sort-order select').on('change', (e) => {
+                let order = $(e.currentTarget).val()
+                console.log(order)
+                steemComments.sortComments(order);
+          })
+
     },
     getPartsFromLink: () => {
       let url = $('.sc-section').data('steemlink')
@@ -197,7 +208,19 @@ const steemComments = {
             </span>
             <a href="${authUrl}"" class="sc-login sc-login--${steemComments.ISAUTHENTICATED}">Sign In</a>
           </div>
-          <hr class="sc-topbar__rule">`
+          <hr class="sc-topbar__rule">
+          <div class="sc-topbar__sort">
+            <span>Sort Order:</span>
+
+          <span class="sc-topbar__sort-order">
+            <select>
+              <option value="oldest">Oldest First</option>
+              <option value="newest">Newest First</option>
+              <option value="top">Top Value</option>
+            </select>
+          </span>
+          </div>
+          `
       $('.sc-section').append(template)
     },
     addCommentTemplateAfter: (dest) => {
@@ -335,7 +358,7 @@ const steemComments = {
             created: result.content[post].created,
             votes: result.content[post].net_votes,
             voters: result.content[post].active_votes.map(vote => vote.voter),
-            value: Math.round( parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100) / 100
+            value: Math.round(parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100 + parseFloat(result.content[post].total_payout_value.substring(0,5)) * 100) / 100
           })
         }
 
@@ -364,9 +387,10 @@ const steemComments = {
             if( steemComments.ISAUTHENTICATED ){
               voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
             }
-
-            let template = steemComments.createCommentTemplate(result,post, voted)
+            let order = post.depth === 1 ? i : false
+            let template = steemComments.createCommentTemplate(result,post, voted, order)
             if ( post.depth === 1 ) {
+
               $('.sc-comments').prepend( template)
             } else if ( post.depth  > 1) {
               var permlink = post.parent_permlink
@@ -375,10 +399,16 @@ const steemComments = {
           })
         })
 
-        $('.sc-topbar__count').text(`${resultsArray.length} Comments`)
+        $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
+        if( steemComments.ISAUTHENTICATED ){
+          let topLevelPost = resultsArray[resultsArray.length -1]
+          voted = topLevelPost.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
+          $('.sc-topbar__upvote').addClass(`sc-topbar__upvote--voted-${voted}`)
+        }
+
       });
     },
-    createCommentTemplate: (result, post, voted) => {
+    createCommentTemplate: (result, post, voted, order) => {
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
@@ -400,10 +430,13 @@ const steemComments = {
           data-title="${post.title}"
           data-post-depth="${post.depth}"
           data-bio="${metadata.about}"
+          data-order="${order}"
+          data-value="${post.value}"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+
           <div class="sc-item__left">
-          <img class="sc-item__image ${ steemComments.OPTIONS.profile ? 'sc-item__image--profile-enabled' : '' }" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px">
+          <img class="sc-item__image ${ steemComments.OPTIONS.profile ? 'sc-item__image--profile-enabled' : '' }" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px" onerror="this.src='/img/default-user.jpg'">
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">
@@ -493,6 +526,33 @@ const steemComments = {
               n.remove()
             })
         }, 3000)
+      },
+      sortComments: (order) => {
+        let $comments = $('*[data-post-depth="1"]')
+        let newest = (a,b) => {
+          var a = a.getAttribute('data-order')
+          var b = b.getAttribute('data-order')
+          return a - b
+        }
+        let oldest = (a,b) => {
+          var a = a.getAttribute('data-order')
+          var b = b.getAttribute('data-order')
+          return  b - a
+        }
+        let top = (a,b) => {
+          var a = a.getAttribute('data-value')
+          var b = b.getAttribute('data-value')
+          return b - a
+        }
+
+        if( order === 'newest') {
+          $comments.sort(newest);
+        } else if (order === 'oldest'){
+          $comments.sort(oldest);
+        } else if (order === 'top'){
+          $comments.sort(top);
+        }
+        $comments.detach().appendTo('.sc-comments');
       }
   }
   steemComments.init()
