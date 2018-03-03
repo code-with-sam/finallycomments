@@ -16,6 +16,7 @@ $('.generate-embded').on('click', () => {
   `
   $('.embed-code').empty()
   if (url) {
+    $('.embed-container').empty()
     $('.embed-container').append(embedContainer)
     $('.embed-container .embed-code').text(embedTemplate)
   }

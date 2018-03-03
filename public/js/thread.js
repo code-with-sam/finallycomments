@@ -430,10 +430,13 @@ const steemComments = {
           data-title="${post.title}"
           data-post-depth="${post.depth}"
           data-bio="${metadata.about}"
+          data-order="${order}"
+          data-value="${post.value}"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
+
           <div class="sc-item__left">
-          <img class="sc-item__image ${ steemComments.OPTIONS.profile ? 'sc-item__image--profile-enabled' : '' }" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px">
+          <img class="sc-item__image ${ steemComments.OPTIONS.profile ? 'sc-item__image--profile-enabled' : '' }" data-username="${post.author}" src="${metadata.profile_image}" height="50px" width="50px" onerror="this.src='/img/default-user.jpg'">
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">
