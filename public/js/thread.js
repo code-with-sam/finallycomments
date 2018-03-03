@@ -165,11 +165,11 @@ const steemComments = {
                     $('.sc-item__overlay').remove()
                 }
           })
-          $('.sc-topbar__sort-order').on('click', (e) => {
-            let order = $(e.currentTarget).data('order')
-            console.log(order);
-              steemComments.sortComments(order);
 
+          $('.sc-topbar__sort-order select').on('change', (e) => {
+                let order = $(e.currentTarget).val()
+                console.log(order)
+                steemComments.sortComments(order);
           })
 
     },
@@ -208,7 +208,19 @@ const steemComments = {
             </span>
             <a href="${authUrl}"" class="sc-login sc-login--${steemComments.ISAUTHENTICATED}">Sign In</a>
           </div>
-          <hr class="sc-topbar__rule">`
+          <hr class="sc-topbar__rule">
+          <div class="sc-topbar__sort">
+            <span>Sort Order:</span>
+
+          <span class="sc-topbar__sort-order">
+            <select>
+              <option value="oldest">Oldest First</option>
+              <option value="newest">Newest First</option>
+              <option value="top">Top Value</option>
+            </select>
+          </span>
+          </div>
+          `
       $('.sc-section').append(template)
     },
     addCommentTemplateAfter: (dest) => {
