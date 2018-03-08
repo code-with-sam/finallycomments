@@ -5,7 +5,8 @@ let router = express.Router();
 
 router.get('/', util.isAuthenticated, (req, res, next) =>  {
   res.render('dashboard', {
-    css : 'bulma'
+    css : 'bulma',
+    name: req.session.steemconnect.name
   });
 });
 

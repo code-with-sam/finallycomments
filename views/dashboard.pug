@@ -5,7 +5,7 @@ block content
     .container
         h1.title Dashboad
 
-  main
+  main.dashboard(data-username=`${name}`)
     section.dashboard__hero
       .container
         .button.is-link Generate new thread
@@ -19,11 +19,4 @@ block content
               th Permalink/ID
               th Embed
           tbody
-            tr
-              td A
-              td B
-              td C
-            tr
-              td A
-              td B
-              td C
+          
