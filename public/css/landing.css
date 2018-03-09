@@ -135,6 +135,12 @@ footer {
   vertical-align: middle;
   font-family: monospace;
 }
+
+
+label.checkbox span {
+  margin: 0 24px 0 8px;
+}
+
 .overlay {
   display: none;
   position: fixed;

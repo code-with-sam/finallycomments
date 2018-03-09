@@ -7,8 +7,6 @@ block content
 
   main.dashboard(data-username=`${name}`)
     //- section.dashboard__hero
-    //-   .container
-    //-     .button.is-link Generate new thread
 
     section.dashboard__table
       .container
@@ -25,5 +23,16 @@ block content
       .overlay__bg
       .overlay__content
           h2.title Embed Code
+          .field
+            .control
+              label.checkbox
+                input.embed-control(type="checkbox" data-value="votes" checked)
+                span Show Vote Values
+              label.checkbox
+                input.embed-control(type="checkbox" data-value="reputation" checked)
+                span Show User Reputation
+              label.checkbox
+                input.embed-control(type="checkbox" data-value="profile" checked)
+                span Show User Profile
           pre
             code.embed-code.language-html

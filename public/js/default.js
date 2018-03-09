@@ -52,34 +52,42 @@ let app = {
         start_permlink: $('tr').last().data('permlink') }
     }
     steem.api.getDiscussionsByBlog(query, (err, result) => {
-      console.log(err, result)
       if (err === null) listPosts(result)
     })
   },
   dashboardUiActions: () => {
     $('.load-more-posts').on('click', (e) => {
-      console.log('load more')
       app.dashboardLoadPosts(true)
     })
     $('.dashboard').on('click', '.load-embed', (e) => {
       let permlink = $(e.currentTarget).data('permlink')
-      app.dashboadLoadEmbed(permlink)
+      let controls = { values: true, rep: true, profile: true }
+      app.dashboadLoadEmbed(permlink, controls)
+      $('.overlay').data('permlink', permlink)
       $('.overlay').addClass('--is-active')
+    })
+    $('.dashboard').on('change', '.embed-control', (e) => {
+      let permlink = $('.overlay').data('permlink')
+      let controls = {
+        values: $('*[data-value="votes"]').is(':checked'),
+        rep: $('*[data-value="reputation"]').is(':checked'),
+        profile: $('*[data-value="profile"]').is(':checked')
+      }
+      app.dashboadLoadEmbed(permlink, controls)
     })
     $('.overlay__bg').on('click', (e) => {
       $('.overlay').removeClass('--is-active')
     })
   },
-  dashboadLoadEmbed: (permlink) => {
-    console.log(permlink)
-    let url = `https://steemit.com${permlink}`
+  dashboadLoadEmbed: (permlink, controls) => {
+    let id = `    data-id="https://steemit.com${permlink}"\n`
+    let rep = controls.rep ? '    data-reputation="true"\n' :''
+    let values = controls.values ? '    data-values="true"\n' :''
+    let profile = controls.profile ? '    data-profile="true"\n' :''
     let embedTemplate = `
-    <section class="finally-comments"
-    data-id="${url}"
-    data-reputation="true"
-    data-values="true"
-    data-profile="true"></section>
-    <script src="https://finallycomments.com/js/finally.min.js"></script>
+<section class="finally-comments"
+${id}${rep}${values}${profile}</section>
+<script src="https://finallycomments.com/js/finally.min.js"></script>
     `
     $('.embed-code').empty()
     $('.embed-code').text(embedTemplate)
