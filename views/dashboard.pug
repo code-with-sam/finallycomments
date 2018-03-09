@@ -6,9 +6,9 @@ block content
         h1.title Dashboad
 
   main.dashboard(data-username=`${name}`)
-    section.dashboard__hero
-      .container
-        .button.is-link Generate new thread
+    //- section.dashboard__hero
+    //-   .container
+    //-     .button.is-link Generate new thread
 
     section.dashboard__table
       .container
@@ -19,4 +19,10 @@ block content
               th Permalink/ID
               th Embed
           tbody
-          
+
+    section.overlay
+      .overlay__bg
+      .overlay__content
+          h2.title Embed Code
+          pre
+            code.embed-code.language-html

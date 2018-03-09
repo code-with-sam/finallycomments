@@ -29,10 +29,14 @@ let app = {
     if(dashboard) app.dashboardInit()
   },
   dashboardInit: () => {
+    app.dashboardLoadPosts()
+    app.dashboardUiActions()
+  },
+  dashboardLoadPosts: () => {
     let listPosts = (posts) => {
       for (var i = 0; i < posts.length; i++) {
           let template = `
-          <tr><td>${posts[i].children}</td><td>${posts[i].url}</td><td><button class="button is-dark">Embed</button></td></tr>
+          <tr><td>${posts[i].children}</td><td>${posts[i].url}</td><td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Embed</button></td></tr>
           `
           $('.table tbody').append(template)
       }
@@ -41,7 +45,31 @@ let app = {
     steem.api.getDiscussionsByBlog(query, (err, result) => {
       if (err === null) listPosts(result)
     })
-
+  },
+  dashboardUiActions: () => {
+    $('.dashboard').on('click', '.load-embed', (e) => {
+      let permlink = $(e.currentTarget).data('permlink')
+      app.dashboadLoadEmbed(permlink)
+      $('.overlay').addClass('--is-active')
+    })
+    $('.overlay__bg').on('click', (e) => {
+      $('.overlay').removeClass('--is-active')
+    })
+  },
+  dashboadLoadEmbed: (permlink) => {
+    console.log(permlink)
+    let url = `https://steemit.com${permlink}`
+    let embedTemplate = `
+    <section class="finally-comments"
+    data-id="${url}"
+    data-reputation="true"
+    data-values="true"
+    data-profile="true"></section>
+    <script src="https://finallycomments.com/js/finally.min.js"></script>
+    `
+    $('.embed-code').empty()
+    $('.embed-code').text(embedTemplate)
   }
+
 }
 app.init()
