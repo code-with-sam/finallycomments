@@ -32,21 +32,35 @@ let app = {
     app.dashboardLoadPosts()
     app.dashboardUiActions()
   },
-  dashboardLoadPosts: () => {
+  dashboardLoadPosts: (loadMore) => {
+    let username = $('main').data('username')
+    let query = { tag: username, limit: 10 }
     let listPosts = (posts) => {
+      if (posts.length < 10) $('.load-more-posts').remove()
       for (var i = 0; i < posts.length; i++) {
-          let template = `
-          <tr><td>${posts[i].children}</td><td>${posts[i].url}</td><td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Embed</button></td></tr>
-          `
-          $('.table tbody').append(template)
+        if(loadMore && i === 0) continue
+        let template = `<tr data-permlink=${posts[i].permlink}>
+          <td>${posts[i].children}</td>
+          <td>${posts[i].title}</td>
+          <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Generate</button></td>
+        </tr>`
+        $('.table tbody').append(template)
       }
     }
-    let query = { tag: $('main').data('username'), limit: 10 }
+    if(loadMore) {
+      query = { tag: username, limit: 10, start_author: username,
+        start_permlink: $('tr').last().data('permlink') }
+    }
     steem.api.getDiscussionsByBlog(query, (err, result) => {
+      console.log(err, result)
       if (err === null) listPosts(result)
     })
   },
   dashboardUiActions: () => {
+    $('.load-more-posts').on('click', (e) => {
+      console.log('load more')
+      app.dashboardLoadPosts(true)
+    })
     $('.dashboard').on('click', '.load-embed', (e) => {
       let permlink = $(e.currentTarget).data('permlink')
       app.dashboadLoadEmbed(permlink)

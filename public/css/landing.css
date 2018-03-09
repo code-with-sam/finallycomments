@@ -124,6 +124,17 @@ footer {
   text-align: center;
 }
 
+/**/
+.dashboard {
+  padding: 0 0 50px;
+}
+.dashboard td:first-of-type {
+  text-align: center;
+}
+.dashboard td {
+  vertical-align: middle;
+  font-family: monospace;
+}
 .overlay {
   display: none;
   position: fixed;
