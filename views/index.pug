@@ -16,30 +16,20 @@ block content
     section.intro#intro
       .container
         h3.title How it Works
-        p.sub-content Finally is an evolution of #[a.content-link(href="https://steemit.com/utopian-io/@sambillingham/introducing-steemcomments-js-add-steem-comments-to-any-website-or-blog") Steemcomments.js] and at its core uses the  #[a.content-link(href="https://steem.io") Steem blockchain] to provide posting and curation rewards to its users. Similar to other popular plug and play comment systems Finally requires only a single html tag while our javascript library &amp; backend system take care of the rest.
+        p.sub-content Finally is a comments system for your website that is powered by the #[a.content-link(href="https://steem.io") Steem blockchain], thus providing rewards for the author and commenters. Finally works effortlessly with minimal setup reuired, include a single html tag along with our javascript library and let our system take care of the rest.
         br
-        p.sub-content Finally uses #[a.content-link(href="https://steemconnect.com/") Steemconnect authentication] to allow users to post comments and upvotes directly from anywhere Finally is embeded. Once authenticated with Finally users will not have to log in again when visiting other sites that also use Finally.
+        p.sub-content Finally uses #[a.content-link(href="https://steemconnect.com/") Steemconnect authentication] to allow users to post comments and upvote content & comments from anywhere Finally is embedded. Once authenticated with Finally users will not have to log in again when visiting other sites that also use Finally.
 
     section.generate#get-started
       .container
         .columns
           .column.is-half
             h3.title Get Started
-            p.sub-content Generate embedable code using a Steemit URL.
-
-
-            .generator
-              .field.has-addons
-                .control
-                  input.input.generate-url(placeholder="url")
-                .control
-                  a.button.is-info.generate-embded(type="text") Create
-
-            h3.title Custom Settings
-            p.sub-content Upvote Values, the profile overlays, and reputation number can be enabled/disabled by setting the data value to true/false in the generated output.
-
-          .column.is-half.embed-container
-
+            p.sub-content The fastest way to embed any of your recent comment threads from Steemit (or any Steem based platform) is to login to our dashboard where you can see a complete list of your posts. Generate the embed code for any post with one click.
+            br
+            p
+              a.button.is-medium.is-light(href="/auth/dashboard") Login With Steemconnect
+            br
 
     section.example
       .container

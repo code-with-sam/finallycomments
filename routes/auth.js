@@ -38,9 +38,26 @@ router.get('/', (req, res, next) => {
           req.session.steemconnect = steemResponse.account;
           let decodedState = req.query.state.replace(/&amp;/g, '&');
           let state = util.splitQueryString(decodedState)
-          let url = `/thread/${state.tag}/${state.author}/${state.permlink}`
+          let url = ''
+          if(state.next) {
+            url = `/${state.next}`
+          } else {
+            url = `/thread/${state.tag}/${state.author}/${state.permlink}`
+          }
           res.redirect(url)
         });
+    }
+});
+
+router.get('/:next', (req, res, next) => {
+    if (!req.query.access_token ) {
+        console.log('not token, creatring auth link from params')
+        let next = req.params.next
+        let state = `next=${next}`
+        let uri = steem.getLoginURL(state);
+        res.redirect(uri);
+    } else {
+      res.redirect(`/${req.params.next}`)
     }
 });
 
