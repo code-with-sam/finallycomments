@@ -3,7 +3,7 @@
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
-## Finally comments - V0.4.0
+## Finally comments - V0.5.0
 An embededable version of steem (steemit/utopian) comments with comment and vote functionality
 
 ### How It Works
@@ -11,7 +11,7 @@ An embededable version of steem (steemit/utopian) comments with comment and vote
 
 Finally is an evolution of Steemcomments.js and at its core uses the Steem blockchain to provide posting and curation rewards to its users. Similar to other popular plug and play comment systems Finally requires only a single html tag while our javascript library & backend system take care of the rest.
 
-use the generator online at [http://finallycomments.com](http://finallycomments.com). Example code output.
+Login to the dashboard at [http://finallycomments.com](http://finallycomments.com/auth/dashboard). to generate code for any Steemit(or any other STEEM based platform) post with one click.
 ```
   <section class="finally-comments" data-id="https://utopian.io/utopian-io/@sambillingham/tutorial-beginner-friendly-build-your-first-steem-bot-in-javascript-30minutes"></section>
   <script src="https://finallycomments.com/js/finally.min.js"></script>
@@ -36,7 +36,7 @@ NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SE
 
 ### Feature Roadmap
 - code/link generation dtube/dmania/dlive/dsound etc
-- can use on non steem top level comments - auto generated for user. (will need to sign into finally and have page for creating threads) 
+- can use on non steem top level comments - auto generated for user. (will need to sign into finally and have page for creating threads)
 - auto hide posts from rep less than X
 - edit/delete/flag comments
 - wordpress plugin

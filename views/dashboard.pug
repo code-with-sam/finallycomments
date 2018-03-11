@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  header
+    .container
+        h1.title Dashboard
+
+  main.dashboard(data-username=`${name}`)
+    //- section.dashboard__hero
+
+    section.dashboard__table
+      .container
+        table.table.is-bordered.is-striped.is-fullwidth
+          thead
+            tr
+              th Comments
+              th Permalink/ID
+              th Embed
+          tbody
+        .button.is-link.load-more-posts Load More Posts
+
+    section.overlay
+      .overlay__bg
+      .overlay__content
+          h2.title Embed Code
+          .field
+            .control
+              label.checkbox
+                input.embed-control(type="checkbox" data-value="votes" checked)
+                span Show Vote Values
+              label.checkbox
+                input.embed-control(type="checkbox" data-value="reputation" checked)
+                span Show User Reputation
+              label.checkbox
+                input.embed-control(type="checkbox" data-value="profile" checked)
+                span Show User Profile
+          pre
+            code.embed-code.language-html
