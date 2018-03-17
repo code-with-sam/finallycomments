@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let util = require('../modules/util');
 let steem = require('../modules/steemconnect')
+let db = require('../modules/db')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
