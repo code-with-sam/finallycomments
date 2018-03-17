@@ -26,6 +26,8 @@ const steemComments = {
       steemComments.OPTIONS.reputation = data.reputation === 'false' ? false : true
       steemComments.OPTIONS.values = data.values === 'false' ? false : true
       steemComments.OPTIONS.profile = data.profile === 'false' ? false : true
+      steemComments.OPTIONS.generated = data.generated === 'false' ? false : true
+      console.log(steemComments.OPTIONS)
     },
     frameLoad: (event) => {
       if (event.data.message == 'finally-frame-load'){
@@ -352,7 +354,7 @@ const steemComments = {
             author: result.content[post].author,
             body: html,
             permlink: result.content[post].permlink,
-            depth: result.content[post].depth,
+            depth: steemComments.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
             root_comment: result.content[post].root_comment,
             parent_permlink: result.content[post].parent_permlink,
             created: result.content[post].created,
