@@ -1,8 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
 
-// const url = `mongodb://${process.env.FINALLY_DATABASE_USERNAME}:${process.env.FINALLY_DATABASE_PASSWORD}@ds115799.mlab.com:15799/finally`;
-// const dbName = 'finally';
-
 let state = {
   db: null
 }

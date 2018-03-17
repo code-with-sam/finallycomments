@@ -59,17 +59,19 @@ router.get('/thread/:tag/:author/:permlink?', (req, res, next) => {
 
 router.get('/thread/:id', (req, res, next) => {
 
-  let id = req.params.id;
-  console.log(id)
-  console.log(typeof id)
-  if(id == 'sc1') {
-    console.log('passed test')
-    let tag = 'steemprojects'
-    let author = '@sambillingham'
-    let permlink = 're-noisy-ann-introducing-steemprojects-com-information-about-all-steem-projects-in-one-place-20180305t211147645z'
-    let url = `/thread/${tag}/${author}/${permlink}`
-    console.log('redirect to ', url)
-    res.redirect(url)
+  let slug = req.params.id;
+  if(slug == 'sc1') {
+
+    db.get().db('finally').collection('threads').find({'slug': slug }).toArray( (err,r) => {
+       let steemThread = r[0].url
+
+       let url = `/thread/${steemThread}`
+       console.log('redirect to ', url)
+       res.redirect(url)
+
+    })
+
+
   } else {
     redirect('/')
   }
