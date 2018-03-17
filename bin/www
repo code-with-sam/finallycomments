@@ -8,6 +8,8 @@ let app = require('../app');
 let debug = require('debug')('boilerplate:server');
 let http = require('http');
 let config = require('../config');
+let db = require('../modules/db')
+const databaseURL = `mongodb://${process.env.FINALLY_DATABASE_USERNAME}:${process.env.FINALLY_DATABASE_PASSWORD}@ds115799.mlab.com:15799/finally`;
 
 /**
  * Get port from environment and store in Express.
@@ -25,10 +27,17 @@ let server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+db.connect(databaseURL, (err) => {
+   if (err) {
+     console.log('Unable to connect to Mongo.')
+     process.exit(1)
+   } else {
+     console.log('Connected to Finally Datbase...')
+     server.listen(port);
+     server.on('error', onError);
+     server.on('listening', onListening);
+   }
+ })
 
 /**
  * Normalize a port into a number, string, or false.
