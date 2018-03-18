@@ -49,7 +49,7 @@ router.get('/', (req, res, next) => {
     }
 });
 
-router.get('/:next', (req, res, next) => {
+router.get('/:next', (req, res) => {
     if (!req.query.access_token ) {
         console.log('not token, creatring auth link from params')
         let next = req.params.next

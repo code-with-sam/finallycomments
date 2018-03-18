@@ -74,8 +74,6 @@ router.get('/thread/:slug', (req, res, next) => {
 
 router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 
-  // console.log(' auth', req.session.steemconnect)
-
     if(req.session.steemconnect) {
       let voter;
       steem.me((err, steemResponse) => {
