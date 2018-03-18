@@ -34,8 +34,10 @@ let finallyCommentsSystem = {
   setupIframe: () => {
     let container = document.querySelector('.finally-comments')
     let url = container.dataset.id
+    let finallyUrl;
     let urlParts = finallyCommentsSystem.getPartsFromLink(url)
-    let finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    console.log('URL: ', finallyUrl)
     let iframe = document.createElement('iframe', { scrolling: 'no' });
     iframe.src = finallyUrl;
     iframe.width = '100%';
@@ -46,7 +48,8 @@ let finallyCommentsSystem = {
       message: 'finally-frame-load',
       reputation: container.dataset.reputation,
       profile: container.dataset.profile,
-      values: container.dataset.values
+      values: container.dataset.values,
+      generated: container.dataset.generated
     }
     iframe.onload = () => {
       document.querySelector('.finally-frame').contentWindow.postMessage(finallySettings,'*')

@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let util = require('../modules/util');
 let steem = require('../modules/steemconnect')
+let db = require('../modules/db')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
@@ -56,9 +57,8 @@ router.get('/thread/:tag/:author/:permlink?', (req, res, next) => {
       });
 });
 
-router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 
-  // console.log(' auth', req.session.steemconnect)
+router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 
     if(req.session.steemconnect) {
       let voter;
@@ -119,6 +119,55 @@ router.post('/comment', (req, res) => {
       message: 'Please Log In'
    })
   }
+
+});
+
+router.post('/new-thread', (req, res) => {
+
+  const FINALLY_AUTHOR = 'finallycomments'
+  const FINALLY_PERMLINK = 'finally-comments-thread'
+
+  if(req.session.steemconnect) {
+    let author = req.session.steemconnect.name
+    let permlink = `finally-${util.urlString(8)}`
+    let title = req.body.title
+    let body = `${title} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
+    let parentAuthor = FINALLY_AUTHOR
+    let parentPermlink = FINALLY_PERMLINK
+
+    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, (err, steemResponse) => {
+      if (err) {
+        console.log(err)
+        res.json({ error: err.error_description })
+      } else {
+
+        let thread = {
+          author: author,
+          slug: permlink,
+          title: title
+        }
+        db.get().db('finally').collection('threads').insertOne(thread, (error, response) => {
+          if(error) { res.json({ error: error }) }
+          else {
+            res.json({
+              error: false,
+              author: author,
+              slug: permlink,
+              title: title
+            })
+          }
+
+        })
+      }
+    });
+
+  } else {
+    res.json({ status: 'fail', message: 'Please Log In'})
+  }
+
+  // generate random slug/id
+
+
 
 });
 

@@ -19,7 +19,7 @@ let app = {
           <td>${posts[i].title}</td>
           <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Generate</button></td>
         </tr>`
-        $('.table tbody').append(template)
+        $('.dashboard__table--steem tbody').append(template)
       }
     }
     if(loadMore) {
@@ -36,7 +36,10 @@ let app = {
     })
     $('.dashboard').on('click', '.load-embed', (e) => {
       let permlink = $(e.currentTarget).data('permlink')
-      let controls = { values: true, rep: true, profile: true }
+      let controls = {
+         values: true, rep: true, profile: true,
+         generated: $(e.currentTarget).data('generated') ? true : false }
+      console.log(controls)
       app.dashboadLoadEmbed(permlink, controls)
       $('.overlay').data('permlink', permlink)
       $('.overlay').addClass('--is-active')
@@ -53,19 +56,42 @@ let app = {
     $('.overlay__bg').on('click', (e) => {
       $('.overlay').removeClass('--is-active')
     })
+    $('.new-thread').on('click', () => {
+      $('.new-thread').addClass('is-loading')
+      let title = $('.new-thread-title').val().trim()
+      app.dashboardNewThread(title)
+    })
   },
   dashboadLoadEmbed: (permlink, controls) => {
     let id = `    data-id="https://steemit.com${permlink}"\n`
     let rep = controls.rep ? '    data-reputation="true"\n' :''
     let values = controls.values ? '    data-values="true"\n' :''
     let profile = controls.profile ? '    data-profile="true"\n' :''
+    let generated = controls.generated ? '    data-generated="true"\n' : '    data-generated="false"\n'
     let embedTemplate = `
 <section class="finally-comments"
-${id}${rep}${values}${profile}</section>
+${id}${rep}${values}${profile}${generated}</section>
 <script src="https://finallycomments.com/js/finally.min.js"></script>
     `
     $('.embed-code').empty()
     $('.embed-code').text(embedTemplate)
+  },
+  dashboardNewThread:(title) => {
+      $.post({
+        url: `/new-thread`,
+        dataType: 'json',
+        data: { title : title }
+      }, (response) => {
+        console.log(response)
+        $('.new-thread').removeClass('is-loading')
+        $('.no-custom-threads').parent().remove()
+        let template = `<tr>
+          <td>${response.title}</td>
+          <td>${response.slug}</td>
+          <td><button class="button is-dark load-embed" data-permlink="/finallycomments/@${response.author}/${response.slug}" data-generated="true">Generate</button></td>
+        </tr>`
+        $('.dashboard__table--custom tbody').append(template)
+      })
   }
 
 }

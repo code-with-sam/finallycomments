@@ -334,6 +334,7 @@ a.sc-settings__logout {
   padding: 10px;
   height: 100px;
   resize: vertical;
+  font-size: 16px;
 }
 
 .sc-comment__btn {
