@@ -138,6 +138,55 @@ router.post('/comment', (req, res) => {
 
 });
 
+router.post('/new-thread', (req, res) => {
+
+  const FINALLY_AUTHOR = 'finallycomments'
+  const FINALLY_PERMLINK = 'finally-comments-thread'
+
+  if(req.session.steemconnect) {
+    let author = req.session.steemconnect.name
+    let permlink = `finally-${util.urlString(8)}`
+    let title = 'FINALLY THREAD'
+    let body = 'This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.'
+    let parentAuthor = FINALLY_AUTHOR
+    let parentPermlink = FINALLY_PERMLINK
+
+    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, (err, steemResponse) => {
+      if (err) {
+        console.log(err)
+        res.json({ error: err.error_description })
+      } else {
+
+        let thread = {
+          author: author,
+          slug: permlink,
+          title: title
+        }
+        db.get().db('finally').collection('threads').insertOne(thread, (error, response) => {
+          if(error) { res.json({ error: error }) }
+          else {
+            res.json({
+              error: false,
+              author: author,
+              slug: permlink,
+              title: title
+            })
+          }
+
+        })
+      }
+    });
+
+  } else {
+    res.json({ status: 'fail', message: 'Please Log In'})
+  }
+
+  // generate random slug/id
+
+
+
+});
+
 
 
 module.exports = router;

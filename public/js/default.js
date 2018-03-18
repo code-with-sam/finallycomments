@@ -5,7 +5,18 @@ let app = {
   },
   dashboardInit: () => {
     app.dashboardLoadPosts()
-    app.dashboardUiActions()
+    app.dashboardUiActions
+
+    setTimeout(()=>{
+      // test
+      $.post({
+        url: `/new-thread`
+      }, (response) => {
+        console.log(response)
+      })
+
+    }, 3000)
+
   },
   dashboardLoadPosts: (loadMore) => {
     let username = $('main').data('username')
