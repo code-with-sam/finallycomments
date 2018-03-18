@@ -57,20 +57,6 @@ router.get('/thread/:tag/:author/:permlink?', (req, res, next) => {
       });
 });
 
-router.get('/thread/:slug', (req, res, next) => {
-    let slug = req.params.slug;
-    db.get().db('finally').collection('threads').find({'slug': slug }).toArray( (err,result) => {
-      if(err || result.length < 1){
-        // thread not found
-        res.redirect('/404')
-      } else {
-        console.log(err, result)
-        let steemThread = result[0].url
-        let url = `/thread/${steemThread}`
-        res.redirect(url)
-      }
-    })
-})
 
 router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 
