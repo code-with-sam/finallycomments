@@ -3,13 +3,20 @@ extends layout
 block content
   header
     .container
-        h1.title Dashboard
+        h1.title.is-2 Dashboard
+        hr
 
   main.dashboard(data-username=`${name}`)
     //- section.dashboard__hero
 
     section.dashboard__table.dashboard__table--custom
       .container
+        h3.title.is-3 Custom Threads
+          .new-thread__container.field.has-addons
+            .control
+              input.input.new-thread-title(type="text" placeholder="Title")
+            .control
+              a.button.is-primary.new-thread New Thread
         table.table.is-bordered.is-striped.is-fullwidth
           thead
             tr
@@ -22,13 +29,16 @@ block content
                   td= val['title']
                   td= val['slug']
                   td
-                    button.button.is-dark.load-embed(data-permlink=`/finallycomments/${val['author']}/${val['slug']}` data-generated='true') Generate
+                    button.button.is-dark.load-embed(data-permlink=`/finallycomments/@${val['author']}/${val['slug']}` data-generated='true') Generate
               else
-                There are no values
-
+               tr
+                td.no-custom-threads   No custom threads yet..
+                td
+                td
 
     section.dashboard__table.dashboard__table--steem
       .container
+        h3.title.is-3 Steem Posts
         table.table.is-bordered.is-striped.is-fullwidth
           thead
             tr

@@ -6,17 +6,6 @@ let app = {
   dashboardInit: () => {
     app.dashboardLoadPosts()
     app.dashboardUiActions()
-
-    // setTimeout(()=>{
-    //   // test
-    //   $.post({
-    //     url: `/new-thread`
-    //   }, (response) => {
-    //     console.log(response)
-    //   })
-    //
-    // }, 3000)
-
   },
   dashboardLoadPosts: (loadMore) => {
     let username = $('main').data('username')
@@ -67,6 +56,11 @@ let app = {
     $('.overlay__bg').on('click', (e) => {
       $('.overlay').removeClass('--is-active')
     })
+    $('.new-thread').on('click', () => {
+      $('.new-thread').addClass('is-loading')
+      let title = $('.new-thread-title').val().trim()
+      app.dashboardNewThread(title)
+    })
   },
   dashboadLoadEmbed: (permlink, controls) => {
     let id = `    data-id="https://steemit.com${permlink}"\n`
@@ -81,6 +75,23 @@ ${id}${rep}${values}${profile}${generated}</section>
     `
     $('.embed-code').empty()
     $('.embed-code').text(embedTemplate)
+  },
+  dashboardNewThread:(title) => {
+      $.post({
+        url: `/new-thread`,
+        dataType: 'json',
+        data: { title : title }
+      }, (response) => {
+        console.log(response)
+        $('.new-thread').removeClass('is-loading')
+        $('.no-custom-threads').parent().remove()
+        let template = `<tr>
+          <td>${response.title}</td>
+          <td>${response.slug}</td>
+          <td><button class="button is-dark load-embed" data-permlink="/finallycomments/${response.author}/${response.slug}">Generate</button></td>
+        </tr>`
+        $('.dashboard__table--custom tbody').append(template)
+      })
   }
 
 }

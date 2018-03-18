@@ -73,7 +73,7 @@ h2 {
 .header__links {
   margin:  50px 0
 }
-.button {
+.header__links .button {
   display: inline-block;
   margin-right: 15px
 }
@@ -101,14 +101,6 @@ section.generate h3 {
   }
 }
 
-.generator {
-  max-width: 50%;
-  margin: 15px 0;
-}
-.control {
-  min-width: 200px;
-}
-
 .example {
   /*width: 80%;*/
   margin: 50px auto;
@@ -128,6 +120,12 @@ footer {
 .dashboard {
   padding: 0 0 50px;
 }
+
+.new-thread__container {
+  float: right;
+  margin-bottom: 20px;
+}
+
 .dashboard td:first-of-type {
   text-align: center;
 }

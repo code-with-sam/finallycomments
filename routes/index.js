@@ -146,8 +146,8 @@ router.post('/new-thread', (req, res) => {
   if(req.session.steemconnect) {
     let author = req.session.steemconnect.name
     let permlink = `finally-${util.urlString(8)}`
-    let title = 'FINALLY THREAD'
-    let body = 'This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.'
+    let title = req.body.title
+    let body = `${title} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
     let parentAuthor = FINALLY_AUTHOR
     let parentPermlink = FINALLY_PERMLINK
 
