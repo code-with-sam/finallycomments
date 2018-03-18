@@ -88,7 +88,7 @@ ${id}${rep}${values}${profile}${generated}</section>
         let template = `<tr>
           <td>${response.title}</td>
           <td>${response.slug}</td>
-          <td><button class="button is-dark load-embed" data-permlink="/finallycomments/${response.author}/${response.slug}">Generate</button></td>
+          <td><button class="button is-dark load-embed" data-permlink="/finallycomments/@${response.author}/${response.slug}" data-generated="true">Generate</button></td>
         </tr>`
         $('.dashboard__table--custom tbody').append(template)
       })
