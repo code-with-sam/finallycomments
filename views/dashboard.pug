@@ -8,7 +8,26 @@ block content
   main.dashboard(data-username=`${name}`)
     //- section.dashboard__hero
 
-    section.dashboard__table
+    section.dashboard__table.dashboard__table--custom
+      .container
+        table.table.is-bordered.is-striped.is-fullwidth
+          thead
+            tr
+              th Title
+              th Permalink/ID
+              th Embed
+          tbody
+              each val in threads
+                tr
+                  td= val['title']
+                  td= val['slug']
+                  td
+                    button.button.is-dark.load-embed(data-permlink=`/finallycomments/${val['author']}/${val['slug']}` data-generated='true') Generate
+              else
+                There are no values
+
+
+    section.dashboard__table.dashboard__table--steem
       .container
         table.table.is-bordered.is-striped.is-fullwidth
           thead

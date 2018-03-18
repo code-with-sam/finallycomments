@@ -5,17 +5,17 @@ let app = {
   },
   dashboardInit: () => {
     app.dashboardLoadPosts()
-    app.dashboardUiActions
+    app.dashboardUiActions()
 
-    setTimeout(()=>{
-      // test
-      $.post({
-        url: `/new-thread`
-      }, (response) => {
-        console.log(response)
-      })
-
-    }, 3000)
+    // setTimeout(()=>{
+    //   // test
+    //   $.post({
+    //     url: `/new-thread`
+    //   }, (response) => {
+    //     console.log(response)
+    //   })
+    //
+    // }, 3000)
 
   },
   dashboardLoadPosts: (loadMore) => {
@@ -30,7 +30,7 @@ let app = {
           <td>${posts[i].title}</td>
           <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Generate</button></td>
         </tr>`
-        $('.table tbody').append(template)
+        $('.dashboard__table--steem tbody').append(template)
       }
     }
     if(loadMore) {
@@ -47,7 +47,10 @@ let app = {
     })
     $('.dashboard').on('click', '.load-embed', (e) => {
       let permlink = $(e.currentTarget).data('permlink')
-      let controls = { values: true, rep: true, profile: true }
+      let controls = {
+         values: true, rep: true, profile: true,
+         generated: $(e.currentTarget).data('generated') ? true : false }
+      console.log(controls)
       app.dashboadLoadEmbed(permlink, controls)
       $('.overlay').data('permlink', permlink)
       $('.overlay').addClass('--is-active')
@@ -70,9 +73,10 @@ let app = {
     let rep = controls.rep ? '    data-reputation="true"\n' :''
     let values = controls.values ? '    data-values="true"\n' :''
     let profile = controls.profile ? '    data-profile="true"\n' :''
+    let generated = controls.generated ? '    data-generated="true"\n' : '    data-generated="false"\n'
     let embedTemplate = `
 <section class="finally-comments"
-${id}${rep}${values}${profile}</section>
+${id}${rep}${values}${profile}${generated}</section>
 <script src="https://finallycomments.com/js/finally.min.js"></script>
     `
     $('.embed-code').empty()

@@ -35,14 +35,9 @@ let finallyCommentsSystem = {
     let container = document.querySelector('.finally-comments')
     let url = container.dataset.id
     let finallyUrl;
-    if (container.dataset.generated === 'true'){
-      console.log('IS GENERATED')
-      finallyUrl = `http://localhost:3000/thread/${url}`
-    } else {
-      let urlParts = finallyCommentsSystem.getPartsFromLink(url)
-      finallyUrl = `http://localhost:3000/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
-      console.log('URL: ', finallyUrl)
-    }
+    let urlParts = finallyCommentsSystem.getPartsFromLink(url)
+    finallyUrl = `http://localhost:3000/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    console.log('URL: ', finallyUrl)
     let iframe = document.createElement('iframe', { scrolling: 'no' });
     iframe.src = finallyUrl;
     iframe.width = '100%';
