@@ -14,6 +14,16 @@ module.exports.isAuthenticated = (req, res, next) => {
   res.redirect('/');
 }
 
+module.exports.isAuthorized = (req, res, next) => {
+  if (req.session.access_token)
+      return next();
+
+  res.json({
+    status: 'fail',
+    message: 'Please sign in.'
+  })
+}
+
 module.exports.splitQueryString = (string) => {
    let allParams = string.split('&');
 

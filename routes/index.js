@@ -2,7 +2,7 @@ let express = require('express');
 let router = express.Router();
 let util = require('../modules/util');
 let steem = require('../modules/steemconnect')
-let db = require('../modules/db')
+const Thread = require('../models/thread')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
@@ -44,48 +44,32 @@ router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
       });
 });
 
-
-router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
-  if(req.session.steemconnect) {
-      steem.setAccessToken(req.session.access_token);
-      let voter = req.session.steemconnect.account.name;
-      let author = req.params.author
-      let permlink = req.params.permlink
-      let weight = parseInt(req.params.weight) * 100
-      steem.vote(voter, author, permlink, weight, (err, steemResponse) => {
-        if (err) {
-          res.json({ error: err.error_description })
-        } else {
-          res.json({ status: 'success', message: `${weight/100}% Vote from @{voter} to ${author} for ${permlink}` })
-        }
-      })
-  } else {
-    res.json({
-      status: 'fail',
-      message: 'Please sign in to vote.'
-   })
-  }
+router.post('/vote/:author/:permlink/:weight', util.isAuthorized, (req, res, next) => {
+    steem.setAccessToken(req.session.access_token);
+    let voter = req.session.steemconnect.name;
+    let author = req.params.author
+    let permlink = req.params.permlink
+    let weight = parseInt(req.params.weight) * 100
+    steem.vote(voter, author, permlink, weight, (err, steemResponse) => {
+      if (err) {
+        res.json({ error: err.error_description })
+      } else {
+        res.json({ status: 'success', message: `${weight/100}% Vote from @${voter} to @${author} for ${permlink}` })
+      }
+    })
 });
 
-router.post('/comment', (req, res) => {
-
-  if(req.session.steemconnect) {
+router.post('/comment', util.isAuthorized, (req, res) => {
     steem.setAccessToken(req.session.access_token);
     let author = req.session.steemconnect.name
-
     let permlink = req.body.parentPermlink + '-' + util.urlString(32)
     let title = 'RE: ' + req.body.parentTitle
     let body = req.body.message
     let parentAuthor = req.body.parentAuthor
     let parentPermlink = req.body.parentPermlink
-
-
     steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, (err, steemResponse) => {
       if (err) {
-        console.log(err)
-
         res.json({ error: err.error_description })
-
       } else {
         res.json({
           name: author,
@@ -94,14 +78,6 @@ router.post('/comment', (req, res) => {
         })
       }
     });
-
-  } else {
-    res.json({
-      status: 'fail',
-      message: 'Please Log In'
-   })
-  }
-
 });
 
 // router.get('/api/thread/:username/:slug', (req, res) => {
@@ -123,56 +99,26 @@ router.post('/comment', (req, res) => {
 //   res.json({data: slug})
 // });
 
-router.post('/new-thread', (req, res) => {
-
+router.post('/new-thread', util.isAuthorized, (req, res) => {
   const FINALLY_AUTHOR = 'finallycomments'
   const FINALLY_PERMLINK = 'finally-comments-thread'
 
-  if(req.session.steemconnect) {
-    steem.setAccessToken(req.session.access_token);
-    let author = req.session.steemconnect.name
-    let permlink = `finally-${util.urlString(8)}`
-    let title = req.body.title
-    let body = `${title} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
-    let parentAuthor = FINALLY_AUTHOR
-    let parentPermlink = FINALLY_PERMLINK
+  steem.setAccessToken(req.session.access_token);
+  let author = req.session.steemconnect.name
+  let permlink = `finally-${util.urlString(8)}`
+  let title = req.body.title
+  let body = `${title} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
+  let parentAuthor = FINALLY_AUTHOR
+  let parentPermlink = FINALLY_PERMLINK
 
-    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, (err, steemResponse) => {
-      if (err) {
-        console.log(err)
-        res.json({ error: err.error_description })
-      } else {
-
-        let thread = {
-          author: author,
-          slug: permlink,
-          title: title
-        }
-        db.get().db('finally').collection('threads').insertOne(thread, (error, response) => {
-          if(error) { res.json({ error: error }) }
-          else {
-            res.json({
-              error: false,
-              author: author,
-              slug: permlink,
-              title: title
-            })
-          }
-
-        })
-      }
-    });
-
-  } else {
-    res.json({ status: 'fail', message: 'Please Log In'})
-  }
-
-  // generate random slug/id
-
-
-
+  steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, async (err, steemResponse) => {
+    if (err) { res.json({ error: err.error_description }) }
+    else {
+      let newThread = { author: author, slug: permlink, title: title }
+      let response = await Thread.insert(newThread)
+      res.json(response)
+    }
+  });
 });
-
-
 
 module.exports = router;
