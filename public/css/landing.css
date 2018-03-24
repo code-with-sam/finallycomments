@@ -21,15 +21,6 @@ a.content-link:hover {
 .button.is-info:hover {
   background-color: #010101;
 }
-header {
-  padding: 30px 0 ;
-}
-
-@media( min-width: 700px){
-  header {
-  padding: 50px;
-  }
-}
 
 .container {
   padding: 0 30px;
@@ -67,6 +58,15 @@ h2 {
 }
 
 
+header.landing {
+  padding: 30px 0 ;
+}
+
+@media( min-width: 700px){
+  header.landing {
+  padding: 50px;
+  }
+}
 
 
 
@@ -117,6 +117,13 @@ footer {
 }
 
 /**/
+.pane {
+  display: none;
+  padding: 30px 0;
+}
+.pane__overview {
+  display: block;
+}
 .dashboard {
   padding: 0 0 50px;
 }

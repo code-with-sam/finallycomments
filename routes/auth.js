@@ -52,6 +52,24 @@ router.get('/', (req, res, next) => {
     }
 });
 
+router.get('/logout/', (req, res) => {
+  steem.revokeToken((err, steemResponse) => {
+      req.session.destroy();
+      res.redirect(`/`)
+  });
+});
+
+router.get('/logout/:tag/:author/:permlink', (req, res) => {
+  let tag = req.params.tag
+  let author = req.params.author
+  let permlink = req.params.permlink
+  console.log(`/thread/${tag}/${author}/${permlink}`)
+  steem.revokeToken((err, steemResponse) => {
+      req.session.destroy();
+      res.redirect(`/thread/${tag}/${author}/${permlink}`)
+  });
+});
+
 router.get('/:next', (req, res) => {
     if (!req.query.access_token ) {
         console.log('not token, creatring auth link from params')
@@ -62,17 +80,6 @@ router.get('/:next', (req, res) => {
     } else {
       res.redirect(`/${req.params.next}`)
     }
-});
-
-router.get('/logout/:tag/:author/:permlink?', (req, res) => {
-  let tag = req.params.tag
-  let author = req.params.author
-  let permlink = req.params.permlink
-  console.log(`/thread/${tag}/${author}/${permlink}`)
-  steem.revokeToken((err, steemResponse) => {
-      req.session.destroy();
-      res.redirect(`/thread/${tag}/${author}/${permlink}`)
-  });
 });
 
 module.exports = router;

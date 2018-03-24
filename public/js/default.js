@@ -31,6 +31,17 @@ let app = {
     })
   },
   dashboardUiActions: () => {
+
+    $('.breadcrumb-link').on('click', (e) => {
+      e.preventDefault()
+      $('.breadcrumb-link').parent().removeClass('is-active')
+      $(e.currentTarget).parent().addClass('is-active')
+
+      let pane = $(e.currentTarget).data('pane')
+      $('.pane').hide()
+      $(`.pane__${pane}`).show()
+    })
+
     $('.load-more-posts').on('click', (e) => {
       app.dashboardLoadPosts(true)
     })
