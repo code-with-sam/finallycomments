@@ -19,7 +19,7 @@ let getRefreshToken = (code) => {
         code: code,
         client_id: process.env.CLIENT_ID,
         client_secret: process.env.CLIENT_SECRET,
-        scope: 'vote,comment,offline'
+        scope: 'comment,offline'
       },
       json: true
     })
@@ -32,6 +32,21 @@ let getRefreshToken = (code) => {
       resolve(await Token.insert(user));
     })
   });
+}
+
+let getAccessFromRefresh = async (username) => {
+    let token = await Token.findOne(username)
+    return rp({
+      method: 'POST',
+      uri: 'https://v2.steemconnect.com/api/oauth2/token',
+      body: {
+        refresh_token: token.refresh,
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        scope: 'comment,offline'
+      },
+      json: true
+    })
 }
 
 
