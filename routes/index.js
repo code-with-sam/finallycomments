@@ -91,7 +91,7 @@ router.post('/comment', (req, res) => {
   if(req.session.steemconnect) {
     let author = req.session.steemconnect.name
 
-    let permlink = req.body.parentPermlink + '-' + util.urlString()
+    let permlink = req.body.parentPermlink + '-' + util.urlString(32)
     let title = 'RE: ' + req.body.parentTitle
     let body = req.body.message
     let parentAuthor = req.body.parentAuthor
