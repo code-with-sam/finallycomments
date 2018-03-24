@@ -101,7 +101,7 @@ ${id}${rep}${values}${profile}${generated}</section>
           <td><a href="/viewer/custom-thread/finallycomments/@${response.author}/${response.slug}">${response.slug}</a></td>
           <td><button class="button is-dark load-embed" data-permlink="/finallycomments/@${response.author}/${response.slug}" data-generated="true">Generate</button></td>
         </tr>`
-        $('.dashboard__table--custom tbody').append(template)
+        $('.dashboard__table--custom tbody').prepend(template)
       })
   }
 
