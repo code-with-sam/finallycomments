@@ -24,13 +24,17 @@ block content
 
     section.pane.pane__api
       .container
-        h3.title.is-3 Register Domains
-        .columns
-          .column.is-one-third
-            .domains
-              p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using.
-              textarea.textarea.domains__entry
-              input.button.is-primary(type="submit" value="save")
+        h3.title.is-3 Api Access
+        .authorise
+          p Finally needs access to comment on your behalf when you are not logged in. We do this so you can access the creation of threads from outside of the dashboard. After clicking, authorise you will be redirected back to steemconnect, then back to the dashboard.
+          a.button.is-primary(a href="/auth/refresh/") Authorise For Offline Usage
+        .register
+          .columns
+            .column.is-one-third
+              .domains
+                p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using.
+                textarea.textarea.domains__entry
+                input.button.is-primary(type="submit" value="save")
 
 
     section.dashboard__table.dashboard__table--custom.pane.pane__custom-threads
