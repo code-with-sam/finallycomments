@@ -46,33 +46,25 @@ router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
 
 
 router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
-
-    if(req.session.steemconnect) {
+  if(req.session.steemconnect) {
       steem.setAccessToken(req.session.access_token);
-
-      let voter;
-      steem.me((err, steemResponse) => {
-        voter =  steemResponse.account.name;
-        console.log(voter)
-        let author = req.params.author
-        let permlink = req.params.permlink
-        let weight = parseInt(req.params.weight) * 100
-        steem.vote(voter, author, permlink, weight, function (err, steemResponse) {
-          if (err) {
-            console.log(err)
-            res.json({ error: err.error_description })
-          } else {
-            res.json({ status: 'success' })
-          }
-        })
-      });
+      let voter = req.session.steemconnect.account.name;
+      let author = req.params.author
+      let permlink = req.params.permlink
+      let weight = parseInt(req.params.weight) * 100
+      steem.vote(voter, author, permlink, weight, (err, steemResponse) => {
+        if (err) {
+          res.json({ error: err.error_description })
+        } else {
+          res.json({ status: 'success', message: `${weight/100}% Vote from @{voter} to ${author} for ${permlink}` })
+        }
+      })
   } else {
     res.json({
       status: 'fail',
       message: 'Please sign in to vote.'
    })
   }
-
 });
 
 router.post('/comment', (req, res) => {
