@@ -6,6 +6,16 @@ let app = {
   dashboardInit: () => {
     app.dashboardLoadPosts()
     app.dashboardUiActions()
+    app.dashboardLoadPane()
+  },
+  dashboardLoadPane: () => {
+    if(window.location.hash) {
+      console.log(window.location.hash)
+      $('.pane').hide()
+      $(`.pane__${window.location.hash.substring(1)}`).show()
+      $('.breadcrumb-link').parent().removeClass('is-active')
+      $(`*[href="${window.location.hash}"]`).parent().addClass('is-active')
+    }
   },
   dashboardLoadPosts: (loadMore) => {
     let username = $('main').data('username')
