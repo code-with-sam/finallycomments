@@ -16,7 +16,7 @@ let app = {
         if(loadMore && i === 0) continue
         let template = `<tr data-permlink=${posts[i].permlink}>
           <td>${posts[i].children}</td>
-          <td>${posts[i].title}</td>
+          <td><a href="/viewer/steem-post${posts[i].url}" target="_blank"> ${posts[i].title}</a></td>
           <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Generate</button></td>
         </tr>`
         $('.dashboard__table--steem tbody').append(template)
@@ -87,7 +87,7 @@ ${id}${rep}${values}${profile}${generated}</section>
         $('.no-custom-threads').parent().remove()
         let template = `<tr>
           <td>${response.title}</td>
-          <td>${response.slug}</td>
+          <td><a href="/viewer/custom-thread/finallycomments/@${response.author}/${response.slug}">${response.slug}</a></td>
           <td><button class="button is-dark load-embed" data-permlink="/finallycomments/@${response.author}/${response.slug}" data-generated="true">Generate</button></td>
         </tr>`
         $('.dashboard__table--custom tbody').append(template)

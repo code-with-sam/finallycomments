@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title Finally Comments System - Thread Viewer
+    link(rel='stylesheet', href='/css/landing.css')
+  body.fullscreen-viewer
+    .finally-comments(
+      data-id=`https://steemit.com/${url}`
+      data-reputation="true"
+      data-values="true"
+      data-profile="true"
+      data-generated=`${generated}`
+      )
+    script(src="/js/finally.min.js")

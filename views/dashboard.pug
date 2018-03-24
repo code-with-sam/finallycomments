@@ -27,7 +27,7 @@ block content
               each val in threads
                 tr
                   td= val['title']
-                  td= val['slug']
+                  td: a(href=`/viewer/custom-thread/finallycomments/@${val['author']}/${val['slug']}` target="_blank") #{val['slug']}
                   td
                     button.button.is-dark.load-embed(data-permlink=`/finallycomments/@${val['author']}/${val['slug']}` data-generated='true') Generate
               else
