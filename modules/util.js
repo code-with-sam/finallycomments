@@ -27,3 +27,15 @@ module.exports.splitQueryString = (string) => {
      return obj
    }, {})
 }
+
+module.exports.processProfileImage = (account) => {
+  let metaData;
+  if (accountjson_metadata === '' ||
+      accountjson_metadata === 'undefined' ||
+      accountjson_metadata === undefined ) {
+      metaData = { profile_image : '/img/default-user.jpg'}
+  } else {
+    metaData = account.json_metadata ? JSON.parse(account.json_metadata).profile : {};
+  }
+  return profileImage = metaData.profile_image ? 'https://steemitimages.com/512x512/' + metaData.profile_image : '';
+}
