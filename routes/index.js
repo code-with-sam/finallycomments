@@ -61,6 +61,8 @@ router.get('/thread/:tag/:author/:permlink?', (req, res, next) => {
 router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 
     if(req.session.steemconnect) {
+      steem.setAccessToken(req.session.access_token);
+
       let voter;
       steem.me((err, steemResponse) => {
         voter =  steemResponse.account.name;
@@ -89,6 +91,7 @@ router.post('/vote/:author/:permlink/:weight', (req, res, next) => {
 router.post('/comment', (req, res) => {
 
   if(req.session.steemconnect) {
+    steem.setAccessToken(req.session.access_token);
     let author = req.session.steemconnect.name
 
     let permlink = req.body.parentPermlink + '-' + util.urlString(32)
@@ -122,12 +125,32 @@ router.post('/comment', (req, res) => {
 
 });
 
+// router.get('/api/thread/:username/:slug', (req, res) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   let username = req.params.username
+//   let slug = req.params.slug
+//   var origin = req.get('origin');
+
+  // check if current slug exists for user
+  // if it does redirect to correct thread
+  //
+  // else if no thread found
+  // check database to see if user exists && if user has origin listed on account
+  // if found create new thread for user with slug
+  //
+  // redirect to new thread
+
+//   res.json({data: slug})
+// });
+
 router.post('/new-thread', (req, res) => {
 
   const FINALLY_AUTHOR = 'finallycomments'
   const FINALLY_PERMLINK = 'finally-comments-thread'
 
   if(req.session.steemconnect) {
+    steem.setAccessToken(req.session.access_token);
     let author = req.session.steemconnect.name
     let permlink = `finally-${util.urlString(8)}`
     let title = req.body.title

@@ -20,6 +20,7 @@ router.get('/:tag/:author/:permlink?', (req, res, next) => {
         steem.setAccessToken(req.query.access_token);
         steem.me((err, steemResponse) => {
           req.session.steemconnect = steemResponse.account;
+          req.session.access_token = req.query.access_token;
           let decodedState = req.query.state.replace(/&amp;/g, '&');
           let state = util.splitQueryString(decodedState)
           let url = `/thread/${state.tag}/${state.author}/${state.permlink}`
@@ -36,6 +37,8 @@ router.get('/', (req, res, next) => {
         steem.setAccessToken(req.query.access_token);
         steem.me((err, steemResponse) => {
           req.session.steemconnect = steemResponse.account;
+          req.session.access_token = req.query.access_token;
+
           let decodedState = req.query.state.replace(/&amp;/g, '&');
           let state = util.splitQueryString(decodedState)
           let url = ''
