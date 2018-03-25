@@ -50,4 +50,4 @@ let getAccessFromRefresh = async (username) => {
 }
 
 
-module.exports = { steem, getRefreshToken };
+module.exports = { steem, getRefreshToken, getAccessFromRefresh };
