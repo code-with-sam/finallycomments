@@ -2,14 +2,90 @@ extends layout
 
 block content
   header
-    .container
-        h1.title.is-2 Dashboard
-        hr
+    nav.navbar.navbar--alt(role="navigation" aria-label="main navigation")
+      .navbar-brand
+        .finally-logo
+          <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><style>.cls-1{fill:#fff;}.cls-2,.cls-3{fill:#010101;}.cls-3{font-size:111px;font-family:Helvetica-BoldOblique, Helvetica;font-weight:700;}.cls-4{letter-spacing:-0.09em;}.cls-5{letter-spacing:-0.02em;}</style></defs><title>Artboard 1</title><path class="cls-1" d="M730,546c0,14.17-11.48,25.31-26.09,25.31H651.7a24.54,24.54,0,0,0-14.61,10.12c-21,31.46-36.52,90.09-59.48,99.2-2.09-5.06-6.26-13.16-8.35-20.24-14.61-34.42-35.48-85-75.13-89.08h-265C214.48,571.27,203,560.13,203,546l24-133.65c0-14.17,11.48-25.31,26.09-25.31H728.92c14.61,0,26.09,11.13,26.09,25.31L731,546Z"/><path class="cls-2" d="M722.76,360.88H262.18c-30.3,0-55.55,24.31-55.55,53.48L183.39,542.75c0,29.17,25.25,53.48,55.55,53.48H489.44c21.21,0,40.4,40.84,50.5,67.09,10.1,24.31,16.16,36.95,31.31,36.95h0c9.09,0,55.55-4.86,87.87-104h40.4c30.3,0,55.55-24.31,55.55-53.48l23.24-128.39C778.31,385.19,753.06,360.88,722.76,360.88Zm2,181.87c0,13.61-11.11,24.31-25.25,24.31H649a23.78,23.78,0,0,0-14.14,9.72c-20.35,30.22-35.35,86.54-57.57,95.29-2-4.86-6.06-12.64-8.08-19.45-14.14-33.06-34.34-81.68-72.72-85.57H240c-14.14,0-25.25-10.7-25.25-24.31l23.24-128.39c0-13.61,11.11-24.31,25.25-24.31H723.77c14.14,0,25.25,10.7,25.25,24.31L725.78,542.75Z"/><text class="cls-3" transform="translate(244.43 521.91)">FINAL<tspan class="cls-4" x="326.77" y="0">L</tspan><tspan class="cls-5" x="384.38" y="0">Y</tspan></text></svg>
 
   main.dashboard(data-username=`${name}`)
-    //- section.dashboard__hero
+    section
+      .container
+        nav.breadcrumb(aria-label="breadcrumbs")
+          ul
+            li.is-active: a.breadcrumb-link(href="#steem-posts" data-pane="steem-posts") Steem Posts
+            li: a.breadcrumb-link(href="#custom-threads" data-pane="custom-threads") Custom Threads
+            li: a.breadcrumb-link(href="#generator" data-pane="generator") Generator
+            li: a.breadcrumb-link(href="#api" data-pane="api") API Access
+            li: a(href="/auth/logout") Logout
 
-    section.dashboard__table.dashboard__table--custom
+    section.pane.pane__generator
+      .container
+        h3.title.is-3 Generator
+        p.generator-intro Generate an embed code using a Steemit url.
+        .generator
+          .field.has-addons
+            .control
+              input.input.generate-url(placeholder="url")
+            .control
+              a.button.is-primary.generate-embded(type="text") Create
+        .generator-controls
+          .field
+            .control
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="votes" checked)
+                span Show Vote Values
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="reputation" checked)
+                span Show User Reputation
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="profile" checked)
+                span Show User Profile
+        pre
+          code.embed-code.language-html
+
+    section.pane.pane__api
+      .container
+        .authorise
+          .columns
+            .column.is-half
+              h3.title.is-3 Api Access
+              p.api-intro Finally needs access to comment on your behalf when you are not logged in. We do this so you can access the creation of threads from outside of the dashboard. After clicking, authorise you will be redirected back to steemconnect, then back to the dashboard.
+              a.button.refresh-auth(href="/auth/refresh/" class=`${token? 'is-dark': 'is-primary'}` disabled=token)= `${token? 'You Are Authenticated': 'Authorise For Offline Usage'}`
+              if token
+                p If you revoke finaly.app through steemconnect - #[a(href="/auth/refresh/") re-authenticate here]
+            .column.is-half
+              h3.title.is-3 Your Domains
+              .domains
+                p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using. it must match exactly including the protocol e.g 'http://sambillingham.com' or 'https://goodbook.reviews'
+                textarea.textarea.domains__entry
+                  if domains
+                    for domain in domains
+                      | #{domain}#{"\n"}
+                input.button.is-primary.domains__submit(type="submit" value=`${domains ? 'Update' : 'Save' }`)
+              .current__domains
+                if domains
+                  for domain in domains
+                    .domain: span.tag.is-dark= domain
+
+      .container
+        h3.is-3.title Universal Embed
+        p.universal-embed Once you are authenticated you can use this embed code on your domain. You should make sure the [UNIQUE-SLUG] is individual to each page/post/section of your site or it will automatically load a single thread.
+        pre
+          code.embed.language-html
+            textareaa(readonly style='white-space:pre;')= '<section class="finally-comments"'
+              |   data-id="https://finallycomments.com/api/thread/#{name}/[UNIQUE-SLUG HERE]"
+              |   data-reputation="true"
+              |   data-values="true"
+              |   data-profile="true"
+              |   data-generated="true"
+              |   data-api="true">
+              = '</section>'
+              |
+              |
+              = '<script src="https://finallycomments.com/js/finally.min.js"></script>'
+
+
+    section.dashboard__table.dashboard__table--custom.pane.pane__custom-threads
       .container
         h3.title.is-3 Custom Threads
           .new-thread__container.field.has-addons
@@ -27,7 +103,7 @@ block content
               each val in threads
                 tr
                   td= val['title']
-                  td= val['slug']
+                  td: a(href=`/viewer/custom-thread/finallycomments/@${val['author']}/${val['slug']}` target="_blank") #{val['slug']}
                   td
                     button.button.is-dark.load-embed(data-permlink=`/finallycomments/@${val['author']}/${val['slug']}` data-generated='true') Generate
               else
@@ -36,14 +112,14 @@ block content
                 td
                 td
 
-    section.dashboard__table.dashboard__table--steem
+    section.dashboard__table.dashboard__table--steem.pane.pane__steem-posts.pane__default
       .container
         h3.title.is-3 Steem Posts
         table.table.is-bordered.is-striped.is-fullwidth
           thead
             tr
               th Comments
-              th Permalink/ID
+              th Title
               th Embed
           tbody
         .button.is-link.load-more-posts Load More Posts
@@ -55,13 +131,13 @@ block content
           .field
             .control
               label.checkbox
-                input.embed-control(type="checkbox" data-value="votes" checked)
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="votes" checked)
                 span Show Vote Values
               label.checkbox
-                input.embed-control(type="checkbox" data-value="reputation" checked)
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="reputation" checked)
                 span Show User Reputation
               label.checkbox
-                input.embed-control(type="checkbox" data-value="profile" checked)
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="profile" checked)
                 span Show User Profile
           pre
             code.embed-code.language-html

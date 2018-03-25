@@ -12,6 +12,7 @@ let env = require('dotenv').config()
 let index = require('./routes/index');
 let auth = require('./routes/auth');
 let dashboard = require('./routes/dashboard');
+let viewer = require('./routes/viewer');
 
 let config = require('./config')
 
@@ -42,6 +43,7 @@ app.use('/vote', index);
 app.use('/auth', auth);
 app.use('/logout', auth);
 app.use('/dashboard', dashboard);
+app.use('/viewer', viewer);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

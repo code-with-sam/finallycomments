@@ -6,6 +6,36 @@ let app = {
   dashboardInit: () => {
     app.dashboardLoadPosts()
     app.dashboardUiActions()
+    app.dashboardLoadPane()
+  },
+  dashboardLoadPane: () => {
+    if(window.location.hash) {
+      console.log(window.location.hash)
+      $('.pane').hide()
+      $(`.pane__${window.location.hash.substring(1)}`).show()
+      $('.breadcrumb-link').parent().removeClass('is-active')
+      $(`*[href="${window.location.hash}"]`).parent().addClass('is-active')
+    }
+  },
+  dashboardSubmitDomain(){
+    $('.domains__submit').addClass('is-loading')
+    let domains = $('.domains__entry').val().split("\n");
+    domains = domains.map(d =>  d.replace(/,/g, '').trim())
+    domains = domains.filter(d => d !== '')
+    console.log(domains)
+    $.post({
+      url: `/dashboard/domains`,
+      dataType: 'json',
+      data: { domains : JSON.stringify(domains) }
+    }, (response) => {
+      $('.domains__submit').removeClass('is-loading')
+      if(!response.error){
+        $('.current__domains').empty()
+        domains.forEach((domain) => {
+          $('.current__domains').append(`<div class="domain"><span class="tag is-dark">${domain}</span></div>`)
+        })
+      }
+    })
   },
   dashboardLoadPosts: (loadMore) => {
     let username = $('main').data('username')
@@ -16,7 +46,7 @@ let app = {
         if(loadMore && i === 0) continue
         let template = `<tr data-permlink=${posts[i].permlink}>
           <td>${posts[i].children}</td>
-          <td>${posts[i].title}</td>
+          <td><a href="/viewer/steem-post${posts[i].url}" target="_blank"> ${posts[i].title}</a></td>
           <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Generate</button></td>
         </tr>`
         $('.dashboard__table--steem tbody').append(template)
@@ -31,6 +61,21 @@ let app = {
     })
   },
   dashboardUiActions: () => {
+    $('.domains__submit').on('click', (e) => {
+        app.dashboardSubmitDomain()
+    })
+
+    $('.breadcrumb-link').on('click', (e) => {
+      $('.breadcrumb-link').parent().removeClass('is-active')
+      $(e.currentTarget).parent().addClass('is-active')
+
+      let pane = $(e.currentTarget).data('pane')
+      $('.pane').hide()
+      $(`.pane__${pane}`).show()
+
+      if(pane === 'generator') $('.embed-code').empty()
+    })
+
     $('.load-more-posts').on('click', (e) => {
       app.dashboardLoadPosts(true)
     })
@@ -44,13 +89,27 @@ let app = {
       $('.overlay').data('permlink', permlink)
       $('.overlay').addClass('--is-active')
     })
+
+    $('.generate-embded').on('click', () => {
+      let permlink = app.linkToPermlink( $('.generate-url').val() )
+      let controls = { values: true, rep: true, profile: true, generated: false }
+      if (permlink) app.dashboadLoadEmbed(permlink, controls)
+    })
+
     $('.dashboard').on('change', '.embed-control', (e) => {
-      let permlink = $('.overlay').data('permlink')
-      let controls = {
-        values: $('*[data-value="votes"]').is(':checked'),
-        rep: $('*[data-value="reputation"]').is(':checked'),
-        profile: $('*[data-value="profile"]').is(':checked')
+      let controller = $(e.currentTarget).data('controller')
+      let permlink;
+      if (controller == 'overlay') {
+         permlink = $('.overlay').data('permlink')
+      } else {
+         permlink = app.linkToPermlink( $('.generate-url').val())
       }
+      let controls = {
+        values: $(`.${controller} *[data-value="votes"]`).is(':checked'),
+        rep: $(`.${controller} *[data-value="reputation"]`).is(':checked'),
+        profile: $(`.${controller} *[data-value="profile"]`).is(':checked')
+      }
+      console.log(controls)
       app.dashboadLoadEmbed(permlink, controls)
     })
     $('.overlay__bg').on('click', (e) => {
@@ -61,6 +120,13 @@ let app = {
       let title = $('.new-thread-title').val().trim()
       app.dashboardNewThread(title)
     })
+  },
+  linkToPermlink(link){
+    let input = link.trim().split('/')
+    let slug = input.pop()
+    let author = input.pop()
+    let cat = input.pop()
+    return `/${cat}/${author}/${slug}`
   },
   dashboadLoadEmbed: (permlink, controls) => {
     let id = `    data-id="https://steemit.com${permlink}"\n`
@@ -87,10 +153,10 @@ ${id}${rep}${values}${profile}${generated}</section>
         $('.no-custom-threads').parent().remove()
         let template = `<tr>
           <td>${response.title}</td>
-          <td>${response.slug}</td>
+          <td><a href="/viewer/custom-thread/finallycomments/@${response.author}/${response.slug}">${response.slug}</a></td>
           <td><button class="button is-dark load-embed" data-permlink="/finallycomments/@${response.author}/${response.slug}" data-generated="true">Generate</button></td>
         </tr>`
-        $('.dashboard__table--custom tbody').append(template)
+        $('.dashboard__table--custom tbody').prepend(template)
       })
   }
 

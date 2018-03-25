@@ -12,7 +12,8 @@ a.content-link {
 }
 a.content-link:hover {
   color: #01d1b2;
-  border-bottom: none;
+  border-bottom: solid 2px transparent;
+
 }
 .button.is-info {
   background-color: #212121;
@@ -21,16 +22,10 @@ a.content-link:hover {
 .button.is-info:hover {
   background-color: #010101;
 }
-header {
-  padding: 30px 0 ;
+.news .content-link {
+  margin: 0 auto 20px;
+  display: inline-block;
 }
-
-@media( min-width: 700px){
-  header {
-  padding: 50px;
-  }
-}
-
 .container {
   padding: 0 30px;
 }
@@ -67,6 +62,15 @@ h2 {
 }
 
 
+header.landing {
+  padding: 30px 0 ;
+}
+
+@media( min-width: 700px){
+  header.landing {
+  padding: 50px;
+  }
+}
 
 
 
@@ -78,10 +82,12 @@ h2 {
   margin-right: 15px
 }
 
-section.intro {
+section.intro,
+.section.news {
   padding: 100px 0;
   background: #eff6fd;
 }
+
 section.generate {
     padding: 100px 0
 }
@@ -117,6 +123,13 @@ footer {
 }
 
 /**/
+.pane {
+  display: none;
+  padding: 30px 0;
+}
+.pane__default {
+  display: block;
+}
 .dashboard {
   padding: 0 0 50px;
 }
@@ -126,12 +139,21 @@ footer {
   margin-bottom: 20px;
 }
 
-.dashboard td:first-of-type {
-  text-align: center;
-}
 .dashboard td {
   vertical-align: middle;
   font-family: monospace;
+}
+
+.domains__submit,
+.domains__entry,
+.api-intro,
+.refresh-auth,
+.universal-embed,
+.generator-intro,
+.controls-container,
+.generator,
+.generator-controls {
+  margin-bottom: 20px;
 }
 
 
@@ -167,4 +189,8 @@ label.checkbox span {
   left: 10%;
   background-color: #fff;
   box-shadow: 0 0 60px rgba(0,0,0,0.2)
+}
+.fullscreen-viewer {
+  padding: 0;
+  margin: 0;
 }

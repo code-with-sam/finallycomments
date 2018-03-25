@@ -3,7 +3,7 @@
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
-## Finally comments - V0.6.0
+## Finally comments - V0.7.0
 An embededable version of steem (steemit/utopian) comments with comment and vote functionality
 
 ### How It Works
@@ -35,9 +35,9 @@ NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SE
 ```
 
 ### Feature Roadmap
-- create posts from outside the finally dashboard with api?
 - stats for threads/account
 - auto hide posts from rep less than X
 - edit/delete/flag comments
+- moderate comments (completely remove with flag from author)
 - wordpress plugin
 - non logged in user comments (not expected for some time)
