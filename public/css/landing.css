@@ -141,6 +141,14 @@ footer {
   font-family: monospace;
 }
 
+.domains__submit,
+.domains__entry,
+.api-intro,
+.refresh-auth,
+.universal-embed {
+  margin-bottom: 20px;
+}
+
 
 label.checkbox span {
   margin: 0 24px 0 8px;

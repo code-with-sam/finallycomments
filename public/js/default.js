@@ -17,6 +17,27 @@ let app = {
       $(`*[href="${window.location.hash}"]`).parent().addClass('is-active')
     }
   },
+  dashboardSubmitDomain(){
+    $('.domains__submit').addClass('is-loading')
+    let domains = $('.domains__entry').val().split("\n");
+    domains = domains.map(d =>  d.replace(/,/g, '').trim())
+    domains = domains.filter(d => d !== '')
+    console.log(domains)
+    $.post({
+      url: `/dashboard/domains`,
+      dataType: 'json',
+      data: { domains : JSON.stringify(domains) }
+    }, (response) => {
+      $('.domains__submit').removeClass('is-loading')
+      if(!response.error){
+        $('.current__domains').empty()
+        domains.forEach((domain) => {
+          $('.current__domains').append(`<div class="domain"><span class="tag is-dark">${domain}</span></div>`)
+        })
+      }
+    })
+
+  },
   dashboardLoadPosts: (loadMore) => {
     let username = $('main').data('username')
     let query = { tag: username, limit: 10 }
@@ -41,6 +62,9 @@ let app = {
     })
   },
   dashboardUiActions: () => {
+    $('.domains__submit').on('click', (e) => {
+        app.dashboardSubmitDomain()
+    })
 
     $('.breadcrumb-link').on('click', (e) => {
       e.preventDefault()

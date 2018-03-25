@@ -26,17 +26,43 @@ block content
 
     section.pane.pane__api
       .container
-        h3.title.is-3 Api Access
         .authorise
-          p Finally needs access to comment on your behalf when you are not logged in. We do this so you can access the creation of threads from outside of the dashboard. After clicking, authorise you will be redirected back to steemconnect, then back to the dashboard.
-          a.button.is-primary(a href="/auth/refresh/") Authorise For Offline Usage
-        .register
           .columns
-            .column.is-one-third
+            .column.is-half
+              h3.title.is-3 Api Access
+              p.api-intro Finally needs access to comment on your behalf when you are not logged in. We do this so you can access the creation of threads from outside of the dashboard. After clicking, authorise you will be redirected back to steemconnect, then back to the dashboard.
+              a.button.refresh-auth(href="/auth/refresh/" class=`${token? 'is-dark': 'is-primary'}` disabled=token)= `${token? 'You Are Authenticated': 'Authorise For Offline Usage'}`
+              if token
+                p If you revoke finaly.app through steemconnect - #[a(href="/auth/refresh/") re-authenticate here]
+            .column.is-half
+              h3.title.is-3 Your Domains
               .domains
-                p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using.
+                p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using. it must match exactly including the protocol e.g 'http://sambillingham.com' or 'https://goodbook.reviews'
                 textarea.textarea.domains__entry
-                input.button.is-primary(type="submit" value="save")
+                  if domains
+                    for domain in domains
+                      | #{domain}#{"\n"}
+                input.button.is-primary.domains__submit(type="submit" value=`${domains ? 'Update' : 'Save' }`)
+              .current__domains
+                if domains
+                  for domain in domains
+                    .domain: span.tag.is-dark= domain
+
+      .container
+        h3.is-3.title Universal Embed
+        p.universal-embed Once you are authenticated you can use this embed code on your domain. You should make sure the [UNIQUE-SLUG] is individual to each page/post/section of your site or it will automatically load a single thread.
+        pre
+          code.embed-code.language-html
+            textareaa(readonly style='white-space:pre;')= '<section class="finally-comments"'
+              |   data-id="/@#{name}/[UNIQUE-SLUG HERE]"
+              |   data-reputation="true"
+              |   data-values="true"
+              |   data-profile="true"
+              |   data-generated="true">
+              = '</section>'
+              |
+              |
+              = '<script src="https://finallycomments.com/js/finally.min.js"></script>'
 
 
     section.dashboard__table.dashboard__table--custom.pane.pane__custom-threads
