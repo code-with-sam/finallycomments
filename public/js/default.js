@@ -36,7 +36,6 @@ let app = {
         })
       }
     })
-
   },
   dashboardLoadPosts: (loadMore) => {
     let username = $('main').data('username')
@@ -67,13 +66,14 @@ let app = {
     })
 
     $('.breadcrumb-link').on('click', (e) => {
-      e.preventDefault()
       $('.breadcrumb-link').parent().removeClass('is-active')
       $(e.currentTarget).parent().addClass('is-active')
 
       let pane = $(e.currentTarget).data('pane')
       $('.pane').hide()
       $(`.pane__${pane}`).show()
+
+      if(pane === 'generator') $('.embed-code').empty()
     })
 
     $('.load-more-posts').on('click', (e) => {
@@ -89,13 +89,27 @@ let app = {
       $('.overlay').data('permlink', permlink)
       $('.overlay').addClass('--is-active')
     })
+
+    $('.generate-embded').on('click', () => {
+      let permlink = app.linkToPermlink( $('.generate-url').val() )
+      let controls = { values: true, rep: true, profile: true, generated: false }
+      if (permlink) app.dashboadLoadEmbed(permlink, controls)
+    })
+
     $('.dashboard').on('change', '.embed-control', (e) => {
-      let permlink = $('.overlay').data('permlink')
-      let controls = {
-        values: $('*[data-value="votes"]').is(':checked'),
-        rep: $('*[data-value="reputation"]').is(':checked'),
-        profile: $('*[data-value="profile"]').is(':checked')
+      let controller = $(e.currentTarget).data('controller')
+      let permlink;
+      if (controller == 'overlay') {
+         permlink = $('.overlay').data('permlink')
+      } else {
+         permlink = app.linkToPermlink( $('.generate-url').val())
       }
+      let controls = {
+        values: $(`.${controller} *[data-value="votes"]`).is(':checked'),
+        rep: $(`.${controller} *[data-value="reputation"]`).is(':checked'),
+        profile: $(`.${controller} *[data-value="profile"]`).is(':checked')
+      }
+      console.log(controls)
       app.dashboadLoadEmbed(permlink, controls)
     })
     $('.overlay__bg').on('click', (e) => {
@@ -106,6 +120,13 @@ let app = {
       let title = $('.new-thread-title').val().trim()
       app.dashboardNewThread(title)
     })
+  },
+  linkToPermlink(link){
+    let input = link.trim().split('/')
+    let slug = input.pop()
+    let author = input.pop()
+    let cat = input.pop()
+    return `/${cat}/${author}/${slug}`
   },
   dashboadLoadEmbed: (permlink, controls) => {
     let id = `    data-id="https://steemit.com${permlink}"\n`

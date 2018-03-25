@@ -121,7 +121,7 @@ footer {
   display: none;
   padding: 30px 0;
 }
-.pane__overview {
+.pane__default {
   display: block;
 }
 .dashboard {
@@ -133,9 +133,6 @@ footer {
   margin-bottom: 20px;
 }
 
-.dashboard td:first-of-type {
-  text-align: center;
-}
 .dashboard td {
   vertical-align: middle;
   font-family: monospace;
@@ -145,7 +142,11 @@ footer {
 .domains__entry,
 .api-intro,
 .refresh-auth,
-.universal-embed {
+.universal-embed,
+.generator-intro,
+.controls-container,
+.generator,
+.generator-controls {
   margin-bottom: 20px;
 }
 
