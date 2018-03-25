@@ -9,6 +9,17 @@ module.exports.find = async (username) => {
   });
 }
 
+module.exports.findBySlugAndUser = async (slug, username) => {
+  return new Promise((resolve, reject) => {
+    db.get().db('finally').collection('threads').findOne({'slug': slug, 'author': username }, (error, result) => {
+      if(result === null ){
+        resolve({ error: false, result: false })
+      } else if(error) { reject({ error: error }) }
+      else { resolve({result: result}) }
+    })
+  });
+}
+
 module.exports.insert = async (thread) => {
   return new Promise((resolve, reject) => {
     db.get().db('finally').collection('threads').insertOne(thread, (error, response) => {
