@@ -12,7 +12,8 @@ a.content-link {
 }
 a.content-link:hover {
   color: #01d1b2;
-  border-bottom: none;
+  border-bottom: solid 2px transparent;
+
 }
 .button.is-info {
   background-color: #212121;
@@ -21,7 +22,10 @@ a.content-link:hover {
 .button.is-info:hover {
   background-color: #010101;
 }
-
+.news .content-link {
+  margin: 0 auto 20px;
+  display: inline-block;
+}
 .container {
   padding: 0 30px;
 }
@@ -78,10 +82,12 @@ header.landing {
   margin-right: 15px
 }
 
-section.intro {
+section.intro,
+.section.news {
   padding: 100px 0;
   background: #eff6fd;
 }
+
 section.generate {
     padding: 100px 0
 }
