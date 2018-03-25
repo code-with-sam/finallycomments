@@ -16,6 +16,7 @@ router.get('/:tag/:author/:permlink?', (req, res, next) => {
         console.log('state: ', state)
 
         let uri = steem.getLoginURL(state);
+        console.log(uri)
         res.redirect(uri);
     } else {
       console.log('already has a token and trying to login again')
@@ -59,6 +60,8 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+
+
 router.get('/logout/', (req, res) => {
   steem.revokeToken((err, steemResponse) => {
       req.session.destroy();
@@ -89,7 +92,7 @@ router.get('/refresh', (req, res) => {
 
 router.get('/:next', (req, res) => {
     if (!req.query.access_token ) {
-        console.log('not token, creatring auth link from params')
+        console.log('no token, creating auth link from params')
         let next = req.params.next
         let state = `next=${next}`
         let uri = steem.getLoginURL(state);
@@ -98,5 +101,6 @@ router.get('/:next', (req, res) => {
       res.redirect(`/${req.params.next}`)
     }
 });
+
 
 module.exports = router;

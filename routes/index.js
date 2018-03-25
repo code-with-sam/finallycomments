@@ -83,56 +83,44 @@ router.post('/comment', util.isAuthorized, (req, res) => {
     });
 });
 
-router.get('/api/thread/:username/:slug', cors(), async (req, res) => {
+router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
   let username = req.params.username
   let slug = req.params.slug
+  let sluglink = `finally-${slug}`
   let thread;
-
-  try { thread = await Thread.findBySlugAndUser(slug, username) } catch(error){console.log(error)}
+  try { thread = await Thread.findBySlugAndUser(sluglink, username) } catch(error){console.log(error)}
   if(thread.result){
-    console.log(thread)
-    console.log('THREAD FOUND')
-    res.redirect(`/thread/finallycomments/@${username}/${slug}`)
-    res.next()
-  }
-
-  let origin = req.headers.origin
-  let referer = req.headers.referer
-  let refererLessSlash = referer.slice(0, -1)
-  conssole.log('refer less ', refererLessSlash)
-  console.log('headers', req.headers)
-  let domains = await Domain.findOne(username)
-  console.log('domains', domains.list)
-  console.log(domains.list.indexOf(origin))
-
-  if (domains.list.indexOf(referer) > -1 || domains.list.indexOf(refererLessSlash) > -1 ){
-    let newToken = await getAccessFromRefresh(username)
-    steem.setAccessToken(newToken.access_token);
-    console.log('token from api call to steemconnect', newToken)
-    const FINALLY_AUTHOR = 'finallycomments'
-    const FINALLY_PERMLINK = 'finally-comments-thread'
-    let author = username
-    let permlink = `finally-${slug}`
-    let title = `${username}: Finally Thread`
-    let body = `${username} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
-    let parentAuthor = FINALLY_AUTHOR
-    let parentPermlink = FINALLY_PERMLINK
-
-    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, async (err, steemResponse) => {
-      if (err) {
-        console.log(err)
-        res.redirect('/404')
-      }
-      else {
-        let newThread = { author: author, slug: permlink, title: title }
-        let response = await Thread.insert(newThread)
-        res.redirect(`/thread/finallycomments/@${username}/${slug}`)
-      }
-    });
-
+    res.redirect(`/thread/finallycomments/@${username}/${sluglink}`)
   } else {
-    res.redirect('/404')
+    let origin = req.headers.origin
+    let referer = req.headers.referer
+    let refererLessSlash = referer.slice(0, -1)
+    let domains = await Domain.findOne(username)
+
+    if (domains.list.indexOf(referer) > -1 || domains.list.indexOf(refererLessSlash) > -1 ){
+      let newToken
+      try { newToken = await getAccessFromRefresh(username) }
+      catch(error){console.log(error)}
+      steem.setAccessToken(newToken.access_token);
+      const FINALLY_AUTHOR = 'finallycomments'
+      const FINALLY_PERMLINK = 'finally-comments-thread'
+      let author = username
+      let permlink = `finally-${slug}`
+      let title = `${username}: Finally Thread`
+      let body = `${username} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
+      let parentAuthor = FINALLY_AUTHOR
+      let parentPermlink = FINALLY_PERMLINK
+      steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, async (err, steemResponse) => {
+        if (err) { console.log(err); res.redirect('/404');
+        } else {
+          let newThread = { author: author, slug: permlink, title: title }
+          let response = await Thread.insert(newThread)
+          res.redirect(`/thread/finallycomments/@${username}/${permlink}`)
+        }
+      });
+    } else { res.redirect('/404') }
   }
+
 });
 
 router.post('/new-thread', util.isAuthorized, (req, res) => {
