@@ -97,11 +97,15 @@ router.get('/api/thread/:username/:slug', cors(), async (req, res) => {
   }
 
   let origin = req.headers.origin
-  console.log('ORIGIN', origin)
+  let referer = req.headers.referer
+  let refererLessSlash = referer.slice(0, -1)
+  conssole.log('refer less ', refererLessSlash)
+  console.log('headers', req.headers)
   let domains = await Domain.findOne(username)
   console.log('domains', domains.list)
   console.log(domains.list.indexOf(origin))
-  if (origin == null|| origin == undefined || domains.list.indexOf(origin) > -1 ){
+
+  if (domains.list.indexOf(referer) > -1 || domains.list.indexOf(refererLessSlash) > -1 ){
     let newToken = await getAccessFromRefresh(username)
     steem.setAccessToken(newToken.access_token);
     console.log('token from api call to steemconnect', newToken)

@@ -35,8 +35,12 @@ let finallyCommentsSystem = {
     let container = document.querySelector('.finally-comments')
     let url = container.dataset.id
     let finallyUrl;
-    let urlParts = finallyCommentsSystem.getPartsFromLink(url)
-    finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    if (container.dataset.api){
+      finallyUrl = url
+    } else {
+      let urlParts = finallyCommentsSystem.getPartsFromLink(url)
+      finallyUrl = `https://finallycomments.com/thread/${urlParts.category}/${urlParts.author}/${urlParts.permlink}`
+    }
     console.log('URL: ', finallyUrl)
     let iframe = document.createElement('iframe', { scrolling: 'no' });
     iframe.src = finallyUrl;
