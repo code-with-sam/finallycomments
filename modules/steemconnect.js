@@ -27,7 +27,7 @@ let getRefreshToken = (code) => {
       let user = {
         username: results.username,
         refresh: results.refresh_token,
-        access: results.refresh_toke
+        access: results.access_token
       }
       resolve(await Token.insert(user));
     })
