@@ -3,7 +3,7 @@
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
-## Finally comments - V0.7.0
+## Finally comments - V0.7.1
 An embededable version of steem (steemit/utopian) comments with comment and vote functionality
 
 ### How It Works

@@ -19,15 +19,11 @@ router.get('/:tag/:author/:permlink?', (req, res, next) => {
         console.log(uri)
         res.redirect(uri);
     } else {
-      console.log('already has a token and trying to login again')
         steem.setAccessToken(req.query.access_token);
         steem.me((err, steemResponse) => {
           req.session.steemconnect = steemResponse.account;
           req.session.access_token = req.query.access_token;
-          let decodedState = req.query.state.replace(/&amp;/g, '&');
-          let state = util.splitQueryString(decodedState)
-          let url = `/thread/${state.tag}/${state.author}/${state.permlink}`
-          res.redirect(url)
+          res.render('auth-success')
         });
     }
 });
@@ -52,10 +48,10 @@ router.get('/', async (req, res, next) => {
           let url = ''
           if(state.next) {
             url = `/${state.next}`
+            res.redirect(url)
           } else {
-            url = `/thread/${state.tag}/${state.author}/${state.permlink}`
+            res.render('auth-success')
           }
-          res.redirect(url)
         });
     }
 });
