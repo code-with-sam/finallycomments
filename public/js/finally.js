@@ -72,16 +72,9 @@ window.addEventListener('message', receiveMessage, false);
 
 function receiveMessage(event)
 {
-  if (event.data.message == 'sign-in'){
-    if (event.origin !== 'https://finallycomments.com' )
-      return;
-    $('.finally-comments iframe').css('height', 600)
-  }
-
   if (event.data.message == 'new-comment'){
     if (event.origin !== 'https://finallycomments.com' )
       return;
-
 
     let frameOffset = getDistanceFromTop(document.querySelector('.finally-comments'))
     let frameHeight = document.querySelector('.finally-comments').getBoundingClientRect().height;

@@ -35,12 +35,11 @@ const steemComments = {
       }
     },
     uiActions: () => {
-          $('.sc-login').on('click', () => {
-            parent.postMessage({
-              message: 'sign-in'
-            }, '*')
-
-            return true
+          $('.sc-login').on('click', (e) => {
+            let authUrl = $(e.currentTarget).attr('href')
+            authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
+            if (window.focus) authWindow.focus();
+            return false;
           })
           $('.sc-topbar').on('click', '.sc-profile__image', () => {
             let template = `
