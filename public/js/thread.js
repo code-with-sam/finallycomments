@@ -65,22 +65,15 @@ const steemComments = {
           })
 
           $('.sc-topbar__reply').on('click', () => {
-            if ( steemComments.ISAUTHENTICATED){
-              steemComments.addCommentTemplateAfter('.sc-section .sc-topbar__rule')
-            } else {
-              $('.sc-comments').prepend(steemComments.notificationTemplate('Please sign in to comment.'))
-            }
+            steemComments.addCommentTemplateAfter('.sc-section .sc-topbar__rule')
             $('.sc-vote').remove()
+            $('.sc-notification').remove()
           })
 
           $('.sc-section').on('click', '.sc-item__reply', (e) => {
-
-            $('.sc-notification').remove()
-            if ( steemComments.ISAUTHENTICATED){
               steemComments.addCommentTemplateAfter(e.currentTarget)
-            } else {
-              $(e.currentTarget).closest('.sc-item__right').append(steemComments.notificationTemplate('Please sign in to comment.'))
-            }
+              $('.sc-vote').remove()
+              $('.sc-notification').remove()
           })
 
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
@@ -116,15 +109,18 @@ const steemComments = {
 
           $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
             e.preventDefault()
-            let parentElement = $(e.currentTarget).closest('.sc-item') || $('.sc-comments')
-
-            let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
-            let message = $('.sc-comment__message').val()
-            let parentPermlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
-            let parentAuthor = topLevel ? steemComments.AUTHOR : parentElement.data('author')
-            let title = topLevel ? '@'+parentAuthor : parentElement.data('title')
-            let parentDepth = parentElement.data('post-depth')
-            steemComments.sendComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
+            if ( steemComments.ISAUTHENTICATED) {
+              let parentElement = $(e.currentTarget).closest('.sc-item') || $('.sc-comments')
+              let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
+              let message = $('.sc-comment__message').val()
+              let parentPermlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
+              let parentAuthor = topLevel ? steemComments.AUTHOR : parentElement.data('author')
+              let title = topLevel ? '@'+parentAuthor : parentElement.data('title')
+              let parentDepth = parentElement.data('post-depth')
+              steemComments.sendComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
+            } else {
+              $(e.currentTarget).closest('.sc-comment__container').append(steemComments.notificationTemplate('Please sign in to comment.'))
+            }
           })
 
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
@@ -516,7 +512,7 @@ const steemComments = {
       notificationTemplate: (message) => {
         $('.sc-notification').remove()
         let template = `
-        <div class="sc-notification">${message}</>
+        <div class="sc-notification">${message}</div>
         `
         return template;
       },
