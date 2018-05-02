@@ -123,6 +123,19 @@ const steemComments = {
             }
           })
 
+          $('.sc-section').on('click', '.sc-guest-comment__btn' , (e) => {
+            e.preventDefault()
+              let parentElement = $(e.currentTarget).closest('.sc-item') || $('.sc-comments')
+              let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
+              let message = $('.sc-comment__message').val()
+              let parentPermlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
+              let parentAuthor = topLevel ? steemComments.AUTHOR : parentElement.data('author')
+              let title = topLevel ? '@'+parentAuthor : parentElement.data('title')
+              let parentDepth = parentElement.data('post-depth') || 0
+              console.log(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
+              steemComments.sendGuestComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
+          })
+
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
             $(e.currentTarget).parent().remove()
           });
@@ -222,9 +235,11 @@ const steemComments = {
     },
     addCommentTemplateAfter: (dest) => {
       $('.sc-comment__container').remove()
+      let guestPostButton =  steemComments.ISAUTHENTICATED ? '' : '<a href="#" target="_blank" class="sc-guest-comment__btn">Post As Guest </a>'
       let template = `<div class="sc-comment__container">
       <textarea class="sc-comment__message" placeholder="Reply"></textarea>
       <a href="#" target="_blank" class="sc-comment__btn">Post</a>
+      ${guestPostButton}
       <span class="sc-close sc-comment__close" >Cancel</span>
       </div>`
       $(template).insertAfter(dest)
@@ -321,6 +336,29 @@ const steemComments = {
 
           }
         }
+      })
+    },
+    sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) => {
+      let replytoThread = $(parentElement).hasClass('sc-item')
+      if( !replytoThread ){
+        $('.sc-comment__container').find('.sc-guest-comment__btn').text('Posting... ')
+        $('.sc-comment__container').find('.sc-guest-comment__btn').append('<img src="/img/loader.gif">')
+        parentElement = $('.sc-comments')
+      } else {
+        $(parentElement).find('.sc-guest-comment__btn').text('Posting... ')
+        $(parentElement).find('.sc-guest-comment__btn').append('<img src="/img/loader.gif">')
+      }
+      $.post({
+        url: `/guest-comment`,
+        dataType: 'json',
+        data: {
+          parentAuthor: parentAuthor,
+          parentPermlink: parentPermlink,
+          message: message,
+          parentTitle: parentTitle
+        }
+      }, (response) => {
+          console.log(response)
       })
     },
     randomString: () => {
@@ -511,9 +549,7 @@ const steemComments = {
       },
       notificationTemplate: (message) => {
         $('.sc-notification').remove()
-        let template = `
-        <div class="sc-notification">${message}</div>
-        `
+        let template = `<div class="sc-notification">${message}</div>`
         return template;
       },
       timeoutNotifications: () => {

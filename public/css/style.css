@@ -337,6 +337,23 @@ a.sc-settings__logout {
   font-size: 16px;
 }
 
+
+.sc-guest-comment__btn {
+  display: inline-block;
+  margin: 0 10px 10px 0;
+  cursor: pointer;
+  background: #dfdbdb;
+  border-radius: 2px;
+  color: #303030;
+  box-shadow: 0 0 15px rgba(0,0,0,0.15);
+  padding: 5px 10px;
+  text-decoration: none;
+}
+a.sc-comment__btn:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #16191f;
+}
 .sc-comment__btn {
   display: inline-block;
   margin: 0 10px 10px 0;

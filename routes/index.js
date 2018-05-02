@@ -83,6 +83,25 @@ router.post('/comment', util.isAuthorized, (req, res) => {
     });
 });
 
+router.post('/guest-comment', (req, res) => {
+    let author = 'guest'
+    let permlink = req.body.parentPermlink + '-' + util.urlString(32)
+    let title = 'RE: ' + req.body.parentTitle
+    let body = req.body.message
+    let parentAuthor = req.body.parentAuthor
+    let parentPermlink = req.body.parentPermlink
+
+    // store comment in database
+    // need to store main finally thread/top permlink to associate comments
+    res.json({
+      name: author,
+      msg: 'Posted A Guest Comment',
+      res: 'res'
+    })
+
+});
+
+
 router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
   let username = req.params.username
   let slug = req.params.slug
