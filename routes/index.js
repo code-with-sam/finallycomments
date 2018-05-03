@@ -114,8 +114,14 @@ router.post('/guest-comment', (req, res) => {
       })
     // store comment in database
     // need to store main finally thread/top permlink to associate comments
+});
 
 
+router.post('/guest-comments', async (req, res) => {
+    let permlink = req.body.permlink
+    let guestComments = await GuestComment.find(permlink)
+    console.log('after db request: ', guestComments)
+    res.json({guestComments})
 });
 
 

@@ -8,3 +8,15 @@ module.exports.insert = async (comment) => {
     })
   });
 }
+
+module.exports.find = async (permlink) => {
+  return new Promise((resolve, reject) => {
+    db.get().db('finally').collection('guest-comments').find({'postPermlink': permlink}).toArray( (error, result) => {
+      if(error) { reject({ error: error }) }
+      else {
+        console.log('result from custom search: ', result)
+        resolve(result)
+      }
+    });
+  });
+}

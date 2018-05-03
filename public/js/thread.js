@@ -19,6 +19,7 @@ const steemComments = {
       steemComments.getPartsFromLink()
       steemComments.addTopBar()
       steemComments.getComments()
+        .then( x => steemComments.getGuestComments(steemComments.PERMLINK) )
       steemComments.uiActions()
       window.addEventListener('message', steemComments.frameLoad, false);
     },
@@ -339,6 +340,25 @@ const steemComments = {
       })
     },
     sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) => {
+
+      // example comment should have
+
+      // {
+      //   id: result.content[post].id,
+      //   title: result.content[post].root_title,
+      //   author: result.content[post].author,
+      //   body: html,
+      //   permlink: result.content[post].permlink,
+      //   depth: steemComments.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
+      //   root_comment: result.content[post].root_comment,
+      //   parent_permlink: result.content[post].parent_permlink,
+      //   created: result.content[post].created,
+      //   votes: 0,
+      //   voters: 0,
+      //   value: 0
+      // }
+
+
       let replytoThread = $(parentElement).hasClass('sc-item')
       if( !replytoThread ){
         $('.sc-comment__container').find('.sc-guest-comment__btn').text('Posting... ')
@@ -356,6 +376,24 @@ const steemComments = {
           console.log(response)
       })
     },
+    getGuestComments: (rootPermlink) => {
+      $.post({
+        url: '/guest-comments',
+        dataType: 'json',
+        data: { permlink: rootPermlink }
+      }, (response) => {
+        steemComments.displayGuestComments(response.guestComments)
+      })
+    },
+    displayGuestComments: (comments) => {
+      comments.forEach( (post, i, arr) => {
+        var template = `
+        <div class="sc-item sc-cf sc-item__level-1">
+            <p>Guest - ${post.body}</p>
+        </div>`
+        $('.'+post.parentPermlink).append(template)
+      })
+    },
     randomString: () => {
       let string = ''
       let allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -365,77 +403,79 @@ const steemComments = {
       return string;
     },
     getComments: () => {
-      $('.sc-section').append('<div class="sc-comments"></div>')
+      return new Promise((resolve, reject) => {
+        $('.sc-section').append('<div class="sc-comments"></div>')
 
-      steem.api.setOptions({ url: steemComments.STEEMSERVER });
-      steem.api.getState(`/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}`, function(err, result) {
-        steemComments.USERACCOUNTS = result.accounts
-        let resultsArray = [];
+        steem.api.setOptions({ url: steemComments.STEEMSERVER });
+        steem.api.getState(`/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}`, function(err, result) {
+          steemComments.USERACCOUNTS = result.accounts
+          let resultsArray = [];
 
-        for ( post in result.content ){
+          for ( post in result.content ){
 
-          var html = result.content[post].body
+            var html = result.content[post].body
 
-          resultsArray.push({
-            id: result.content[post].id,
-            title: result.content[post].root_title,
-            author: result.content[post].author,
-            body: html,
-            permlink: result.content[post].permlink,
-            depth: steemComments.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
-            root_comment: result.content[post].root_comment,
-            parent_permlink: result.content[post].parent_permlink,
-            created: result.content[post].created,
-            votes: result.content[post].net_votes,
-            voters: result.content[post].active_votes.map(vote => vote.voter),
-            value: Math.round(parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100 + parseFloat(result.content[post].total_payout_value.substring(0,5)) * 100) / 100
+            resultsArray.push({
+              id: result.content[post].id,
+              title: result.content[post].root_title,
+              author: result.content[post].author,
+              body: html,
+              permlink: result.content[post].permlink,
+              depth: steemComments.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
+              root_comment: result.content[post].root_comment,
+              parent_permlink: result.content[post].parent_permlink,
+              created: result.content[post].created,
+              votes: result.content[post].net_votes,
+              voters: result.content[post].active_votes.map(vote => vote.voter),
+              value: Math.round(parseFloat(result.content[post].pending_payout_value.substring(0,5)) * 100 + parseFloat(result.content[post].total_payout_value.substring(0,5)) * 100) / 100
+            })
+          }
+
+          // Sort By Date/ID
+          resultsArray = resultsArray.sort((a,b) => {
+            return b.id - a.id
+          });
+
+          // Find Deepest Comment
+          let maxDepthComment = resultsArray.reduce((prev, current) => {
+            return (prev.depth > current.depth) ? prev : current
           })
-        }
 
-        // Sort By Date/ID
-        resultsArray = resultsArray.sort((a,b) => {
-          return b.id - a.id
+          // Multi demention array by
+          let resultsByDepth = [];
+          for (var i = 0; i < maxDepthComment.depth + 1; i++) {
+            resultsByDepth.push(resultsArray.filter((elem, j, array) => {
+              return elem.depth === i;
+            }))
+          }
+
+          // loop over multi array
+          resultsByDepth.forEach( (postsAtDepth, i, arr) => {
+            postsAtDepth.forEach( (post, i, arr) => {
+              let voted = false
+              if( steemComments.ISAUTHENTICATED ){
+                voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
+              }
+              let order = post.depth === 1 ? i : false
+              let template = steemComments.createCommentTemplate(result,post, voted, order)
+              if ( post.depth === 1 ) {
+
+                $('.sc-comments').prepend( template)
+              } else if ( post.depth  > 1) {
+                var permlink = post.parent_permlink
+                $('.' + permlink ).append( template)
+              }
+            })
+          })
+
+          $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
+          if( steemComments.ISAUTHENTICATED ){
+            let topLevelPost = resultsArray[resultsArray.length -1]
+            voted = topLevelPost.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
+            $('.sc-topbar__upvote').addClass(`sc-topbar__upvote--voted-${voted}`)
+          }
+          resolve()
         });
-
-        // Find Deepest Comment
-        let maxDepthComment = resultsArray.reduce((prev, current) => {
-          return (prev.depth > current.depth) ? prev : current
-        })
-
-        // Multi demention array by
-        let resultsByDepth = [];
-        for (var i = 0; i < maxDepthComment.depth + 1; i++) {
-          resultsByDepth.push(resultsArray.filter((elem, j, array) => {
-            return elem.depth === i;
-          }))
-        }
-
-        // loop over multi array
-        resultsByDepth.forEach( (postsAtDepth, i, arr) => {
-          postsAtDepth.forEach( (post, i, arr) => {
-            let voted = false
-            if( steemComments.ISAUTHENTICATED ){
-              voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
-            }
-            let order = post.depth === 1 ? i : false
-            let template = steemComments.createCommentTemplate(result,post, voted, order)
-            if ( post.depth === 1 ) {
-
-              $('.sc-comments').prepend( template)
-            } else if ( post.depth  > 1) {
-              var permlink = post.parent_permlink
-              $('.' + permlink ).append( template)
-            }
-          })
-        })
-
-        $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
-        if( steemComments.ISAUTHENTICATED ){
-          let topLevelPost = resultsArray[resultsArray.length -1]
-          voted = topLevelPost.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
-          $('.sc-topbar__upvote').addClass(`sc-topbar__upvote--voted-${voted}`)
-        }
-
       });
     },
     createCommentTemplate: (result, post, voted, order) => {
