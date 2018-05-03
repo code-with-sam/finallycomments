@@ -351,12 +351,7 @@ const steemComments = {
       $.post({
         url: `/guest-comment`,
         dataType: 'json',
-        data: {
-          parentAuthor: parentAuthor,
-          parentPermlink: parentPermlink,
-          message: message,
-          parentTitle: parentTitle
-        }
+        data: {parentAuthor, parentPermlink, message, parentTitle, mainPostPermlink: steemComments.PERMLINK }
       }, (response) => {
           console.log(response)
       })

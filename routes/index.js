@@ -6,6 +6,7 @@ let { steem, getAccessFromRefresh } = require('../modules/steemconnect')
 const Thread = require('../models/thread')
 const Domain = require('../models/domain')
 const Token = require('../models/token')
+const GuestComment = require('../models/guest-comment')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
@@ -84,20 +85,36 @@ router.post('/comment', util.isAuthorized, (req, res) => {
 });
 
 router.post('/guest-comment', (req, res) => {
-    let author = 'guest'
-    let permlink = req.body.parentPermlink + '-' + util.urlString(32)
-    let title = 'RE: ' + req.body.parentTitle
-    let body = req.body.message
-    let parentAuthor = req.body.parentAuthor
-    let parentPermlink = req.body.parentPermlink
+    let comment = {
+      postPermlink: req.body.mainPostPermlink,
+      parentPermlink: req.body.parentPermlink,
+      author: 'Guest',
+      permlink: req.body.parentPermlink + '-' + util.urlString(32),
+      title: 'RE: ' + req.body.parentTitle,
+      body: req.body.message,
+      parentAuthor: req.body.parentAuthor
+    }
+    console.log(comment)
 
+    GuestComment.insert(comment)
+      .then(res => {
+
+        console.log(res)
+        res.json({
+          name: 'author',
+          msg: 'Posted A Guest Comment',
+          res: 'res'
+        })
+
+      })
+      .catch(err => {
+        console.log(err)
+                res.json({ error: err })
+
+      })
     // store comment in database
     // need to store main finally thread/top permlink to associate comments
-    res.json({
-      name: author,
-      msg: 'Posted A Guest Comment',
-      res: 'res'
-    })
+
 
 });
 
