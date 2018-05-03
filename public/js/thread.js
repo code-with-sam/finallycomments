@@ -341,23 +341,14 @@ const steemComments = {
     },
     sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) => {
 
-      // example comment should have
-
-      // {
-      //   id: result.content[post].id,
-      //   title: result.content[post].root_title,
-      //   author: result.content[post].author,
-      //   body: html,
-      //   permlink: result.content[post].permlink,
-      //   depth: steemComments.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
-      //   root_comment: result.content[post].root_comment,
-      //   parent_permlink: result.content[post].parent_permlink,
-      //   created: result.content[post].created,
-      //   votes: 0,
-      //   voters: 0,
-      //   value: 0
-      // }
-
+      let comment = {
+        author: 'Guest',
+        commentBody: message,
+        parentTitle: parentTitle,
+        depth: parentDepth + 1 ,
+        rootComment: steemComments.PERMLINK,
+        parentPermlink: parentPermlink
+      }
 
       let replytoThread = $(parentElement).hasClass('sc-item')
       if( !replytoThread ){
@@ -371,7 +362,7 @@ const steemComments = {
       $.post({
         url: `/guest-comment`,
         dataType: 'json',
-        data: {parentAuthor, parentPermlink, message, parentTitle, mainPostPermlink: steemComments.PERMLINK }
+        data: comment
       }, (response) => {
           console.log(response)
       })
@@ -387,11 +378,16 @@ const steemComments = {
     },
     displayGuestComments: (comments) => {
       comments.forEach( (post, i, arr) => {
-        var template = `
-        <div class="sc-item sc-cf sc-item__level-1">
-            <p>Guest - ${post.body}</p>
-        </div>`
-        $('.'+post.parentPermlink).append(template)
+        console.log(post)
+        let order = post.depth === 1 ? i : false
+        let accounts = undefined // no account arry to loop over for guests
+        let voted = false
+        let template = steemComments.createCommentTemplate(accounts, post, voted, order, true)
+        if ( post.depth === 1 ) {
+          $('.sc-comments').prepend( template)
+        } else if ( post.depth  > 1) {
+          $('.' + post.parent_permlink ).append( template)
+        }
       })
     },
     randomString: () => {
@@ -478,7 +474,7 @@ const steemComments = {
         });
       });
     },
-    createCommentTemplate: (result, post, voted, order) => {
+    createCommentTemplate: (result, post, voted, order, guest) => {
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
@@ -492,7 +488,7 @@ const steemComments = {
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
           var voteValue = (post.value > 0) ? '</span> <span class="sc-item__divider">|</span> <span class="sc-item__votecount">$' + post.value  + '</span><span class="sc-item__votecount">': ''
-          var reputation = `<span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>`
+          var reputation = guest ? '' :`<span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>`
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"

@@ -86,34 +86,25 @@ router.post('/comment', util.isAuthorized, (req, res) => {
 
 router.post('/guest-comment', (req, res) => {
     let comment = {
-      postPermlink: req.body.mainPostPermlink,
-      parentPermlink: req.body.parentPermlink,
-      author: 'Guest',
-      permlink: req.body.parentPermlink + '-' + util.urlString(32),
+      postid: util.urlString(32),
       title: 'RE: ' + req.body.parentTitle,
-      body: req.body.message,
-      parentAuthor: req.body.parentAuthor
+      author: req.body.author,
+      body: req.body.commentBody,
+      permlink: req.body.parentPermlink + '_' + util.urlString(32),
+      depth: req.body.depth,
+      root_comment: req.body.rootComment,
+      parent_permlink: req.body.parentPermlink,
+      created: new Date().toISOString(),
+      votes: 0,
+      voters: [],
+      value: 0
     }
-    console.log(comment)
 
     GuestComment.insert(comment)
-      .then(res => {
-
-        console.log(res)
-        res.json({
-          name: 'author',
-          msg: 'Posted A Guest Comment',
-          res: 'res'
-        })
-
+      .then(dbResponse => {
+        res.json({result : dbResponse})
       })
-      .catch(err => {
-        console.log(err)
-                res.json({ error: err })
-
-      })
-    // store comment in database
-    // need to store main finally thread/top permlink to associate comments
+      .catch(err => res.json({ error: err }))
 });
 
 
