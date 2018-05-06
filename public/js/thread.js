@@ -8,6 +8,7 @@ const steemComments = {
     ISAUTHENTICATED: $('.sc-section').data('auth'),
     USERACCOUNTS: [],
     OPTIONS: {},
+    upvoteIcon: '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" width="18px" height="18px"><circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/></svg>',
     authenticatedUser: () => {
       if (steemComments.ISAUTHENTICATED){
         return $('.sc-section').data('username');
@@ -208,14 +209,7 @@ const steemComments = {
       let authUrl = $('.sc-section').data('auth-url')
       let template = `
           <div class="sc-topbar sc-cf">
-            <span class="sc-topbar__upvote">
-            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-            viewBox="0 0 50 50" width="22px" height="22px">
-            <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
-            <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
-            <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
-            </svg>
-            </span>
+            <span class="sc-topbar__upvote">${steemComments.upvoteIcon}</span>
             <span class="sc-topbar__reply">Reply</span>
 
             <span class="sc-topbar__count"> 00 Comments</span>
@@ -256,14 +250,7 @@ const steemComments = {
     addVoteTemplateAfter: (dest) => {
       $('.sc-vote').remove()
       let template = `<div class="sc-vote">
-      <span class="sc-vote__btn">
-      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-      viewBox="0 0 50 50" width="30px" height="30px">
-      <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
-      <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
-      <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
-      </svg>
-      </span>
+      <span class="sc-vote__btn"><span class="sc-topbar__upvote">${steemComments.upvoteIcon}</span>
       <span class="sc-vote__value">50%</span>
       <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
       <span class="sc-close sc-vote__close" >&#43;</span>
@@ -521,14 +508,7 @@ const steemComments = {
           </h4>
           <p class="sc-item__content">${ html }</p>
           <div class="sc-item__meta">
-          <span class="sc-item__upvote sc-item__upvote--voted-${voted}">
-          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-          viewBox="0 0 50 50" width="18px" height="18px">
-          <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
-          <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
-          <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
-          </svg>
-          </span>
+          <span class="sc-item__upvote sc-item__upvote--voted-${voted}"><span class="sc-topbar__upvote">${steemComments.svgIcon}</span>
           <span class="sc-item__divider">|</span>
           <span class="sc-item__votecount">${post.votes} ${voteMessage} ${ steemComments.OPTIONS.values ? voteValue : ''}</span>
           <span class="sc-item__divider">|</span>
@@ -568,14 +548,7 @@ const steemComments = {
         </h4>
         <p class="sc-item__content">${ post.body }</p>
         <div class="sc-item__meta">
-        <span class="sc-item__upvote">
-        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-        viewBox="0 0 50 50" width="18px" height="18px">
-        <circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/>
-        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/>
-        <line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/>
-        </svg>
-        </span>
+        <span class="sc-item__upvote">${steemComments.upvoteIcon}</span>
         <span class="sc-item__divider">|</span>
         <span class="sc-item__votecount">0 votes</span>
         <span class="sc-item__divider">|</span>
