@@ -133,8 +133,14 @@ const steemComments = {
               let parentAuthor = topLevel ? steemComments.AUTHOR : parentElement.data('author')
               let title = topLevel ? '@'+parentAuthor : parentElement.data('title')
               let parentDepth = parentElement.data('post-depth') || 0
-              console.log(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
-              steemComments.sendGuestComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
+              let author = $('.sc-input--guestname').val()
+
+              if (author === '') {
+                 $(parentElement).children('.sc-item__right').append(steemComments.notificationTemplate('Name can not be empty'))
+              } else {
+                console.log(parentElement, parentAuthor,parentPermlink, message, title, parentDepth, author)
+                steemComments.sendGuestComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth, author)
+              }
           })
 
           $('.sc-section').on('click', '.sc-comment__close, .sc-vote__close', (e) => {
@@ -217,7 +223,7 @@ const steemComments = {
               <h3 class="sc-profile__name">${username}</h3>
               <img class="sc-profile__image" src="${profileImage}">
             </span>
-            <a href="${authUrl}"" class="sc-login sc-login--${steemComments.ISAUTHENTICATED}">Sign In</a>
+            <a href="${authUrl}"" class="sc-login sc-login--topbar sc-login--${steemComments.ISAUTHENTICATED}">Sign In</a>
           </div>
           <hr class="sc-topbar__rule">
           <div class="sc-topbar__sort">
@@ -236,11 +242,12 @@ const steemComments = {
     },
     addCommentTemplateAfter: (dest) => {
       $('.sc-comment__container').remove()
-      let guestPostButton =  steemComments.ISAUTHENTICATED ? '' : '<a href="#" target="_blank" class="sc-guest-comment__btn">Post As Guest </a>'
+      let authUrl = $('.sc-section').data('auth-url')
+      let guestPostUI = `<input placeholder="Name" type="text" name="guest-name" class="sc-input sc-input--guestname"><a href="#" target="_blank" class="sc-guest-comment__btn">Post As Guest </a> or <a href="${authUrl}" class="sc-login ">Sign In</a>`
+      let postButton =  steemComments.ISAUTHENTICATED ? '<a href="#" target="_blank" class="sc-comment__btn">Post</a>' : guestPostUI
       let template = `<div class="sc-comment__container">
       <textarea class="sc-comment__message" placeholder="Reply"></textarea>
-      <a href="#" target="_blank" class="sc-comment__btn">Post</a>
-      ${guestPostButton}
+      ${postButton}
       <span class="sc-close sc-comment__close" >Cancel</span>
       </div>`
       $(template).insertAfter(dest)
@@ -339,10 +346,10 @@ const steemComments = {
         }
       })
     },
-    sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) => {
+    sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth, author) => {
 
       let comment = {
-        author: 'Guest',
+        author,
         commentBody: message,
         parentTitle: parentTitle,
         depth: parentDepth + 1 ,
@@ -489,6 +496,7 @@ const steemComments = {
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'
           var voteValue = (post.value > 0) ? '</span> <span class="sc-item__divider">|</span> <span class="sc-item__votecount">$' + post.value  + '</span><span class="sc-item__votecount">': ''
           var reputation = guest ? '' :`<span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>`
+          let authorLink = guest ? `<span class="sc-item__author-link">${post.author} (Guest)</span>` : `<a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>`
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
@@ -506,8 +514,7 @@ const steemComments = {
           </div>
           <div class="sc-item__right">
           <h4 class="sc-item__username">
-          <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
-
+          ${authorLink}
           ${steemComments.OPTIONS.reputation ? reputation : ''}
 
           <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
