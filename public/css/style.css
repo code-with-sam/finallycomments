@@ -185,7 +185,7 @@ a.sc-settings__logout {
 }
 .sc-close {
   cursor: pointer;
-  float: right;
+  /*float: right;*/
 }
 .sc-item {
   padding: 0 15px 10px;

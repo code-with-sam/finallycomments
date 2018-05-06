@@ -20,7 +20,10 @@ const steemComments = {
       steemComments.getPartsFromLink()
       steemComments.addTopBar()
       steemComments.getComments()
-        .then( x => steemComments.getGuestComments(steemComments.PERMLINK) )
+        .then( x => {
+          steemComments.getGuestComments(steemComments.PERMLINK)
+          steemComments.getGuestReplyComments(steemComments.PERMLINK)
+        })
       steemComments.uiActions()
       window.addEventListener('message', steemComments.frameLoad, false);
     },
@@ -111,17 +114,18 @@ const steemComments = {
 
           $('.sc-section').on('click', '.sc-comment__btn' , (e) => {
             e.preventDefault()
-            if ( steemComments.ISAUTHENTICATED) {
-              let parentElement = $(e.currentTarget).closest('.sc-item') || $('.sc-comments')
-              let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
-              let message = $('.sc-comment__message').val()
-              let parentPermlink = topLevel ? steemComments.PERMLINK : parentElement.data('permlink')
-              let parentAuthor = topLevel ? steemComments.AUTHOR : parentElement.data('author')
-              let title = topLevel ? '@'+parentAuthor : parentElement.data('title')
-              let parentDepth = parentElement.data('post-depth')
-              steemComments.sendComment(parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
+            let $parentElement = $(e.currentTarget).closest('.sc-item') ||  $('.sc-comments')
+            let topLevel = $(e.currentTarget).parent().parent().hasClass('sc-section') ? true : false
+            let message = $('.sc-comment__message').val()
+            let parentPermlink = topLevel ? steemComments.PERMLINK : $parentElement.data('permlink')
+            let parentAuthor = topLevel ? steemComments.AUTHOR : $parentElement.data('author')
+            let title = topLevel ? '@'+parentAuthor : $parentElement.data('title')
+            let parentDepth = $parentElement.data('post-depth')
+
+            if ( $parentElement.data('guest') ) {
+              steemComments.sendGuestReplyComment($parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
             } else {
-              $(e.currentTarget).closest('.sc-comment__container').append(steemComments.notificationTemplate('Please sign in to comment.'))
+              steemComments.sendComment($parentElement, parentAuthor,parentPermlink, message, title, parentDepth)
             }
           })
 
@@ -361,6 +365,32 @@ const steemComments = {
           console.log(response)
       })
     },
+    sendGuestReplyComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) => {
+      let comment = {
+        parentAuthor: parentAuthor,
+        parentPermlink: parentPermlink,
+        commentBody: message,
+        parentTitle: parentTitle,
+        depth: parentDepth + 1 ,
+        rootComment: steemComments.PERMLINK,
+      }
+      let replytoThread = $(parentElement).hasClass('sc-item')
+      if( !replytoThread ){
+        $('.sc-comment__container').find('.sc-comment__btn').text('Posting... ')
+        $('.sc-comment__container').find('.sc-comment__btn').append('<img src="/img/loader.gif">')
+        parentElement = $('.sc-comments')
+      } else {
+        $(parentElement).find('.sc-comment__btn').text('Posting... ')
+        $(parentElement).find('.sc-comment__btn').append('<img src="/img/loader.gif">')
+      }
+      $.post({
+        url: `/guest-reply-comment`,
+        dataType: 'json',
+        data: comment
+      }, (response) => {
+          console.log(response)
+      })
+    },
     getGuestComments: (rootPermlink) => {
       $.post({
         url: '/guest-comments',
@@ -370,6 +400,15 @@ const steemComments = {
         steemComments.displayGuestComments(response.guestComments)
       })
     },
+    getGuestReplyComments: (rootPermlink) => {
+      $.post({
+        url: '/guest-reply-comments',
+        dataType: 'json',
+        data: { permlink: rootPermlink }
+      }, (response) => {
+        steemComments.displayGuestReplyComments(response.guestReplyComments)
+      })
+    },
     displayGuestComments: (comments) => {
       comments.forEach( (post, i, arr) => {
         console.log(post)
@@ -377,6 +416,22 @@ const steemComments = {
         let accounts = undefined // no account arry to loop over for guests
         let voted = false
         let template = steemComments.createCommentTemplate(accounts, post, voted, order, true)
+        if ( post.depth === 1 ) {
+          $('.sc-comments').prepend( template)
+        } else if ( post.depth  > 1) {
+          $('.' + post.parent_permlink ).append( template)
+        }
+      })
+    },
+    displayGuestReplyComments: async (comments) => {
+      let authors = comments.map(comment => comment.author)
+      let newAccounts = await steem.api.getAccountsAsync(authors)
+      newAccounts.forEach(user => steemComments.USERACCOUNTS[user.name] = user )
+      comments.forEach( (post, i, arr) => {
+        console.log(post)
+        let order = post.depth === 1 ? i : false
+        let voted = false
+        let template = steemComments.createCommentTemplate(steemComments.USERACCOUNTS, post, voted, order, false, true)
         if ( post.depth === 1 ) {
           $('.sc-comments').prepend( template)
         } else if ( post.depth  > 1) {
@@ -447,7 +502,7 @@ const steemComments = {
                 voted = post.voters.indexOf(steemComments.authenticatedUser()) > -1 ? true : false
               }
               let order = post.depth === 1 ? i : false
-              let template = steemComments.createCommentTemplate(result,post, voted, order)
+              let template = steemComments.createCommentTemplate(result.accounts,post, voted, order)
               if ( post.depth === 1 ) {
 
                 $('.sc-comments').prepend( template)
@@ -468,13 +523,13 @@ const steemComments = {
         });
       });
     },
-    createCommentTemplate: (result, post, voted, order, guest) => {
+    createCommentTemplate: (accounts, post, voted, order, guest, guestReply) => {
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
 
           try {
-            var metadata = JSON.parse(result.accounts[post.author].json_metadata).profile
+            var metadata = JSON.parse(accounts[post.author].json_metadata).profile
           }
           catch (err){
             var metadata = {profile_image: '/img/default-user.jpg'}
@@ -484,6 +539,13 @@ const steemComments = {
           var voteValue = (post.value > 0) ? '</span> <span class="sc-item__divider">|</span> <span class="sc-item__votecount">$' + post.value  + '</span><span class="sc-item__votecount">': ''
           var reputation = guest ? '' :`<span class="sc-item__reputation">[${steem.formatter.reputation(steemComments.USERACCOUNTS[post.author].reputation)}]</span>`
           let authorLink = guest ? `<span class="sc-item__author-link">${post.author} (Guest)</span>` : `<a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>`
+          let upvote = `<span class="sc-item__upvote sc-item__upvote--voted-${voted}">${steemComments.upvoteIcon}</span>
+                    <span class="sc-item__divider">|</span>
+                    <span class="sc-item__votecount">${post.votes} ${voteMessage} ${ steemComments.OPTIONS.values ? voteValue : ''}</span>
+                    <span class="sc-item__divider">|</span>
+                    `
+          if (guest || guestReply) upvote = ''
+
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
@@ -493,6 +555,7 @@ const steemComments = {
           data-bio="${metadata.about}"
           data-order="${order}"
           data-value="${post.value}"
+          data-guest="${guest ? true : false }"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
 
@@ -508,10 +571,7 @@ const steemComments = {
           </h4>
           <p class="sc-item__content">${ html }</p>
           <div class="sc-item__meta">
-          <span class="sc-item__upvote sc-item__upvote--voted-${voted}"><span class="sc-topbar__upvote">${steemComments.svgIcon}</span>
-          <span class="sc-item__divider">|</span>
-          <span class="sc-item__votecount">${post.votes} ${voteMessage} ${ steemComments.OPTIONS.values ? voteValue : ''}</span>
-          <span class="sc-item__divider">|</span>
+          ${upvote}
           <span class="sc-item__reply">Reply</span>
           </div>
           </div>
