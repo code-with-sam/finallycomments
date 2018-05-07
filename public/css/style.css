@@ -77,14 +77,22 @@ a {
   display: none;
 }
 
+.sc-input {
+  padding: 6px 10px;
+  border-radius: 3px;
+  text-decoration: none;
+  margin-bottom: 10px;
+  margin-right: 7px;
+  border: solid 1px #ccc;
+  box-shadow: 0 0 15px rgba(0,0,0,0.15)
+}
 .sc-login {
-  float: right;
   background-color: #6eafff;
   padding: 5px 10px;
   border-radius: 3px;
   color: #fff;
   text-decoration: none;
-  margin-bottom: 10px;
+  margin: 0 0 10px 5px;
 }
 .sc-login:hover {
   text-decoration: none;
@@ -93,6 +101,10 @@ a {
 
 .sc-login--true {
   display: none;
+}
+
+.sc-login--topbar {
+  float: right;
 }
 
 .sc-profile__image {
@@ -173,6 +185,7 @@ a.sc-settings__logout {
 }
 .sc-close {
   cursor: pointer;
+  /*float: right;*/
 }
 .sc-item {
   padding: 0 15px 10px;
@@ -337,6 +350,24 @@ a.sc-settings__logout {
   font-size: 16px;
 }
 
+
+.sc-guest-comment__btn {
+  display: inline-block;
+  margin: 0 10px 10px 0;
+  cursor: pointer;
+  background: #dfdbdb;
+  border-radius: 2px;
+  color: #303030;
+  box-shadow: 0 0 15px rgba(0,0,0,0.15);
+  padding: 5px 10px;
+  text-decoration: none;
+}
+
+a.sc-comment__btn:hover {
+  color: #333;
+  text-decoration: none;
+  background-color: #16191f;
+}
 .sc-comment__btn {
   display: inline-block;
   margin: 0 10px 10px 0;

@@ -6,6 +6,8 @@ let { steem, getAccessFromRefresh } = require('../modules/steemconnect')
 const Thread = require('../models/thread')
 const Domain = require('../models/domain')
 const Token = require('../models/token')
+const GuestComment = require('../models/guest-comment')
+const GuestReplyComment = require('../models/guest-reply-comment')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
@@ -77,11 +79,73 @@ router.post('/comment', util.isAuthorized, (req, res) => {
         res.json({
           name: author,
           msg: 'Posted To Steem Network',
-          res: steemResponse
+          data: steemResponse
         })
       }
     });
 });
+
+router.post('/guest-reply-comment', util.isAuthorized, (req, res) => {
+    steem.setAccessToken(req.session.access_token);
+    let comment = {
+      postid: util.urlString(32),
+      title: 'RE: ' + req.body.parentTitle,
+      author: req.session.steemconnect.name,
+      body: req.body.commentBody,
+      permlink: req.body.parentPermlink + '_' + util.urlString(32),
+      depth: req.body.depth,
+      root_comment: req.body.rootComment,
+      parent_permlink: req.body.parentPermlink,
+      created: new Date().toISOString(),
+      votes: 0,
+      voters: [],
+      value: 0
+    }
+
+    GuestReplyComment.insert(comment)
+      .then(dbResponse => {
+        res.json({ data: {result : dbResponse} })
+      })
+      .catch(err => res.json({ error: err }))
+});
+
+router.post('/guest-comment', (req, res) => {
+    let comment = {
+      postid: util.urlString(32),
+      title: 'RE: ' + req.body.parentTitle,
+      author: req.body.author,
+      body: req.body.commentBody,
+      permlink: req.body.parentPermlink + '_' + util.urlString(32),
+      depth: req.body.depth,
+      root_comment: req.body.rootComment,
+      parent_permlink: req.body.parentPermlink,
+      created: new Date().toISOString(),
+      votes: 0,
+      voters: [],
+      value: 0
+    }
+
+    GuestComment.insert(comment)
+      .then(dbResponse => {
+        res.json({ data: {result : dbResponse} })
+      })
+      .catch(err => res.json({ error: err }))
+});
+
+router.post('/guest-comments', async (req, res) => {
+    let permlink = req.body.permlink
+    let guestComments = await GuestComment.find(permlink)
+    console.log('after db request: ', guestComments)
+    res.json({guestComments})
+});
+
+router.post('/guest-reply-comments', async (req, res) => {
+    let permlink = req.body.permlink
+    let guestReplyComments = await GuestReplyComment.find(permlink)
+    console.log('after db request: ', guestReplyComments)
+    res.json({guestReplyComments})
+});
+
 
 router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
   let username = req.params.username
