@@ -2,24 +2,21 @@ const f = {
     CATEGORY: '',
     AUTHOR: '',
     PERMLINK: '',
-    STEEMSERVER: 'https://api.steemit.com',
     PROFILEIMAGE: '',
     ISAUTHENTICATED: $('.sc-section').data('auth'),
     USERACCOUNTS: [],
     OPTIONS: {},
     upvoteIcon: '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" width="18px" height="18px"><circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/></svg>',
     authenticatedUser: () => {
-      if (f.ISAUTHENTICATED){
-        return $('.sc-section').data('username');
-      } else {
-        return false
-      }
+      if (f.ISAUTHENTICATED) return $('.sc-section').data('username')
+      return false
     },
     init: () => {
       f.getPartsFromLink()
       f.addTopBar()
       f.getComments()
         .then( x => {
+          // Guest/GuestReply comments are from a database and need to be appended to the correct permlink, this happens after the STEEM comments have been retrived and rendered
           f.getGuestComments(f.PERMLINK)
           f.getGuestReplyComments(f.PERMLINK)
         })
@@ -84,7 +81,6 @@ const f = {
             if ( $(e.currentTarget).hasClass('sc-item__upvote--voted-true') ){
               $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate('You have already voted.'))
               f.timeoutNotifications()
-
               return false
             }
             $('.sc-notification').remove()
@@ -102,7 +98,6 @@ const f = {
 
           $('.sc-section').on('click', '.sc-vote__btn', (e) => {
             let parentElement = $(e.currentTarget).closest('.sc-item')
-
             let topLevel = $(e.currentTarget).parent().parent().parent().hasClass('sc-section') ? true : false
             let weight = $('.sc-vote__slider').val()
             let permlink = topLevel ? f.PERMLINK : parentElement.data('permlink')
@@ -324,7 +319,6 @@ const f = {
     appendSuccessfulComment: (response, parentDepth, parentElement, fromSteem) => {
       let newComment, guestReply = false, guest = false;
       let commentdata = f.processAjaxCommentData(response.data, fromSteem, parentDepth)
-      // let newComment =  $(f.singleCommentTemplate(commentdata, parentDepth, fromSteem, f.ISAUTHENTICATED)
       if (!fromSteem && !f.ISAUTHENTICATED) guest = true
       if (!fromSteem && f.ISAUTHENTICATED) guestReply = true
       newComment = $(f.createCommentTemplate(f.USERACCOUNTS, commentdata, false, false, guest, guestReply))
@@ -419,6 +413,9 @@ const f = {
         f.displayGuestReplyComments(response.guestReplyComments)
       })
     },
+    // Guest comments are not connected to the STEEM blockchain
+    // Can not be voted
+    // no need to search for accounts (user nickname provided by user)
     displayGuestComments: (comments) => {
       comments.forEach( (post, i, arr) => {
         console.log(post)
@@ -433,6 +430,7 @@ const f = {
         }
       })
     },
+    // Async so that we can request any new account data for the authorised user
     displayGuestReplyComments: async (comments) => {
       let authors = comments.map(comment => comment.author)
       let newAccounts = await steem.api.getAccountsAsync(authors)
@@ -524,8 +522,13 @@ const f = {
         });
       });
     },
+    // Returns HTML for an individual comment
+    // @param accounts - Object - User accounts in STEEM API format
+    // @param post - Object - Data for a specific comment
+    // @param voted - Boolean - If the comment being generated has been voted by the currently authenticated User
+    // @param guest - Boolean - IF the comment being generated is a guest comment
+    // @parem guestReply - Boolean - if the comment being generated is by an authenticated user but in reply to a guest
     createCommentTemplate: (accounts, post, voted, order, guest, guestReply) => {
-      console.log(accounts, post, voted, order, guest, guestReply)
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
@@ -580,6 +583,10 @@ const f = {
           </div>`
           return template;
         },
+      // prepare RAW data from STEEM API and Finally Database into a recongnised format
+      // @param data - Object - from Finally database or STEEM API
+      // @param fromSteem - Boolean - specificy if data is from STEEM API or not
+      // @param parentDepth - Int - The depth(indentation) of the parent comment this is inresponse to
       processAjaxCommentData: (data, fromSteem, parentDepth) => {
           var post = {}, metadata;
           if (fromSteem) {
