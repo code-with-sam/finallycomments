@@ -15,14 +15,6 @@ router.get('/', (req, res, next) =>  {
   });
 });
 
-router.get('/login', (req, res, next) =>  {
-  if(req.session.steemconnect){
-    res.redirect(`/`)
-  } else {
-    res.render('index', { title: 'SteemConnect Comments' });
-  }
-});
-
 router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
       let status = false
       let username = req.session.steemconnect ? req.session.steemconnect.name : ''
@@ -36,7 +28,6 @@ router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
         status = true
         profileImage = util.processProfileImage(req.session.steemconnect)
       }
-
       res.render('thread', {
         path: 'thread',
         username: username,
