@@ -36,7 +36,7 @@ const f = {
       }
     },
     uiActions: () => {
-          $('.sc-login').on('click', (e) => {
+          $('.sc-section').on('click', '.sc-login', (e) => {
             let authUrl = $(e.currentTarget).attr('href')
             authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
             if (window.focus) authWindow.focus();
