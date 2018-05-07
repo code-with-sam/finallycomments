@@ -79,7 +79,7 @@ router.post('/comment', util.isAuthorized, (req, res) => {
         res.json({
           name: author,
           msg: 'Posted To Steem Network',
-          res: steemResponse
+          data: steemResponse
         })
       }
     });
@@ -104,7 +104,7 @@ router.post('/guest-reply-comment', util.isAuthorized, (req, res) => {
 
     GuestReplyComment.insert(comment)
       .then(dbResponse => {
-        res.json({result : dbResponse})
+        res.json({ data: {result : dbResponse} })
       })
       .catch(err => res.json({ error: err }))
 });

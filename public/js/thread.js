@@ -317,25 +317,24 @@ const steemComments = {
           if (response.status == 'fail'){
             $(parentElement).append(steemComments.notificationTemplate(response.message))
           } else {
-            let newComment = $(steemComments.singleCommentTemplate(response.res, parentDepth))
-            let inputArea = $('.sc-comment__container')
-            inputArea.fadeOut(400, (e) => {
-              inputArea.remove()
-            })
-
-            $(parentElement).append(newComment)
-
-            let offset = newComment.offset().top
-            parent.postMessage({
-              message: 'new-comment',
-              inputAreaHeight: 100,
-              offset: offset,
-              depth: parentDepth || 0
-            }, '*')
-
+            steemComments.appendSuccessfulComment(response, parentDepth, parentElement, true)
           }
         }
       })
+    },
+    appendSuccessfulComment: (response, parentDepth, parentElement, fromSteem) => {
+      console.log(response, parentDepth, parentElement)
+      let newComment = $(steemComments.singleCommentTemplate(response.data, parentDepth, fromSteem))
+      let inputArea = $('.sc-comment__container')
+      inputArea.fadeOut(400, () => inputArea.remove())
+      $(parentElement).append(newComment)
+      let offset = newComment.offset().top
+      parent.postMessage({
+        message: 'new-comment',
+        inputAreaHeight: 100,
+        offset: offset,
+        depth: parentDepth || 0
+      }, '*')
     },
     sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth, author) => {
 
@@ -362,7 +361,11 @@ const steemComments = {
         dataType: 'json',
         data: comment
       }, (response) => {
-          console.log(response)
+        if (response.status == 'fail'){
+          $(parentElement).append(steemComments.notificationTemplate(response.message))
+        } else {
+          steemComments.appendSuccessfulComment(response, parentDepth, parentElement, false)
+        }
       })
     },
     sendGuestReplyComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) => {
@@ -388,7 +391,11 @@ const steemComments = {
         dataType: 'json',
         data: comment
       }, (response) => {
-          console.log(response)
+        if (response.status == 'fail'){
+          $(parentElement).append(steemComments.notificationTemplate(response.message))
+        } else {
+          steemComments.appendSuccessfulComment(response, parentDepth, parentElement, false)
+        }
       })
     },
     getGuestComments: (rootPermlink) => {
@@ -578,21 +585,25 @@ const steemComments = {
           </div>`
           return template;
         },
-      singleCommentTemplate: (data, parentDepth) => {
-        let post = {
-          id : data.result.id,
-          permlink : data.result.operations[0][1].permlink,
-          author : data.result.operations[0][1].author,
-          title : data.result.operations[0][1].title,
-          body : data.result.operations[0][1].body,
-          depth: parentDepth + 1
+      singleCommentTemplate: (data, parentDepth, fromSteem) => {
+        console.log('data: ',data)
+        var post = {}, metadata;
+        if (fromSteem) {
+          data = data.result.operations[0][1]
+          metadata = { profile_image: $('.sc-section').data('profileimage') }
+        } else {
+          data = data.result.comment
+          metadata = { profile_image: '/img/default-user.jpg' }
         }
-        let metadata = {
-          profile_image: $('.sc-section').data('profileimage')
-        }
+
+        post.permlink = data.permlink,
+        post.author = data.author,
+        post.title = data.title,
+        post.body = data.body,
+        post.depth = parentDepth + 1
+
         var template = `
-        <div data-post-id="${post.id}"
-        data-permlink="${post.permlink}"
+        <div data-permlink="${post.permlink}"
         data-author="${post.author}"
         data-title="${post.title}"
         data-post-depth="${post.depth}"
