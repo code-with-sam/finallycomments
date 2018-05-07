@@ -450,19 +450,10 @@ const steemComments = {
         }
       })
     },
-    randomString: () => {
-      let string = ''
-      let allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
-      for (var i = 0; i < 32; i++){
-        string += allowedChars.charAt(Math.floor(Math.random() * allowedChars.length));
-      }
-      return string;
-    },
     getComments: () => {
       return new Promise((resolve, reject) => {
         $('.sc-section').append('<div class="sc-comments"></div>')
 
-        steem.api.setOptions({ url: steemComments.STEEMSERVER });
         steem.api.getState(`/${steemComments.CATEGORY}/@${steemComments.AUTHOR}/${steemComments.PERMLINK}`, function(err, result) {
           steemComments.USERACCOUNTS = result.accounts
           let resultsArray = [];
