@@ -334,7 +334,6 @@ const f = {
       }, '*')
     },
     sendGuestComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth, author) => {
-
       let comment = {
         author,
         commentBody: message,
