@@ -127,11 +127,10 @@ router.post('/guest-comment', (req, res) => {
 
     GuestComment.insert(comment)
       .then(dbResponse => {
-        res.json({result : dbResponse})
+        res.json({ data: {result : dbResponse} })
       })
       .catch(err => res.json({ error: err }))
 });
-
 
 router.post('/guest-comments', async (req, res) => {
     let permlink = req.body.permlink

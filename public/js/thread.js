@@ -323,8 +323,12 @@ const steemComments = {
       })
     },
     appendSuccessfulComment: (response, parentDepth, parentElement, fromSteem) => {
-      console.log(response, parentDepth, parentElement)
-      let newComment = $(steemComments.singleCommentTemplate(response.data, parentDepth, fromSteem))
+      let newComment, guestReply = false, guest = false;
+      let commentdata = steemComments.processAjaxCommentData(response.data, fromSteem, parentDepth)
+      // let newComment =  $(steemComments.singleCommentTemplate(commentdata, parentDepth, fromSteem, steemComments.ISAUTHENTICATED)
+      if (!fromSteem && !steemComments.ISAUTHENTICATED) guest = true
+      if (!fromSteem && steemComments.ISAUTHENTICATED) guestReply = true
+      newComment = $(steemComments.createCommentTemplate(steemComments.USERACCOUNTS, commentdata, false, false, guest, guestReply))
       let inputArea = $('.sc-comment__container')
       inputArea.fadeOut(400, () => inputArea.remove())
       $(parentElement).append(newComment)
@@ -585,49 +589,22 @@ const steemComments = {
           </div>`
           return template;
         },
-      singleCommentTemplate: (data, parentDepth, fromSteem) => {
-        console.log('data: ',data)
-        var post = {}, metadata;
-        if (fromSteem) {
-          data = data.result.operations[0][1]
-          metadata = { profile_image: $('.sc-section').data('profileimage') }
-        } else {
-          data = data.result.comment
-          metadata = { profile_image: '/img/default-user.jpg' }
-        }
+      processAjaxCommentData: (data, fromSteem, parentDepth) => {
+          var post = {}, metadata;
+          if (fromSteem) {
+            data = data.result.operations[0][1]
+            metadata = { profile_image: $('.sc-section').data('profileimage') }
+          } else {
+            data = data.result.comment
+            metadata = { profile_image: '/img/default-user.jpg' }
+          }
+          post.permlink = data.permlink,
+          post.author = data.author,
+          post.title = data.title,
+          post.body = data.body,
+          post.depth = parentDepth + 1
 
-        post.permlink = data.permlink,
-        post.author = data.author,
-        post.title = data.title,
-        post.body = data.body,
-        post.depth = parentDepth + 1
-
-        var template = `
-        <div data-permlink="${post.permlink}"
-        data-author="${post.author}"
-        data-title="${post.title}"
-        data-post-depth="${post.depth}"
-
-        class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
-        <div class="sc-item__left">
-        <img class="sc-item__image" src="${metadata.profile_image}" height="50px" width="50px">
-        </div>
-        <div class="sc-item__right">
-        <h4 class="sc-item__username">
-        <a class="sc-item__author-link" href="https://steemit.com/@${post.author}" target="_blank">@${post.author}</a>
-        <span class="sc-item__middot"> &middot; </span> <span class="sc-item__datetime"> ${ moment(post.created).fromNow() } </span>
-        </h4>
-        <p class="sc-item__content">${ post.body }</p>
-        <div class="sc-item__meta">
-        <span class="sc-item__upvote">${steemComments.upvoteIcon}</span>
-        <span class="sc-item__divider">|</span>
-        <span class="sc-item__votecount">0 votes</span>
-        <span class="sc-item__divider">|</span>
-        <span class="sc-item__reply">Reply</span>
-        </div>
-        </div>
-        </div>`
-        return template;
+          return post
       },
       notificationTemplate: (message) => {
         $('.sc-notification').remove()
