@@ -4,11 +4,16 @@ const f = {
     PERMLINK: '',
     PROFILEIMAGE: '',
     ISAUTHENTICATED: $('.sc-section').data('auth'),
+    rootAuthor: '',
     USERACCOUNTS: [],
     OPTIONS: {},
     upvoteIcon: '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" width="18px" height="18px"><circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/></svg>',
     authenticatedUser: () => {
       if (f.ISAUTHENTICATED) return $('.sc-section').data('username')
+      return false
+    },
+    isThreadOwner: (post) => {
+      if (f.authenticatedUser() === f.rootAuthor) return true
       return false
     },
     init: () => {
@@ -454,26 +459,39 @@ const f = {
         }
       })
     },
+    sendCommentModeration: (moderationType, commentData) => {
+      $.post({
+        url: '/moderation',
+        dataType: 'json',
+        data: { moderationType,
+          commentAuthor: commentData.author,
+          commentCategory: commentData.category,
+          commentPermlink: commentData.permlink
+        }
+      }, (response) => {
+        console.log(response)
+      })
+    },
     getComments: () => {
       return new Promise((resolve, reject) => {
         $('.sc-section').append('<div class="sc-comments"></div>')
 
         steem.api.getState(`/${f.CATEGORY}/@${f.AUTHOR}/${f.PERMLINK}`, function(err, result) {
+          f.rootAuthor = Object.values(Object.assign(result.content, {}))[0].root_author
           f.USERACCOUNTS = result.accounts
           let resultsArray = [];
 
           for ( post in result.content ){
 
             var html = result.content[post].body
-
             resultsArray.push({
               id: result.content[post].id,
               title: result.content[post].root_title,
               author: result.content[post].author,
+              category: result.content[post].category,
               body: html,
               permlink: result.content[post].permlink,
               depth: f.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
-              root_comment: result.content[post].root_comment,
               parent_permlink: result.content[post].parent_permlink,
               created: result.content[post].created,
               votes: result.content[post].net_votes,
@@ -558,9 +576,15 @@ const f = {
                     `
           if (guest || guestReply) upvote = ''
 
+          let moderate =  f.isThreadOwner(post) ? `
+          <span class="sc-item__divider">|</span>
+          <button class="sc-item__hide button is-dark">Hide</button>
+          ` : ''
+
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
+          data-category="${post.category}"
           data-author="${post.author}"
           data-title="${post.title}"
           data-post-depth="${post.depth}"
@@ -585,6 +609,7 @@ const f = {
           <div class="sc-item__meta">
           ${upvote}
           <span class="sc-item__reply">Reply</span>
+          ${moderate}
           </div>
           </div>
           </div>`
