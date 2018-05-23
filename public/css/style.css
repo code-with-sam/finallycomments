@@ -525,3 +525,7 @@ a.sc-comment__btn:hover {
   margin-bottom: 30px;
   color: #2167ef;
 }
+
+.moderation--message {
+  padding: 15px 0 30px;
+}

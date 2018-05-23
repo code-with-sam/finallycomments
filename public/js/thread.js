@@ -22,7 +22,7 @@ const f = {
       f.getComments()
         .then(() => f.getGuestComments(f.PERMLINK))
         .then(() => f.getGuestReplyComments(f.PERMLINK))
-        .then(() => f.applyModeration(f.PERMLINK))
+        .then(() => f.applyCommentModeration(f.PERMLINK))
       f.uiActions()
       window.addEventListener('message', f.frameLoad, false);
     },
@@ -470,9 +470,12 @@ const f = {
       })
       console.log(response)
     },
-    applyModeration: async (rootPermlink) => {
+    applyCommentModeration: async (rootPermlink) => {
       const response = await $.get({url: `/moderation/${rootPermlink}`})
-      console.log(response)
+      response.moderation.forEach( (comment) => {
+        $(`.${comment.permlink}`).prepend('<p class="moderation--message">- [Hidden By Moderation]</p>')
+        $(`.${comment.permlink}`).children('.sc-item__left, .sc-item__right').hide()
+      })
     },
     getComments: () => {
       return new Promise((resolve, reject) => {

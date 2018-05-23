@@ -211,7 +211,7 @@ router.post('/moderation', util.isAuthorized, async (req, res) => {
   const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
   const rootAuthor = Object.values(permlinkState.content)[0].root_author
   const rootPermlink = Object.values(permlinkState.content)[0].root_permlink
-  if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: true})
+  if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
 
   const commentRefrence = {
     root_comment: rootPermlink,
