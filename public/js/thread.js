@@ -20,11 +20,9 @@ const f = {
       f.getPartsFromLink()
       f.addTopBar()
       f.getComments()
-        .then( x => {
-          // Guest/GuestReply comments are from a database and need to be appended to the correct permlink, this happens after the STEEM comments have been retrived and rendered
-          f.getGuestComments(f.PERMLINK)
-          f.getGuestReplyComments(f.PERMLINK)
-        })
+        .then(() => f.getGuestComments(f.PERMLINK))
+        .then(() => f.getGuestReplyComments(f.PERMLINK))
+        .then(() => f.applyModeration(f.PERMLINK))
       f.uiActions()
       window.addEventListener('message', f.frameLoad, false);
     },
@@ -407,28 +405,28 @@ const f = {
         }
       })
     },
-    getGuestComments: (rootPermlink) => {
-      $.post({
+    getGuestComments: async (rootPermlink) => {
+      const response = await $.post({
         url: '/guest-comments',
         dataType: 'json',
-        data: { permlink: rootPermlink }
-      }, (response) => {
-        f.displayGuestComments(response.guestComments)
+        data: { permlink: rootPermlink}
       })
+      await f.displayGuestComments(response.guestComments)
+      return
     },
-    getGuestReplyComments: (rootPermlink) => {
-      $.post({
+    getGuestReplyComments: async (rootPermlink) => {
+      const response = await $.post({
         url: '/guest-reply-comments',
         dataType: 'json',
         data: { permlink: rootPermlink }
-      }, (response) => {
-        f.displayGuestReplyComments(response.guestReplyComments)
       })
+      await f.displayGuestReplyComments(response.guestReplyComments)
+      return
     },
     // Guest comments are not connected to the STEEM blockchain
     // Can not be voted
     // no need to search for accounts (user nickname provided by user)
-    displayGuestComments: (comments) => {
+    displayGuestComments: async (comments) => {
       comments.forEach( (post, i, arr) => {
         console.log(post)
         let order = post.depth === 1 ? i : false
@@ -440,6 +438,7 @@ const f = {
         } else if ( post.depth  > 1) {
           $('.' + post.parent_permlink ).append( template)
         }
+        return
       })
     },
     // Async so that we can request any new account data for the authorised user
@@ -458,19 +457,22 @@ const f = {
           $('.' + post.parent_permlink ).append( template)
         }
       })
+      return
     },
-    sendCommentModeration: (moderationType, commentData) => {
-      $.post({
+    sendCommentModeration: async (moderationType, commentData) => {
+      const response = await $.post({
         url: '/moderation',
         dataType: 'json',
         data: { moderationType,
           commentAuthor: commentData.author,
           commentCategory: commentData.category,
-          commentPermlink: commentData.permlink
-        }
-      }, (response) => {
-        console.log(response)
+          commentPermlink: commentData.permlink }
       })
+      console.log(response)
+    },
+    applyModeration: async (rootPermlink) => {
+      const response = await $.get({url: `/moderation/${rootPermlink}`})
+      console.log(response)
     },
     getComments: () => {
       return new Promise((resolve, reject) => {
