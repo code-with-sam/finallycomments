@@ -77,6 +77,14 @@ const f = {
               $('.sc-notification').remove()
           })
 
+          $('.sc-section').on('click', '.sc-item__hide', (e) => {
+              let commmentData = $(e.currentTarget).closest('.sc-item').data()
+              console.log('IS GUEST COMMENT: ', commmentData)
+              f.sendCommentModeration('hide', commmentData)
+              // $('.sc-vote').remove()
+              // $('.sc-notification').remove()
+          })
+
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
             if ( $(e.currentTarget).hasClass('sc-item__upvote--voted-true') ){
               $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate('You have already voted.'))
