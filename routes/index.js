@@ -9,7 +9,7 @@ const Token = require('../models/token')
 const GuestComment = require('../models/guest-comment')
 const GuestReplyComment = require('../models/guest-reply-comment')
 const Moderation = require('../models/moderation')
-const steemjs = require('steem')
+const ModerationController = require('../controllers/moderation')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
@@ -205,54 +205,11 @@ router.post('/new-thread', util.isAuthorized, (req, res) => {
 });
 
 router.post('/moderation', util.isAuthorized, async (req, res) => {
-  steem.setAccessToken(req.session.access_token);
-  let authenticatedUser = req.session.steemconnect.name
-  let permlink = req.body.commentPermlink
-  let category = req.body.commentCategory
-  let author = req.body.commentAuthor
-  let rootPermlink, rootAuthor
-  let isGuestComment =  JSON.parse(req.body.isGuestComment)
-  let isGuestReplyComment = JSON.parse(req.body.isGuestReplyComment)
-  let moderationType = req.body.moderationType
-
-    if (isGuestComment) {
-      let guestComment = await GuestComment.findOneByPermlink(permlink)
-      rootPermlink = guestComment.result.root_comment
-      rootAuthor = guestComment.result.rootAuthor
-    } else if (isGuestReplyComment) {
-      let guestReplyComments = await GuestReplyComment.findOneByPermlink(permlink)
-      rootPermlink = guestReplyComments.result.root_comment
-      rootAuthor = guestReplyComments.result.rootAuthor
-    } else {
-      const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
-      rootAuthor = Object.values(permlinkState.content)[0].root_author
-      rootPermlink = Object.values(permlinkState.content)[0].root_permlink
-    }
-    if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
-
-    if(moderationType === 'delete'){
-      let comment;
-      try { if (isGuestComment) comment = await GuestComment.findOneByPermlinkAndUpdateContent(permlink) }
-      catch(error){ return res.json({ error }) }
-
-      try { if (isGuestReplyComment) comment = await GuestReplyComment.findOneByPermlinkAndUpdateContent(permlink) }
-      catch(error){ return res.json({ error }) }
-    }
-    const commentRefrence = {
-      root_comment: rootPermlink,
-      permlink: permlink,
-      status: moderationType
-    }
-    Moderation.insert(commentRefrence)
-      .then(() => res.json({status:'success'}))
-      .catch(err => res.json({ error: err }))
-
+    ModerationController.checkRequest(req, res)
 });
 
 router.get('/moderation/:permlink', async (req, res) => {
-    const permlink = req.params.permlink
-    const moderation = await Moderation.find(permlink)
-    res.json({moderation})
+  ModerationController.getModeratedCommentsForPermlink(req, res)
 });
 
 module.exports = router;

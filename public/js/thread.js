@@ -316,7 +316,6 @@ const f = {
               }
             }
           })
-
     },
     sendComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) =>  {
       let replytoThread = $(parentElement).hasClass('sc-item')

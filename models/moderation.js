@@ -9,23 +9,9 @@ module.exports.find = async (permlink) => {
   });
 }
 
-
-// module.exports.insert = async (user) => {
-//   return new Promise((resolve, reject) => {
-//     db.get().db('finally').collection('token').insertOne(user, (error, response) => {
-//       if(error || response == null) { reject({ error: error }) }
-//       else { resolve({ error: false, username: response.username })}
-//     })
-//   });
-// }
-
-
 module.exports.insert = async (commentRefrence) => {
-  let response
   try {
-    response = await db.get().db('finally').collection('moderation').insertOne(commentRefrence)
+    let response = await db.get().db('finally').collection('moderation').insertOne(commentRefrence)
     return { error: false, username: response.username }
-  } catch(error){
-    return { error }
-  }
+  } catch(error){ return { error } }
 }

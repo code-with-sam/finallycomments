@@ -1,3 +1,7 @@
+const steemjs = require('steem')
+const GuestComment = require('../models/guest-comment')
+const GuestReplyComment = require('../models/guest-reply-comment')
+
 module.exports.urlString = (num) => {
     let string = ''
     let allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -48,4 +52,24 @@ module.exports.processProfileImage = (account) => {
     metaData = account.json_metadata ? JSON.parse(account.json_metadata).profile : {};
   }
   return profileImage = metaData.profile_image ? 'https://steemitimages.com/512x512/' + metaData.profile_image : '';
+}
+
+// Takes a comment and finds the root author and root permlink
+
+module.exports.findRootCommentDetails = async (isGuestComment, isGuestReplyComment, permlink, author, category) => {
+  let rootPermlink, rootAuthor;
+  if (isGuestComment) {
+    let guestComment = await GuestComment.findOneByPermlink(permlink)
+    rootPermlink = guestComment.result.root_comment
+    rootAuthor = guestComment.result.rootAuthor
+  } else if (isGuestReplyComment) {
+    let guestReplyComments = await GuestReplyComment.findOneByPermlink(permlink)
+    rootPermlink = guestReplyComments.result.root_comment
+    rootAuthor = guestReplyComments.result.rootAuthor
+  } else {
+    const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
+    rootAuthor = Object.values(permlinkState.content)[0].root_author
+    rootPermlink = Object.values(permlinkState.content)[0].root_permlink
+  }
+  return {rootAuthor, rootPermlink}
 }
