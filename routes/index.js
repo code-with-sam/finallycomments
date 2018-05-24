@@ -215,14 +215,6 @@ router.post('/moderation', util.isAuthorized, async (req, res) => {
   let isGuestReplyComment = JSON.parse(req.body.isGuestReplyComment)
   let moderationType = req.body.moderationType
 
-  if(moderationType === 'delete'){
-    let comment;
-    try { if (isGuestComment) comment = await GuestComment.findOneByPermlinkAndUpdateContent(permlink) }
-    catch(error){console.log(error)}
-    if (isGuestReplyComment) comment = await GuestReplyComment.findOneByPermlinkAndUpdateContent(permlink)
-    console.log(comment)
-    res.json({comment})
-  } else {
     if (isGuestComment) {
       let guestComment = await GuestComment.findOneByPermlink(permlink)
       rootPermlink = guestComment.result.root_comment
@@ -238,15 +230,23 @@ router.post('/moderation', util.isAuthorized, async (req, res) => {
     }
     if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
 
+    if(moderationType === 'delete'){
+      let comment;
+      try { if (isGuestComment) comment = await GuestComment.findOneByPermlinkAndUpdateContent(permlink) }
+      catch(error){ return res.json({ error }) }
+
+      try { if (isGuestReplyComment) comment = await GuestReplyComment.findOneByPermlinkAndUpdateContent(permlink) }
+      catch(error){ return res.json({ error }) }
+    }
     const commentRefrence = {
       root_comment: rootPermlink,
       permlink: permlink,
-      status: 'hide'
+      status: moderationType
     }
     Moderation.insert(commentRefrence)
-    .then(() => res.json({status:'success'}))
-    .catch(err => res.json({ error: err }))
-  }
+      .then(() => res.json({status:'success'}))
+      .catch(err => res.json({ error: err }))
+
 });
 
 router.get('/moderation/:permlink', async (req, res) => {

@@ -528,4 +528,6 @@ a.sc-comment__btn:hover {
 
 .moderation--message {
   padding: 15px 0 30px;
+  color: #676767;
+  font-style: italic;
 }

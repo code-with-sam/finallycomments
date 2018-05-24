@@ -32,9 +32,9 @@ module.exports.findOneByPermlink = async (permlink) => {
 
 module.exports.findOneByPermlinkAndUpdateContent = async (permlink) => {
   return new Promise((resolve, reject) => {
-    db.get().db('finally').collection('guest-comments').updateOne(
+    db.get().db('finally').collection('guest-reply-comments').updateOne(
       {'permlink': permlink},
-      { author: 'deleted', body: 'deleted' },
+      {  $set: { author: 'deleted', body: 'deleted'} },
       { sort: { _id: -1 }, limit: 1 }, (error,result) => {
         if(error) reject({ error })
         else resolve({ error: false, result })

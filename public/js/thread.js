@@ -81,20 +81,22 @@ const f = {
           })
 
           $('.sc-section').on('click', '.sc-item__hide', (e) => {
-              let commmentData = $(e.currentTarget).closest('.sc-item').data()
-              f.sendCommentModeration('hide', commmentData)
+              let commentData = $(e.currentTarget).closest('.sc-item').data()
+              console.log(commentData)
+              f.sendCommentModeration('hide', commentData)
                 .then(response => {
                   if (response.error) $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate(response.error))
-                  else f.renderModerationMessage(commmentData.permlink, '- [Hidden By Moderation]')
+                  else f.renderModerationMessage(commentData.permlink, '- [Hidden By Moderation]')
                 })
           })
 
           $('.sc-section').on('click', '.sc-item__delete', (e) => {
-              let commmentData = $(e.currentTarget).closest('.sc-item').data()
-              f.sendCommentModeration('delete', commmentData)
+              let commentData = $(e.currentTarget).closest('.sc-item').data()
+              console.log(commentData)
+              f.sendCommentModeration('delete', commentData)
                 .then(response => {
                   if (response.error) $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate(response.error))
-                  else f.renderModerationMessage(commmentData.permlink, '- [Deleted]')
+                  else f.renderModerationMessage(commentData.permlink, '- [Deleted]')
                 })
           })
 
@@ -487,9 +489,11 @@ const f = {
     },
     applyCommentModeration: async (rootPermlink) => {
       const response = await $.get({url: `/moderation/${rootPermlink}`})
-      response.moderation.forEach( (comment) => {
-        f.renderModerationMessage(comment.permlink, '- [Hidden By Moderation]')
-      })
+      console.log(response)
+      const deleted = response.moderation.filter(comment => comment.status === 'delete')
+      const hidden = response.moderation.filter(comment => comment.status === 'hide')
+      deleted.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Deleted By Moderation]'))
+      hidden.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Hidden By Moderation]'))
     },
     renderModerationMessage: (permlink, message) => {
       $(`.${permlink}`).prepend(`<p class="moderation--message">${message}</p>`)
