@@ -562,10 +562,10 @@ const f = {
               }
               let order = post.depth === 1 ? i : false
               let template = f.createCommentTemplate(result.accounts,post, voted, order)
-              if ( post.depth === 1 ) {
+              if ( parseInt(post.depth) === 1 ) {
 
                 $('.sc-comments').prepend( template)
-              } else if ( post.depth  > 1) {
+              } else if ( parseInt(post.depth) > 1) {
                 var permlink = post.parent_permlink
                 $('.' + permlink ).append( template)
               }
@@ -589,6 +589,7 @@ const f = {
     // @param guest - Boolean - IF the comment being generated is a guest comment
     // @parem guestReply - Boolean - if the comment being generated is by an authenticated user but in reply to a guest
     createCommentTemplate: (accounts, post, voted, order, guest, guestReply) => {
+          Object.keys(post).forEach(key => post[key] = DOMPurify.sanitize(post[key]))
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
