@@ -89,6 +89,15 @@ const f = {
                 })
           })
 
+          $('.sc-section').on('click', '.sc-item__delete', (e) => {
+              let commmentData = $(e.currentTarget).closest('.sc-item').data()
+              f.sendCommentModeration('delete', commmentData)
+                .then(response => {
+                  if (response.error) $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate(response.error))
+                  else f.renderModerationMessage(commmentData.permlink, '- [Deleted]')
+                })
+          })
+
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
             if ( $(e.currentTarget).hasClass('sc-item__upvote--voted-true') ){
               $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate('You have already voted.'))
@@ -592,8 +601,9 @@ const f = {
 
           let moderate =  f.isThreadOwner(post) ? `
           <span class="sc-item__divider">|</span>
-          <button class="sc-item__hide button is-dark">Hide</button>
+          <button class="sc-item__hide">Hide</button>
           ` : ''
+          let moderateGuest = f.isThreadOwner(post) && guest || f.isThreadOwner(post) && guestReply ? '<button class="sc-item__delete">Delete</button>': ''
 
           var template = `
           <div data-post-id="${post.id}"
@@ -625,6 +635,7 @@ const f = {
           ${upvote}
           <span class="sc-item__reply">Reply</span>
           ${moderate}
+          ${moderateGuest}
           </div>
           </div>
           </div>`

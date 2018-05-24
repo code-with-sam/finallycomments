@@ -213,31 +213,40 @@ router.post('/moderation', util.isAuthorized, async (req, res) => {
   let rootPermlink, rootAuthor
   let isGuestComment =  JSON.parse(req.body.isGuestComment)
   let isGuestReplyComment = JSON.parse(req.body.isGuestReplyComment)
+  let moderationType = req.body.moderationType
 
-  if (isGuestComment) {
-    let guestComment = await GuestComment.findOneByPermlink(permlink)
-    rootPermlink = guestComment.result.root_comment
-    rootAuthor = guestComment.result.rootAuthor
-  } else if (isGuestReplyComment) {
-    let guestReplyComments = await GuestReplyComment.findOneByPermlink(permlink)
-    rootPermlink = guestReplyComments.result.root_comment
-    rootAuthor = guestReplyComments.result.rootAuthor
+  if(moderationType === 'delete'){
+    let comment;
+    try { if (isGuestComment) comment = await GuestComment.findOneByPermlinkAndUpdateContent(permlink) }
+    catch(error){console.log(error)}
+    if (isGuestReplyComment) comment = await GuestReplyComment.findOneByPermlinkAndUpdateContent(permlink)
+    console.log(comment)
+    res.json({comment})
   } else {
-    const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
-    rootAuthor = Object.values(permlinkState.content)[0].root_author
-    rootPermlink = Object.values(permlinkState.content)[0].root_permlink
-    console.log('STEEM: ', rootPermlink)
-  }
-  if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
+    if (isGuestComment) {
+      let guestComment = await GuestComment.findOneByPermlink(permlink)
+      rootPermlink = guestComment.result.root_comment
+      rootAuthor = guestComment.result.rootAuthor
+    } else if (isGuestReplyComment) {
+      let guestReplyComments = await GuestReplyComment.findOneByPermlink(permlink)
+      rootPermlink = guestReplyComments.result.root_comment
+      rootAuthor = guestReplyComments.result.rootAuthor
+    } else {
+      const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
+      rootAuthor = Object.values(permlinkState.content)[0].root_author
+      rootPermlink = Object.values(permlinkState.content)[0].root_permlink
+    }
+    if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
 
-  const commentRefrence = {
-    root_comment: rootPermlink,
-    permlink: permlink,
-    status: 'hide'
+    const commentRefrence = {
+      root_comment: rootPermlink,
+      permlink: permlink,
+      status: 'hide'
+    }
+    Moderation.insert(commentRefrence)
+    .then(() => res.json({status:'success'}))
+    .catch(err => res.json({ error: err }))
   }
-  Moderation.insert(commentRefrence)
-      .then(() => res.json({status:'success'}))
-      .catch(err => res.json({ error: err }))
 });
 
 router.get('/moderation/:permlink', async (req, res) => {
