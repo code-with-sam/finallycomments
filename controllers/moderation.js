@@ -10,9 +10,10 @@ module.exports.checkRequest = async (req, res) => {
   let author = req.body.commentAuthor
   let isGuestComment =  JSON.parse(req.body.isGuestComment)
   let isGuestReplyComment = JSON.parse(req.body.isGuestReplyComment)
+  let rootPostPath = req.body.rootPostPath
   let moderationType = req.body.moderationType
 
-  let commentDetails = await util.findRootCommentDetails(isGuestComment, isGuestReplyComment, permlink, author, category)
+  let commentDetails = await util.findRootCommentDetails(isGuestComment, isGuestReplyComment, permlink, rootPostPath)
   if (authenticatedUser !== commentDetails.rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
 
   if(moderationType === 'delete'){
