@@ -1,3 +1,4 @@
+const steemjs = require('steem')
 const GuestComment = require('../models/guest-comment')
 const GuestReplyComment = require('../models/guest-reply-comment')
 
@@ -53,7 +54,7 @@ module.exports.processProfileImage = (account) => {
 
 // Takes a comment and finds the root author and root permlink
 
-module.exports.findRootCommentDetails = async (isGuestComment, isGuestReplyComment, permlink, author, category) => {
+module.exports.findRootCommentDetails = async (isGuestComment, isGuestReplyComment, permlink, rootPostPath) => {
   let rootPermlink, rootAuthor;
   if (isGuestComment) {
     let guestComment = await GuestComment.findOneByPermlink(permlink)
@@ -64,8 +65,20 @@ module.exports.findRootCommentDetails = async (isGuestComment, isGuestReplyComme
     rootPermlink = guestReplyComments.result.root_comment
     rootAuthor = guestReplyComments.result.rootAuthor
   } else {
-    rootAuthor = author
-    rootPermlink = permlink
+    const permlinkState = await steemjs.api.getStateAsync(rootPostPath)
+    // check if this is a custom thread by seeing if the get state url has an item of depth 0.
+    // if depth 0 exists it must be a STEEM comment
+    // custom threads are the first child of finally post so will be min depth of 1
+    let isCustomThread =  Object.values(Object.assign(permlinkState.content, {})).filter(post =>  parseInt(post.depth) === 0 ).length >= 1 ? false : true
+    if(isCustomThread) {
+      let authorPost =  Object.values(Object.assign(permlinkState.content, {})).filter(post =>  parseInt(post.depth) === 1 )[0]
+      rootAuthor = authorPost.author
+      rootPermlink = authorPost.permlink
+    } else {
+       rootAuthor = Object.values(permlinkState.content)[0].root_author
+       rootPermlink = Object.values(permlinkState.content)[0].root_permlink
+    }
   }
+  console.log({rootAuthor, rootPermlink})
   return {rootAuthor, rootPermlink}
 }

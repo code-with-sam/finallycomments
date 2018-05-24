@@ -492,6 +492,7 @@ const f = {
           commentAuthor: commentData.author,
           commentCategory: commentData.category,
           commentPermlink: commentData.permlink,
+          rootPostPath: `/${f.CATEGORY}/@${f.AUTHOR}/${f.PERMLINK}`,
           isGuestComment: commentData.guest,
           isGuestReplyComment: commentData.guestReply }
       })
