@@ -13,7 +13,7 @@ const f = {
       return false
     },
     isThreadOwner: (post) => {
-      if (f.authenticatedUser() === f.rootAuthor) return true
+      if (f.authenticatedUser() === f.AUTHOR) return true
       return false
     },
     init: () => {
@@ -514,7 +514,6 @@ const f = {
         $('.sc-section').append('<div class="sc-comments"></div>')
 
         steem.api.getState(`/${f.CATEGORY}/@${f.AUTHOR}/${f.PERMLINK}`, function(err, result) {
-          f.rootAuthor = Object.values(Object.assign(result.content, {}))[0].root_author
           f.USERACCOUNTS = result.accounts
           let resultsArray = [];
 

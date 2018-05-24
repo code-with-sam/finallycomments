@@ -1,4 +1,3 @@
-const steemjs = require('steem')
 const GuestComment = require('../models/guest-comment')
 const GuestReplyComment = require('../models/guest-reply-comment')
 
@@ -67,9 +66,8 @@ module.exports.findRootCommentDetails = async (isGuestComment, isGuestReplyComme
     rootPermlink = guestReplyComments.result.root_comment
     rootAuthor = guestReplyComments.result.rootAuthor
   } else {
-    const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
-    rootAuthor = Object.values(permlinkState.content)[0].root_author
-    rootPermlink = Object.values(permlinkState.content)[0].root_permlink
+    rootAuthor = author
+    rootPermlink = permlink
   }
   return {rootAuthor, rootPermlink}
 }

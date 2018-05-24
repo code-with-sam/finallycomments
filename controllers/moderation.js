@@ -2,7 +2,6 @@ const util = require('../modules/util');
 const GuestComment = require('../models/guest-comment')
 const GuestReplyComment = require('../models/guest-reply-comment')
 const Moderation = require('../models/moderation')
-const steemjs = require('steem')
 
 module.exports.checkRequest = async (req, res) => {
   let authenticatedUser = req.session.steemconnect.name
