@@ -3,7 +3,7 @@
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
-## Finally comments - V0.9.0
+## Finally comments - V0.9.1
 A embedable comments system built on the STEEM blockchain.
 
 ### How It Works
