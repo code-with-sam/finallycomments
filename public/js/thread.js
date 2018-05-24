@@ -74,6 +74,17 @@ const f = {
             $('.sc-notification').remove()
           })
 
+          $('.sc-section').on('click', '.moderation-temp-show', (e) => {
+             let commentData = $(e.currentTarget).closest('.sc-item').data()
+             $(e.currentTarget).addClass('moderation-temp-hide').removeClass('moderation-temp-show').text('Hide Comment')
+            $(`.${commentData.permlink}`).children('.sc-item__left, .sc-item__right').show()
+          })
+          $('.sc-section').on('click', '.moderation-temp-hide', (e) => {
+             let commentData = $(e.currentTarget).closest('.sc-item').data()
+             $(e.currentTarget).removeClass('moderation-temp-hide').addClass('moderation-temp-show').text('Show Comment')
+            $(`.${commentData.permlink}`).children('.sc-item__left, .sc-item__right').hide()
+          })
+
           $('.sc-section').on('click', '.sc-item__reply', (e) => {
               f.addCommentTemplateAfter(e.currentTarget)
               $('.sc-vote').remove()
@@ -493,7 +504,7 @@ const f = {
       const deleted = response.moderation.filter(comment => comment.status === 'delete')
       const hidden = response.moderation.filter(comment => comment.status === 'hide')
       deleted.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Deleted By Moderation]'))
-      hidden.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Hidden By Moderation]'))
+      hidden.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Hidden By Moderation] -- <span class="moderation-temp-show">Show Comment</a>'))
     },
     renderModerationMessage: (permlink, message) => {
       $(`.${permlink}`).prepend(`<p class="moderation--message">${message}</p>`)

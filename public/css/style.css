@@ -531,3 +531,14 @@ a.sc-comment__btn:hover {
   color: #676767;
   font-style: italic;
 }
+.moderation-temp-show,
+.moderation-temp-hide {
+  margin-left: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #aaaaaa;
+}
+.moderation-temp-show:hover,
+.moderation-temp-hide:hover {
+  color: #000;
+}
