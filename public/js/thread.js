@@ -4,6 +4,7 @@ const f = {
     PERMLINK: '',
     PROFILEIMAGE: '',
     ISAUTHENTICATED: $('.sc-section').data('auth'),
+    rootAuthor: '',
     USERACCOUNTS: [],
     OPTIONS: {},
     upvoteIcon: '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" width="18px" height="18px"><circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/></svg>',
@@ -11,15 +12,17 @@ const f = {
       if (f.ISAUTHENTICATED) return $('.sc-section').data('username')
       return false
     },
+    isThreadOwner: (post) => {
+      if (f.authenticatedUser() === f.AUTHOR) return true
+      return false
+    },
     init: () => {
       f.getPartsFromLink()
       f.addTopBar()
       f.getComments()
-        .then( x => {
-          // Guest/GuestReply comments are from a database and need to be appended to the correct permlink, this happens after the STEEM comments have been retrived and rendered
-          f.getGuestComments(f.PERMLINK)
-          f.getGuestReplyComments(f.PERMLINK)
-        })
+        .then(() => f.getGuestComments(f.PERMLINK))
+        .then(() => f.getGuestReplyComments(f.PERMLINK))
+        .then(() => f.applyCommentModeration(f.PERMLINK))
       f.uiActions()
       window.addEventListener('message', f.frameLoad, false);
     },
@@ -71,10 +74,41 @@ const f = {
             $('.sc-notification').remove()
           })
 
+          $('.sc-section').on('click', '.moderation-temp-show', (e) => {
+             let commentData = $(e.currentTarget).closest('.sc-item').data()
+             $(e.currentTarget).addClass('moderation-temp-hide').removeClass('moderation-temp-show').text('Hide Comment')
+            $(`.${commentData.permlink}`).children('.sc-item__left, .sc-item__right').show()
+          })
+          $('.sc-section').on('click', '.moderation-temp-hide', (e) => {
+             let commentData = $(e.currentTarget).closest('.sc-item').data()
+             $(e.currentTarget).removeClass('moderation-temp-hide').addClass('moderation-temp-show').text('Show Comment')
+            $(`.${commentData.permlink}`).children('.sc-item__left, .sc-item__right').hide()
+          })
+
           $('.sc-section').on('click', '.sc-item__reply', (e) => {
               f.addCommentTemplateAfter(e.currentTarget)
               $('.sc-vote').remove()
               $('.sc-notification').remove()
+          })
+
+          $('.sc-section').on('click', '.sc-item__hide', (e) => {
+              let commentData = $(e.currentTarget).closest('.sc-item').data()
+              console.log(commentData)
+              f.sendCommentModeration('hide', commentData)
+                .then(response => {
+                  if (response.error) $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate(response.error))
+                  else f.renderModerationMessage(commentData.permlink, '- [Hidden By Moderation]')
+                })
+          })
+
+          $('.sc-section').on('click', '.sc-item__delete', (e) => {
+              let commentData = $(e.currentTarget).closest('.sc-item').data()
+              console.log(commentData)
+              f.sendCommentModeration('delete', commentData)
+                .then(response => {
+                  if (response.error) $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate(response.error))
+                  else f.renderModerationMessage(commentData.permlink, '- [Deleted]')
+                })
           })
 
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
@@ -282,7 +316,6 @@ const f = {
               }
             }
           })
-
     },
     sendComment: (parentElement, parentAuthor,parentPermlink, message, parentTitle, parentDepth) =>  {
       let replytoThread = $(parentElement).hasClass('sc-item')
@@ -340,6 +373,8 @@ const f = {
         parentTitle: parentTitle,
         depth: parentDepth + 1 ,
         rootComment: f.PERMLINK,
+        rootCategory: f.CATEGORY,
+        rootAuthor: f.AUTHOR,
         parentPermlink: parentPermlink
       }
 
@@ -372,6 +407,8 @@ const f = {
         parentTitle: parentTitle,
         depth: parentDepth + 1 ,
         rootComment: f.PERMLINK,
+        rootCategory: f.CATEGORY,
+        rootAuthor: f.AUTHOR
       }
       let replytoThread = $(parentElement).hasClass('sc-item')
       if( !replytoThread ){
@@ -394,40 +431,41 @@ const f = {
         }
       })
     },
-    getGuestComments: (rootPermlink) => {
-      $.post({
+    getGuestComments: async (rootPermlink) => {
+      const response = await $.post({
         url: '/guest-comments',
         dataType: 'json',
-        data: { permlink: rootPermlink }
-      }, (response) => {
-        f.displayGuestComments(response.guestComments)
+        data: { permlink: rootPermlink}
       })
+      await f.displayGuestComments(response.guestComments)
+      return
     },
-    getGuestReplyComments: (rootPermlink) => {
-      $.post({
+    getGuestReplyComments: async (rootPermlink) => {
+      const response = await $.post({
         url: '/guest-reply-comments',
         dataType: 'json',
         data: { permlink: rootPermlink }
-      }, (response) => {
-        f.displayGuestReplyComments(response.guestReplyComments)
       })
+      await f.displayGuestReplyComments(response.guestReplyComments)
+      return
     },
     // Guest comments are not connected to the STEEM blockchain
     // Can not be voted
     // no need to search for accounts (user nickname provided by user)
-    displayGuestComments: (comments) => {
+    displayGuestComments: async (comments) => {
       comments.forEach( (post, i, arr) => {
-        console.log(post)
         let order = post.depth === 1 ? i : false
         let accounts = undefined // no account arry to loop over for guests
         let voted = false
         let template = f.createCommentTemplate(accounts, post, voted, order, true)
-        if ( post.depth === 1 ) {
+        console.log( post.depth)
+        if ( parseInt(post.depth) === 1 ) {
           $('.sc-comments').prepend( template)
-        } else if ( post.depth  > 1) {
+        } else if ( parseInt(post.depth)  > 1) {
           $('.' + post.parent_permlink ).append( template)
         }
       })
+      return
     },
     // Async so that we can request any new account data for the authorised user
     displayGuestReplyComments: async (comments) => {
@@ -435,16 +473,40 @@ const f = {
       let newAccounts = await steem.api.getAccountsAsync(authors)
       newAccounts.forEach(user => f.USERACCOUNTS[user.name] = user )
       comments.forEach( (post, i, arr) => {
-        console.log(post)
-        let order = post.depth === 1 ? i : false
+        let order = parseInt(post.depth) === 1 ? i : false
         let voted = false
         let template = f.createCommentTemplate(f.USERACCOUNTS, post, voted, order, false, true)
-        if ( post.depth === 1 ) {
+        if ( parseInt(post.depth) === 1 ) {
           $('.sc-comments').prepend( template)
         } else if ( post.depth  > 1) {
           $('.' + post.parent_permlink ).append( template)
         }
       })
+      return
+    },
+    sendCommentModeration: async (moderationType, commentData) => {
+      return await $.post({
+        url: '/moderation',
+        dataType: 'json',
+        data: { moderationType,
+          commentAuthor: commentData.author,
+          commentCategory: commentData.category,
+          commentPermlink: commentData.permlink,
+          isGuestComment: commentData.guest,
+          isGuestReplyComment: commentData.guestReply }
+      })
+    },
+    applyCommentModeration: async (rootPermlink) => {
+      const response = await $.get({url: `/moderation/${rootPermlink}`})
+      console.log(response)
+      const deleted = response.moderation.filter(comment => comment.status === 'delete')
+      const hidden = response.moderation.filter(comment => comment.status === 'hide')
+      deleted.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Deleted By Moderation]'))
+      hidden.forEach(comment => f.renderModerationMessage(comment.permlink, '- [Hidden By Moderation] -- <span class="moderation-temp-show">Show Comment</a>'))
+    },
+    renderModerationMessage: (permlink, message) => {
+      $(`.${permlink}`).prepend(`<p class="moderation--message">${message}</p>`)
+      $(`.${permlink}`).children('.sc-item__left, .sc-item__right').hide()
     },
     getComments: () => {
       return new Promise((resolve, reject) => {
@@ -457,15 +519,14 @@ const f = {
           for ( post in result.content ){
 
             var html = result.content[post].body
-
             resultsArray.push({
               id: result.content[post].id,
               title: result.content[post].root_title,
               author: result.content[post].author,
+              category: result.content[post].category,
               body: html,
               permlink: result.content[post].permlink,
               depth: f.OPTIONS.generated ? result.content[post].depth - 1 : result.content[post].depth ,
-              root_comment: result.content[post].root_comment,
               parent_permlink: result.content[post].parent_permlink,
               created: result.content[post].created,
               votes: result.content[post].net_votes,
@@ -501,10 +562,10 @@ const f = {
               }
               let order = post.depth === 1 ? i : false
               let template = f.createCommentTemplate(result.accounts,post, voted, order)
-              if ( post.depth === 1 ) {
+              if ( parseInt(post.depth) === 1 ) {
 
                 $('.sc-comments').prepend( template)
-              } else if ( post.depth  > 1) {
+              } else if ( parseInt(post.depth) > 1) {
                 var permlink = post.parent_permlink
                 $('.' + permlink ).append( template)
               }
@@ -528,6 +589,7 @@ const f = {
     // @param guest - Boolean - IF the comment being generated is a guest comment
     // @parem guestReply - Boolean - if the comment being generated is by an authenticated user but in reply to a guest
     createCommentTemplate: (accounts, post, voted, order, guest, guestReply) => {
+          Object.keys(post).forEach(key => post[key] = DOMPurify.sanitize(post[key]))
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
@@ -550,9 +612,16 @@ const f = {
                     `
           if (guest || guestReply) upvote = ''
 
+          let moderate =  f.isThreadOwner(post) ? `
+          <span class="sc-item__divider">|</span>
+          <button class="sc-item__hide">Hide</button>
+          ` : ''
+          let moderateGuest = f.isThreadOwner(post) && guest || f.isThreadOwner(post) && guestReply ? '<button class="sc-item__delete">Delete</button>': ''
+
           var template = `
           <div data-post-id="${post.id}"
           data-permlink="${post.permlink}"
+          data-category="${post.category}"
           data-author="${post.author}"
           data-title="${post.title}"
           data-post-depth="${post.depth}"
@@ -560,6 +629,7 @@ const f = {
           data-order="${order}"
           data-value="${post.value}"
           data-guest="${guest ? true : false }"
+          data-guest-reply="${guestReply ? true : false }"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
 
@@ -577,6 +647,8 @@ const f = {
           <div class="sc-item__meta">
           ${upvote}
           <span class="sc-item__reply">Reply</span>
+          ${moderate}
+          ${moderateGuest}
           </div>
           </div>
           </div>`

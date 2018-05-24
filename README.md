@@ -3,7 +3,7 @@
 
 The aim of this project is to promote the Steem ecosystem by breaking the comments system out of the walls of Steem based apps.
 
-## Finally comments - V0.8.2
+## Finally comments - V0.9.0
 A embedable comments system built on the STEEM blockchain.
 
 ### How It Works
@@ -39,6 +39,6 @@ NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SE
 - Themes
 - How To Guides
 - Beneficiaries
-- User Profiles
-- moderate comments (completely remove with flag from author)
+- Improve Profiles - @username
+- Flag comments using STEEM downvote
 - wordpress plugin

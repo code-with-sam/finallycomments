@@ -8,6 +8,8 @@ const Domain = require('../models/domain')
 const Token = require('../models/token')
 const GuestComment = require('../models/guest-comment')
 const GuestReplyComment = require('../models/guest-reply-comment')
+const Moderation = require('../models/moderation')
+const ModerationController = require('../controllers/moderation')
 
 router.get('/', (req, res, next) =>  {
   res.render('index', {
@@ -87,6 +89,8 @@ router.post('/guest-reply-comment', util.isAuthorized, (req, res) => {
       depth: req.body.depth,
       root_comment: req.body.rootComment,
       parent_permlink: req.body.parentPermlink,
+      rootCategory: req.body.rootCategory,
+      rootAuthor: req.body.rootAuthor,
       created: new Date().toISOString(),
       votes: 0,
       voters: [],
@@ -110,6 +114,8 @@ router.post('/guest-comment', (req, res) => {
       depth: req.body.depth,
       root_comment: req.body.rootComment,
       parent_permlink: req.body.parentPermlink,
+      rootCategory: req.body.rootCategory,
+      rootAuthor: req.body.rootAuthor,
       created: new Date().toISOString(),
       votes: 0,
       voters: [],
@@ -126,14 +132,12 @@ router.post('/guest-comment', (req, res) => {
 router.post('/guest-comments', async (req, res) => {
     let permlink = req.body.permlink
     let guestComments = await GuestComment.find(permlink)
-    console.log('after db request: ', guestComments)
     res.json({guestComments})
 });
 
 router.post('/guest-reply-comments', async (req, res) => {
     let permlink = req.body.permlink
     let guestReplyComments = await GuestReplyComment.find(permlink)
-    console.log('after db request: ', guestReplyComments)
     res.json({guestReplyComments})
 });
 
@@ -198,6 +202,14 @@ router.post('/new-thread', util.isAuthorized, (req, res) => {
       res.json(response)
     }
   });
+});
+
+router.post('/moderation', util.isAuthorized, async (req, res) => {
+    ModerationController.checkRequest(req, res)
+});
+
+router.get('/moderation/:permlink', async (req, res) => {
+  ModerationController.getModeratedCommentsForPermlink(req, res)
 });
 
 module.exports = router;

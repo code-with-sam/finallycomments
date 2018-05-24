@@ -1,3 +1,6 @@
+const GuestComment = require('../models/guest-comment')
+const GuestReplyComment = require('../models/guest-reply-comment')
+
 module.exports.urlString = (num) => {
     let string = ''
     let allowedChars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -40,12 +43,29 @@ module.exports.splitQueryString = (string) => {
 
 module.exports.processProfileImage = (account) => {
   let metaData;
-  if (account.json_metadata === '' ||
-      account.json_metadata === 'undefined' ||
-      account.json_metadata === undefined ) {
+  if (account.json_metadata === '{}') {
       metaData = { profile_image : '/img/default-user.jpg'}
   } else {
     metaData = account.json_metadata ? JSON.parse(account.json_metadata).profile : {};
   }
   return profileImage = metaData.profile_image ? 'https://steemitimages.com/512x512/' + metaData.profile_image : '';
+}
+
+// Takes a comment and finds the root author and root permlink
+
+module.exports.findRootCommentDetails = async (isGuestComment, isGuestReplyComment, permlink, author, category) => {
+  let rootPermlink, rootAuthor;
+  if (isGuestComment) {
+    let guestComment = await GuestComment.findOneByPermlink(permlink)
+    rootPermlink = guestComment.result.root_comment
+    rootAuthor = guestComment.result.rootAuthor
+  } else if (isGuestReplyComment) {
+    let guestReplyComments = await GuestReplyComment.findOneByPermlink(permlink)
+    rootPermlink = guestReplyComments.result.root_comment
+    rootAuthor = guestReplyComments.result.rootAuthor
+  } else {
+    rootAuthor = author
+    rootPermlink = permlink
+  }
+  return {rootAuthor, rootPermlink}
 }

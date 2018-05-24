@@ -20,3 +20,24 @@ module.exports.find = async (permlink) => {
     });
   });
 }
+
+module.exports.findOneByPermlink = async (permlink) => {
+  return new Promise((resolve, reject) => {
+    db.get().db('finally').collection('guest-reply-comments').findOne({'permlink': permlink},{ sort: { _id: -1 }, limit: 1 }, (error,result) => {
+      if(error) reject({ error })
+      else resolve({ error: false, result })
+    })
+  });
+}
+
+module.exports.findOneByPermlinkAndUpdateContent = async (permlink) => {
+  return new Promise((resolve, reject) => {
+    db.get().db('finally').collection('guest-reply-comments').updateOne(
+      {'permlink': permlink},
+      {  $set: { author: 'deleted', body: 'deleted'} },
+      { sort: { _id: -1 }, limit: 1 }, (error,result) => {
+        if(error) reject({ error })
+        else resolve({ error: false, result })
+      })
+  });
+}
