@@ -82,10 +82,11 @@ const f = {
 
           $('.sc-section').on('click', '.sc-item__hide', (e) => {
               let commmentData = $(e.currentTarget).closest('.sc-item').data()
-              console.log('IS GUEST COMMENT: ', commmentData)
               f.sendCommentModeration('hide', commmentData)
-              // $('.sc-vote').remove()
-              // $('.sc-notification').remove()
+                .then(response => {
+                  if (response.error) $(e.currentTarget).closest('.sc-item__right').append(f.notificationTemplate(response.error))
+                  else f.renderModerationMessage(commmentData.permlink, '- [Hidden By Moderation]')
+                })
           })
 
           $('.sc-section').on('click', '.sc-item__upvote', (e) => {
@@ -460,22 +461,26 @@ const f = {
       return
     },
     sendCommentModeration: async (moderationType, commentData) => {
-      const response = await $.post({
+      return await $.post({
         url: '/moderation',
         dataType: 'json',
         data: { moderationType,
           commentAuthor: commentData.author,
           commentCategory: commentData.category,
-          commentPermlink: commentData.permlink }
+          commentPermlink: commentData.permlink,
+          isGuestComment: commentData.guest,
+          isGuestReplyComment: commentData.guestReply }
       })
-      console.log(response)
     },
     applyCommentModeration: async (rootPermlink) => {
       const response = await $.get({url: `/moderation/${rootPermlink}`})
       response.moderation.forEach( (comment) => {
-        $(`.${comment.permlink}`).prepend('<p class="moderation--message">- [Hidden By Moderation]</p>')
-        $(`.${comment.permlink}`).children('.sc-item__left, .sc-item__right').hide()
+        f.renderModerationMessage(comment.permlink, '- [Hidden By Moderation]')
       })
+    },
+    renderModerationMessage: (permlink, message) => {
+      $(`.${permlink}`).prepend('<p class="moderation--message">- [Hidden By Moderation]</p>')
+      $(`.${permlink}`).children('.sc-item__left, .sc-item__right').hide()
     },
     getComments: () => {
       return new Promise((resolve, reject) => {
@@ -597,6 +602,7 @@ const f = {
           data-order="${order}"
           data-value="${post.value}"
           data-guest="${guest ? true : false }"
+          data-guest-reply="${guestReply ? true : false }"
 
           class="sc-item sc-cf sc-item__level-${post.depth} ${post.permlink}">
 
