@@ -352,6 +352,8 @@ const f = {
         parentTitle: parentTitle,
         depth: parentDepth + 1 ,
         rootComment: f.PERMLINK,
+        rootCategory: f.CATEGORY,
+        rootAuthor: f.AUTHOR,
         parentPermlink: parentPermlink
       }
 
@@ -384,6 +386,8 @@ const f = {
         parentTitle: parentTitle,
         depth: parentDepth + 1 ,
         rootComment: f.PERMLINK,
+        rootCategory: f.CATEGORY,
+        rootAuthor: f.AUTHOR
       }
       let replytoThread = $(parentElement).hasClass('sc-item')
       if( !replytoThread ){
@@ -479,7 +483,7 @@ const f = {
       })
     },
     renderModerationMessage: (permlink, message) => {
-      $(`.${permlink}`).prepend('<p class="moderation--message">- [Hidden By Moderation]</p>')
+      $(`.${permlink}`).prepend(`<p class="moderation--message">${message}</p>`)
       $(`.${permlink}`).children('.sc-item__left, .sc-item__right').hide()
     },
     getComments: () => {

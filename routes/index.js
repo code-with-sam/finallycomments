@@ -89,6 +89,8 @@ router.post('/guest-reply-comment', util.isAuthorized, (req, res) => {
       depth: req.body.depth,
       root_comment: req.body.rootComment,
       parent_permlink: req.body.parentPermlink,
+      rootCategory: req.body.rootCategory,
+      rootAuthor: req.body.rootAuthor,
       created: new Date().toISOString(),
       votes: 0,
       voters: [],
@@ -112,6 +114,8 @@ router.post('/guest-comment', (req, res) => {
       depth: req.body.depth,
       root_comment: req.body.rootComment,
       parent_permlink: req.body.parentPermlink,
+      rootCategory: req.body.rootCategory,
+      rootAuthor: req.body.rootAuthor,
       created: new Date().toISOString(),
       votes: 0,
       voters: [],
@@ -203,20 +207,26 @@ router.post('/new-thread', util.isAuthorized, (req, res) => {
 router.post('/moderation', util.isAuthorized, async (req, res) => {
   steem.setAccessToken(req.session.access_token);
   let authenticatedUser = req.session.steemconnect.name
-  let rootPermlink;
+  let permlink = req.body.commentPermlink
+  let category = req.body.commentCategory
+  let author = req.body.commentAuthor
+  let rootPermlink, rootAuthor
+  let isGuestComment =  JSON.parse(req.body.isGuestComment)
+  let isGuestReplyComment = JSON.parse(req.body.isGuestReplyComment)
 
-  if (req.body.isGuestComment) {
+  if (isGuestComment) {
     let guestComment = await GuestComment.findOneByPermlink(permlink)
     rootPermlink = guestComment.result.root_comment
-  }
-  else if (req.body.isGuestReplyComment) {
+    rootAuthor = guestComment.result.rootAuthor
+  } else if (isGuestReplyComment) {
     let guestReplyComments = await GuestReplyComment.findOneByPermlink(permlink)
     rootPermlink = guestReplyComments.result.root_comment
-  }
-  else {
-    const permlinkState = await steemjs.api.getStateAsync(`/${req.body.commentCategory}/@${req.body.commentAuthor}/${req.body.commentPermlink}`)
-    const rootAuthor = Object.values(permlinkState.content)[0].root_author
-    let rootPermlink = Object.values(permlinkState.content)[0].root_permlink
+    rootAuthor = guestReplyComments.result.rootAuthor
+  } else {
+    const permlinkState = await steemjs.api.getStateAsync(`/${category}/@${author}/${permlink}`)
+    rootAuthor = Object.values(permlinkState.content)[0].root_author
+    rootPermlink = Object.values(permlinkState.content)[0].root_permlink
+    console.log('STEEM: ', rootPermlink)
   }
   if (authenticatedUser !==  rootAuthor ) return res.json({status: 'fail', error: 'Not Thread Owner'})
 
