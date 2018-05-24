@@ -43,9 +43,7 @@ module.exports.splitQueryString = (string) => {
 
 module.exports.processProfileImage = (account) => {
   let metaData;
-  if (account.json_metadata === '' ||
-      account.json_metadata === 'undefined' ||
-      account.json_metadata === undefined ) {
+  if (account.json_metadata === '{}') {
       metaData = { profile_image : '/img/default-user.jpg'}
   } else {
     metaData = account.json_metadata ? JSON.parse(account.json_metadata).profile : {};
