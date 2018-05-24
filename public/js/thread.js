@@ -454,18 +454,18 @@ const f = {
     // no need to search for accounts (user nickname provided by user)
     displayGuestComments: async (comments) => {
       comments.forEach( (post, i, arr) => {
-        console.log(post)
         let order = post.depth === 1 ? i : false
         let accounts = undefined // no account arry to loop over for guests
         let voted = false
         let template = f.createCommentTemplate(accounts, post, voted, order, true)
-        if ( post.depth === 1 ) {
+        console.log( post.depth)
+        if ( parseInt(post.depth) === 1 ) {
           $('.sc-comments').prepend( template)
-        } else if ( post.depth  > 1) {
+        } else if ( parseInt(post.depth)  > 1) {
           $('.' + post.parent_permlink ).append( template)
         }
-        return
       })
+      return
     },
     // Async so that we can request any new account data for the authorised user
     displayGuestReplyComments: async (comments) => {
@@ -473,11 +473,10 @@ const f = {
       let newAccounts = await steem.api.getAccountsAsync(authors)
       newAccounts.forEach(user => f.USERACCOUNTS[user.name] = user )
       comments.forEach( (post, i, arr) => {
-        console.log(post)
-        let order = post.depth === 1 ? i : false
+        let order = parseInt(post.depth) === 1 ? i : false
         let voted = false
         let template = f.createCommentTemplate(f.USERACCOUNTS, post, voted, order, false, true)
-        if ( post.depth === 1 ) {
+        if ( parseInt(post.depth) === 1 ) {
           $('.sc-comments').prepend( template)
         } else if ( post.depth  > 1) {
           $('.' + post.parent_permlink ).append( template)
