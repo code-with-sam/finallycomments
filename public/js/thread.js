@@ -349,11 +349,15 @@ const f = {
         }
       })
     },
-    appendSuccessfulComment: (response, parentDepth, parentElement, fromSteem) => {
+    appendSuccessfulComment: async (response, parentDepth, parentElement, fromSteem) => {
       let newComment, guestReply = false, guest = false;
       let commentdata = f.processAjaxCommentData(response.data, fromSteem, parentDepth)
       if (!fromSteem && !f.ISAUTHENTICATED) guest = true
       if (!fromSteem && f.ISAUTHENTICATED) guestReply = true
+      if(f.ISAUTHENTICATED){
+        let accountData = await steem.api.getAccountsAsync([f.authenticatedUser()])
+        f.USERACCOUNTS[accountData[0].name] = accountData[0]
+      }
       newComment = $(f.createCommentTemplate(f.USERACCOUNTS, commentdata, false, false, guest, guestReply))
       let inputArea = $('.sc-comment__container')
       inputArea.fadeOut(400, () => inputArea.remove())
