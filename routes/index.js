@@ -12,9 +12,7 @@ const Moderation = require('../models/moderation')
 const ModerationController = require('../controllers/moderation')
 
 router.get('/', (req, res, next) =>  {
-  res.render('index', {
-    css : 'bulma'
-  });
+  res.render('index');
 });
 
 router.get('/about', (req, res, next) =>  {

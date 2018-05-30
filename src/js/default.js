@@ -1,12 +1,30 @@
+import '../../node_modules/bulma/bulma.sass'
+import '../scss/landing.scss'
+
+import $ from 'jquery'
+import steem from 'steem'
+import finallycomments from 'finallycomments'
+
 let app = {
   init: () => {
     let dashboard = $('main').hasClass('dashboard')
+    let index = $('main').hasClass('index')
     if(dashboard) app.dashboardInit()
+    if(index) app.indexInit();
   },
   dashboardInit: () => {
     app.dashboardLoadPosts()
     app.dashboardUiActions()
     app.dashboardLoadPane()
+  },
+  indexInit: () => {
+    finallycomments.init()
+    let options = {
+      values: true,
+      reputation: true,
+      profile: false
+    }
+    finallycomments.appendTo('.finally-comments', 'thread', 'finally-hellomars', 'sambillingham', options)
   },
   dashboardLoadPane: () => {
     if(window.location.hash) {

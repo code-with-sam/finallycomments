@@ -1,3 +1,13 @@
+import "../scss/style.scss"
+
+const frame = require('iframe-resizer')
+
+import $ from 'jquery'
+import steem from 'steem'
+import showdown from 'showdown'
+import moment from 'moment'
+import purify from 'dompurify'
+
 const f = {
     CATEGORY: '',
     AUTHOR: '',
@@ -41,7 +51,7 @@ const f = {
     uiActions: () => {
           $('.sc-section').on('click', '.sc-login', (e) => {
             let authUrl = $(e.currentTarget).attr('href')
-            authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
+            let authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
             if (window.focus) authWindow.focus();
             return false;
           })
@@ -521,7 +531,7 @@ const f = {
           f.USERACCOUNTS = result.accounts
           let resultsArray = [];
 
-          for ( post in result.content ){
+          for (let post in result.content ){
 
             var html = result.content[post].body
             resultsArray.push({
@@ -580,7 +590,7 @@ const f = {
           $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
           if( f.ISAUTHENTICATED ){
             let topLevelPost = resultsArray[resultsArray.length -1]
-            voted = topLevelPost.voters.indexOf(f.authenticatedUser()) > -1 ? true : false
+            let voted = topLevelPost.voters.indexOf(f.authenticatedUser()) > -1 ? true : false
             $('.sc-topbar__upvote').addClass(`sc-topbar__upvote--voted-${voted}`)
           }
           resolve()
@@ -594,7 +604,7 @@ const f = {
     // @param guest - Boolean - IF the comment being generated is a guest comment
     // @parem guestReply - Boolean - if the comment being generated is by an authenticated user but in reply to a guest
     createCommentTemplate: (accounts, post, voted, order, guest, guestReply) => {
-          Object.keys(post).forEach(key => post[key] = DOMPurify.sanitize(post[key]))
+          Object.keys(post).forEach(key => post[key] = purify.sanitize(post[key]))
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;

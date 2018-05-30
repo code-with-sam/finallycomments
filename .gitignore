@@ -1,3 +1,14 @@
+.env
+.cache/
 node_modules/
 now.json
-.env
+dist/thread.css
+dist/default.css
+dist/auth-success.js
+dist/auth-success.map
+dist/default.js
+dist/default.map
+dist/finally.js
+dist/finally.map
+dist/thread.js
+dist/thread.map
