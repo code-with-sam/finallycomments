@@ -1,11 +1,35 @@
+
+header.landing {
+  min-height: 100vh;
+}
+.landing__detail {
+  position: absolute;
+  bottom: 0;
+  max-height: 300px;
+  min-width: 100%;
+}
+nav {
+  /*float: right;*/
+  text-align: center;
+  padding: 20px;
+}
+nav a {
+  margin: 10px;
+  display: inline-block;
+}
 .finally-logo {
   width: 107px;
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  z-index: 1000;
+}
+.steem-connect-cta {
+  position: absolute;
+  top: 20px;
   right: 20px;
   z-index: 1000;
 }
-
 a.content-link {
   color: #0e0e0e;
   border-bottom: solid 2px #01d1b2;
@@ -34,8 +58,9 @@ h1 {
 }
 
 h2 {
-  font-size: 1.3rem;
   line-height: 1;
+  text-align: center;
+  margin-top: 150px;
 }
 @media( min-width: 600px){
   h1 {
@@ -56,26 +81,25 @@ h2 {
     font-size: 9rem;
   }
   h2 {
-    font-size: 5rem;
+    font-size: 3.5rem;
     line-height: 1;
   }
 }
 
 
 header.landing {
-  padding: 30px 0 ;
+  overflow: hidden;
 }
 
 @media( min-width: 700px){
-  header.landing {
-  padding: 50px;
-  }
+
 }
 
 
 
 .header__links {
-  margin:  50px 0
+  margin:  50px 0;
+  text-align: center;
 }
 .header__links .button {
   display: inline-block;
@@ -85,7 +109,8 @@ header.landing {
 section.intro,
 .section.news {
   padding: 100px 0;
-  background: #eff6fd;
+  background: #2b365f;
+  color: #fff;
 }
 
 section.generate {
@@ -93,7 +118,7 @@ section.generate {
 }
 
 section.generate {
-  background: #01d1b2;
+  background: #eff6fd;
 }
 section.generate p,
 section.generate h3 {
