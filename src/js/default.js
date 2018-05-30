@@ -1,3 +1,5 @@
+import "../scss/landing.scss"
+
 let app = {
   init: () => {
     let dashboard = $('main').hasClass('dashboard')

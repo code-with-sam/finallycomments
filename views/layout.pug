@@ -2,11 +2,11 @@ doctype html
 html
   head
     title Finally Comments System
-    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='/thread.css')
 
     if css == 'bulma'
       link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css')
-      link(rel='stylesheet', href='/css/landing.css')
+      link(rel='stylesheet', href='/default.css')
 
   body
     block content
@@ -18,8 +18,8 @@ html
       script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js")
       script(src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.min.js")
       script(src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/1.0.4/purify.min.js")
-      script(src="/js/iframeResizer.contentWindow.min.js")
-      script(src="/js/thread.js")
+      //- script(src="/js/iframeResizer.contentWindow.min.js")
+      script(src="/thread.js")
     else
-      script(src="/js/finally.js")
-      script(src="/js/default.js")
+      script(src="/finally.js")
+      script(src="/default.js")

@@ -1,3 +1,7 @@
+import "../scss/style.scss"
+
+const frame = require('iframe-resizer')
+
 const f = {
     CATEGORY: '',
     AUTHOR: '',
@@ -521,7 +525,7 @@ const f = {
           f.USERACCOUNTS = result.accounts
           let resultsArray = [];
 
-          for ( post in result.content ){
+          for (let post in result.content ){
 
             var html = result.content[post].body
             resultsArray.push({

@@ -3,9 +3,12 @@
   "version": "0.9.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "parcel watch src/js/thread.js src/js/default.js src/js/finally.js src/js/auth-success.js",
+    "build": "parcel build src/js/thread.js src/js/default.js src/js/finally.js src/js/auth-success.js"
   },
   "dependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
@@ -14,6 +17,7 @@
     "express": "~4.15.5",
     "express-sanitize-escape": "^1.1.0",
     "express-session": "^1.15.6",
+    "iframe-resizer": "^3.6.1",
     "mongodb": "^3.0.8",
     "morgan": "~1.9.0",
     "pug": "2.0.0-beta11",
@@ -21,6 +25,10 @@
     "request-promise": "^4.2.2",
     "sc2-sdk": "^1.0.2",
     "serve-favicon": "~2.4.5",
-    "steem": "^0.7.1"
+    "steem": "^0.7.1",
+    "parcel-bundler": "^1.8.1",
+  },
+  "devDependencies": {
+    "node-sass": "^4.9.0"
   }
 }
