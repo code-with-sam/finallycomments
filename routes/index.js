@@ -17,6 +17,18 @@ router.get('/', (req, res, next) =>  {
   });
 });
 
+router.get('/about', (req, res, next) =>  {
+  res.render('about', { css : 'bulma' });
+});
+
+router.get('/get-started', (req, res, next) =>  {
+  res.render('get-started', { css : 'bulma' });
+});
+
+router.get('/news', (req, res, next) =>  {
+  res.render('news', { css : 'bulma' });
+});
+
 router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
       let status = false
       let username = req.session.steemconnect ? req.session.steemconnect.name : ''
