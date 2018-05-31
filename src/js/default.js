@@ -3,14 +3,18 @@ import '../scss/landing.scss'
 
 import $ from 'jquery'
 import steem from 'steem'
+import showdown from 'showdown'
 import finallycomments from 'finallycomments'
+import purify from 'dompurify'
 
 let app = {
   init: () => {
     let dashboard = $('main').hasClass('dashboard')
     let index = $('main').hasClass('index')
+    let single = $('main').hasClass('single-post')
     if(dashboard) app.dashboardInit()
     if(index) app.indexInit();
+    if(single) app.initSinglePost();
   },
   dashboardInit: () => {
     app.dashboardLoadPosts()
@@ -25,6 +29,20 @@ let app = {
       profile: false
     }
     finallycomments.appendTo('.finally-comments', 'thread', 'finally-hellomars', 'sambillingham', options)
+  },
+  initSinglePost: async () => {
+    let permlink = $('main').data('permlink')
+    let postData = await steem.api.getContentAsync('sambillingham', permlink)
+    app.appendSingePost(postData)
+  },
+  appendSingePost: (post) => {
+    var converter = new showdown.Converter();
+    var html = purify.sanitize(converter.makeHtml(post.body))
+    let template = `
+      <h2>${post.title}</h2>
+      ${html}
+    `
+    $('.single-post__content').append(template)
   },
   dashboardLoadPane: () => {
     if(window.location.hash) {

@@ -24,7 +24,12 @@ router.get('/get-started', (req, res, next) =>  {
 });
 
 router.get('/news', (req, res, next) =>  {
-  res.render('news', { css : 'bulma' });
+  res.render('news');
+});
+
+router.get('/post/:permlink', (req, res, next) =>  {
+  let permlink = req.params.permlink
+  res.render('single-post', { permlink });
 });
 
 router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
