@@ -1,5 +1,6 @@
 extends layout
 block content
-
+  include partials/nav
   main.single-post(data-permlink=permlink)
     section.single-post__content
+    section.single-post__finally-comments

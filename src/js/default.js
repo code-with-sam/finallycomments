@@ -33,15 +33,13 @@ let app = {
   initSinglePost: async () => {
     let permlink = $('main').data('permlink')
     let postData = await steem.api.getContentAsync('sambillingham', permlink)
-    app.appendSingePost(postData)
+    app.appendSingePostContent(postData)
+    finallycomments.appendTo('.single-post__finally-comments', 'steem', `utoptian-io/@sambillingham/${permlink}`, 'sambillingham')
   },
-  appendSingePost: (post) => {
+  appendSingePostContent: (post) => {
     var converter = new showdown.Converter();
     var html = purify.sanitize(converter.makeHtml(post.body))
-    let template = `
-      <h2>${post.title}</h2>
-      ${html}
-    `
+    let template = `<h2>${post.title}</h2>${html}`
     $('.single-post__content').append(template)
   },
   dashboardLoadPane: () => {
