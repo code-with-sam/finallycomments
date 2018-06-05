@@ -1,0 +1,51 @@
+
+.nav__logo {
+  width: 107px;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  z-index: 1000;
+}
+
+.nav {
+  text-align: center;
+  padding: 20px;
+  background-color: $brand-primary;
+  box-shadow: 0 1px 25px rgba(0,0,0,0.5);
+}
+.nav--alt {
+  color: $brand-primary;
+  background-color: transparent;
+  box-shadow: 0 0 0 transparent;
+}
+
+.nav__link {
+  margin: 10px;
+  display: inline-block;
+  font-family: "brandon-grotesque",sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  font-size: 14px;
+  color: #fff;
+  &:hover {
+    color: $brand-alt;
+  }
+}
+.nav__link--alt {
+  color: $brand-primary
+}
+.nav__divider {
+  color: #fff;
+
+}
+.nav__divider--alt {
+  color: $brand-primary
+}
+
+.nav__steemconnect {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
