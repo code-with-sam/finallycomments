@@ -9,8 +9,10 @@ const Domain = require('../models/domain')
 
 router.get('/', util.isAuthenticated, async (req, res, next) =>  {
   let username = req.session.steemconnect.name
-  let threads = await Thread.find(username)
-  let domains = await Domain.findOne(username)
+  let threads ;
+  try { threads = await Thread.find(username)} catch(error){ console.log(error) }
+  let domains;
+  try { domains = await Domain.findOne(username) } catch(error){ console.log(error) }
   console.log(domains)
   let token = false;
   try { token = await Token.findOne(username) } catch(error){ console.log(error) }

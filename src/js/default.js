@@ -3,14 +3,20 @@ import '../scss/landing.scss'
 
 import $ from 'jquery'
 import steem from 'steem'
+import showdown from 'showdown'
 import finallycomments from 'finallycomments'
+import purify from 'dompurify'
 
 let app = {
   init: () => {
     let dashboard = $('main').hasClass('dashboard')
     let index = $('main').hasClass('index')
+    let single = $('main').hasClass('single-post')
+    let getStarted = $('main').hasClass('get-started')
     if(dashboard) app.dashboardInit()
     if(index) app.indexInit();
+    if(single) app.initSinglePost();
+    if(getStarted) app.initGetStartedPage();
   },
   dashboardInit: () => {
     app.dashboardLoadPosts()
@@ -24,7 +30,32 @@ let app = {
       reputation: true,
       profile: false
     }
-    finallycomments.appendTo('.finally-comments', 'thread', 'finally-hellomars', 'sambillingham', options)
+    finallycomments.appendTo('.finally__example', 'thread', 'finally-hellomars', 'sambillingham', options)
+  },
+  initSinglePost: async () => {
+    let permlink = $('main').data('permlink')
+    let postData = await steem.api.getContentAsync('sambillingham', permlink)
+    app.appendSingePostContent(postData)
+    finallycomments.init()
+    finallycomments.loadEmbed('.single-post__finally-comments')
+  },
+  appendSingePostContent: (post) => {
+    var converter = new showdown.Converter();
+    var html = purify.sanitize(converter.makeHtml(post.body))
+    let template = `<h2>${post.title}</h2>${html}`
+    $('.single-post__content').append(template)
+  },
+  initGetStartedPage: () => {
+    let codeBlock = `
+<section class="finally-comments"\n
+    data-id="https://steemit.com/utopian-io/@sambillingham/steemconnect-node-js-boilerplate-for-rapid-development-v-0-3-0"\n
+    data-reputation="true"\n
+    data-values="true"\n
+    data-profile="true"\n
+    data-generated="false"\n
+</section>\n
+<script src="https://finallycomments.com/js/finally.min.js"></script>`
+    $('.strip__code').text(codeBlock)
   },
   dashboardLoadPane: () => {
     if(window.location.hash) {
@@ -151,7 +182,7 @@ let app = {
     let rep = controls.rep ? '    data-reputation="true"\n' :''
     let values = controls.values ? '    data-values="true"\n' :''
     let profile = controls.profile ? '    data-profile="true"\n' :''
-    let generated = controls.generated ? '    data-generated="true"\n' : '    data-generated="false"\n'
+    let generated = controls.generated ? '    data-generated="true">\n' : '    data-generated="false">\n'
     let embedTemplate = `
 <section class="finally-comments"
 ${id}${rep}${values}${profile}${generated}</section>

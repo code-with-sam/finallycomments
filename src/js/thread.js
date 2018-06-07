@@ -608,12 +608,15 @@ const f = {
           var permlink = post.parent_permlink
           var converter = new showdown.Converter();
           var html = converter.makeHtml(post.body);;
-
+          var metadata;
           try {
-            var metadata = JSON.parse(accounts[post.author].json_metadata).profile
+            metadata = JSON.parse(accounts[post.author].json_metadata).profile
+          } catch (err){
+            metadata = {about: '', profile_image: '/img/default-user.jpg'}
           }
-          catch (err){
-            var metadata = {profile_image: '/img/default-user.jpg'}
+
+          if (accounts[post.author].json_metadata === '{}') {
+            metadata = {about: '', profile_image: '/img/default-user.jpg'}
           }
 
           var voteMessage = (post.votes > 1 || post.votes == 0 )? 'votes' : 'vote'

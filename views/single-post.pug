@@ -1,0 +1,12 @@
+extends layout
+block content
+  include partials/nav
+  main.single-post(data-permlink=permlink)
+    section.single-post__content
+
+    section(class="single-post__finally-comments"
+      data-id=`utopian-io/@sambillingham/${permlink}`
+      data-reputation="false"
+      data-values="true"
+      data-profile="false"
+      data-generated="false")

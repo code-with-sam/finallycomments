@@ -15,6 +15,23 @@ router.get('/', (req, res, next) =>  {
   res.render('index');
 });
 
+router.get('/about', (req, res, next) =>  {
+  res.render('about');
+});
+
+router.get('/get-started', (req, res, next) =>  {
+  res.render('get-started');
+});
+
+router.get('/news', (req, res, next) =>  {
+  res.render('news');
+});
+
+router.get('/post/:permlink', (req, res, next) =>  {
+  let permlink = req.params.permlink
+  res.render('single-post', { permlink });
+});
+
 router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
       let status = false
       let username = req.session.steemconnect ? req.session.steemconnect.name : ''

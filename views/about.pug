@@ -1,0 +1,64 @@
+extends layout
+block content
+  include partials/nav
+  header.news.single
+    h2.title.single__title About
+
+  section.strip.strip--brand
+    .strip__inner
+        h3.title A Blockchain Powered Comments System
+        p.strip__content Finally is a comments system for your website that is powered by the #[a.content-link(href="https://steem.io") STEEM blockchain]. The STEEM blockchain is a unique piece of technology that allows content creators to receive a share of weekly token rewards.
+        p.strip__content Finally is a competitor to the current status quo of comments sytems that are rife with tracking and advertisment. Finally aims to provide monetisation to blogs and foster discussions with the incentives the STEEM blockchain provides.
+
+
+  section.strip.strip--alt
+    .strip__inner
+        h3.title Get Rewards
+        p.strip__content On the surface Finally works similar to other comments systems you've used before both for developers and end users. A HTML embed and a javascript library are provided for developers, while users see a typical threaded comments section with the ability to reply and upvote both the main article and other comments.
+
+        p.strip__content Upvotes are what make Finally different. On Finally upvotes are not just for ranking or vanity but provide users with token based rewards.  Learn more about STEEM and how rewards are distributed by reading the #[a.content-link(href="https://steem.io/steem-bluepaper.pdf") STEEM Blue Paper].
+
+  section.strip.strip--plain
+    .strip__inner
+        h3.title Extra Details
+
+        p.strip__content When commenting on Finally comments you are interacting with the STEEM blockchain and therefore need a STEEM account. STEEM accounts can be setup for free via steemit.com. #[a.content-link(href="https://signup.steemit.com/?ref=finally") Signup here to try it out].
+
+        p.strip__content Finally Comments is not intended to replace, compete, supersede any other platforms that run on STEEM. Each platform is able to display content from the STEEM platform however they wish.
+
+        p.strip__content Finally is open-source software. The code is available on #[a.content-link(href="https://github.com/code-with-sam/finallycomments") Github]. You are welcome to clone or fork the code as well as create issues.
+
+        p.strip__content &hearts; Thank you to the community of  #[a.content-link(href="https://utopian.io") Utopian.io] for providing support and valuable feedback while working on this project.
+
+  section.strip.strip--brand
+    .strip__inner
+        h3.title Frequently Asked Questions
+        ul.strip__ul
+          li.strip__li
+            h3.strip__question I don't understand, why are you copying Steemit (busy, Utopian, steemhunt etc)?
+            p.strip__answer Finally Comments is not intended to replace, compete, supersede any other platforms that run on STEEM. Each platform has slightly different purposes and is able to display content from the STEEM blockchain however they wish. Finally does not create top-level posts but only comment threads and provides an interface for embeding those comments threads around the web.
+          li.strip__li
+            h3.strip__question Who makes Finally Comments?
+            p.strip__answer Sam Billingham - #[a.content-link(href="https://steemit.com/@sambillingham") Steemit], #[a.content-link(href="https://twitter.com/@sambillingham") Twitter], #[a.content-link(href="https://sambillingham.com") Website]
+          li.strip__li
+            h3.strip__question Can I see an example?
+            p.strip__answer There is a list of examples on the #[a.content-link(href="/get-started") get started page].
+            p - #[a.content-link(href="/post/finally-comments-api-and-new-dashboard-features") Finally Blog Post]
+            p - #[a.content-link(href="https://photofeed.club/") Photofeed.club Post(click an image)]
+          li.strip__li
+            h3.strip__question Can I use finally on wordpres?
+            p.strip__answer Yes. The current Embed code will work anywhere you can include HTML and Javscript. The Javascript library can be used with wordpress themes and pluings. A dedicated plugin is being developed to make working with Finally easier.
+          li.strip__li
+            h3.strip__question Who controls the content?
+            p.strip__answer The STEEM blockchain is a public data source. Finally enables you to submit to this data source but we do not own it or control it.
+          li.strip__li
+            h3.strip__question How much does it cost?
+            p Using Finally is currently completely free, I do not take any beneficiary rewards or charge any usage fee. I'm currently looking into options for monetisation.
+          li.strip__li
+            h3.strip__question Do you track usage?
+            p.strip__answer No. We do not track users usage of the site or embed. There are no third-party scripts in our site.
+          li.strip__li
+            h3.strip__question Do you serve ads
+            p.strip__answer No.
+
+  include partials/footer
