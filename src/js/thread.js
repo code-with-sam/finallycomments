@@ -254,7 +254,7 @@ const f = {
             <span class="sc-topbar__upvote">${f.upvoteIcon}</span>
             <span class="sc-topbar__reply">Reply</span>
 
-            <span class="sc-topbar__count"> 00 Comments</span>
+            <span class="sc-topbar__count">00 Comments</span>
             <span class="sc-profile sc-profile--${f.ISAUTHENTICATED}">
               <h3 class="sc-profile__name">${username}</h3>
               <img class="sc-profile__image" src="${profileImage}">
@@ -467,6 +467,7 @@ const f = {
     // Can not be voted
     // no need to search for accounts (user nickname provided by user)
     displayGuestComments: async (comments) => {
+      f.displayCommentCount(comments.length)
       comments.forEach( (post, i, arr) => {
         let order = post.depth === 1 ? i : false
         let accounts = undefined // no account arry to loop over for guests
@@ -483,6 +484,7 @@ const f = {
     },
     // Async so that we can request any new account data for the authorised user
     displayGuestReplyComments: async (comments) => {
+      f.displayCommentCount(comments.length)
       let authors = comments.map(comment => comment.author)
       let newAccounts = await steem.api.getAccountsAsync(authors)
       newAccounts.forEach(user => f.USERACCOUNTS[user.name] = user )
@@ -587,7 +589,8 @@ const f = {
             })
           })
 
-          $('.sc-topbar__count').text(`${resultsArray.length - 1} Comments`)
+          f.displayCommentCount(resultsArray.length - 1)
+
           if( f.ISAUTHENTICATED ){
             let topLevelPost = resultsArray[resultsArray.length -1]
             let voted = topLevelPost.voters.indexOf(f.authenticatedUser()) > -1 ? true : false
@@ -732,6 +735,10 @@ const f = {
           $comments.sort(top);
         }
         $comments.detach().appendTo('.sc-comments');
+      },
+      displayCommentCount: (num) => {
+        let count = parseInt($('.sc-topbar__count').text().split(' ')[0])
+        $('.sc-topbar__count').text(`${count + num} Comments`)
       }
   }
   f.init()
