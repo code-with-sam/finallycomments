@@ -182,7 +182,7 @@ let app = {
     let rep = controls.rep ? '    data-reputation="true"\n' :''
     let values = controls.values ? '    data-values="true"\n' :''
     let profile = controls.profile ? '    data-profile="true"\n' :''
-    let generated = controls.generated ? '    data-generated="true"\n' : '    data-generated="false"\n'
+    let generated = controls.generated ? '    data-generated="true">\n' : '    data-generated="false">\n'
     let embedTemplate = `
 <section class="finally-comments"
 ${id}${rep}${values}${profile}${generated}</section>
