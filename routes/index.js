@@ -16,11 +16,11 @@ router.get('/', (req, res, next) =>  {
 });
 
 router.get('/about', (req, res, next) =>  {
-  res.render('about', { css : 'bulma' });
+  res.render('about');
 });
 
 router.get('/get-started', (req, res, next) =>  {
-  res.render('get-started', { css : 'bulma' });
+  res.render('get-started');
 });
 
 router.get('/news', (req, res, next) =>  {
