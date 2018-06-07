@@ -8,15 +8,11 @@
 }
 
 .nav {
-  text-align: center;
+  text-align: right;
   padding: 20px;
-  background-color: $brand-primary;
-  box-shadow: 0 1px 25px rgba(0,0,0,0.5);
+  color: $brand-primary;
 }
 .nav--alt {
-  color: $brand-primary;
-  background-color: transparent;
-  box-shadow: 0 0 0 transparent;
 }
 
 .nav__link {
@@ -28,8 +24,15 @@
   letter-spacing: 0.05rem;
   font-size: 14px;
   color: #fff;
+  padding: 3px 6px;
+
   &:hover {
     color: $brand-alt;
+    background-color: $brand-primary;
+    padding: 3px 6px;
+    border-radius: 5px;
+    transition: all 100ms ease-in;
+    text-align: center;
   }
 }
 .nav__link--alt {
@@ -44,8 +47,9 @@
 }
 
 .nav__steemconnect {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
+  margin: 10px;
+  // position: absolute;
+  // top: 20px;
+  // right: 20px;
+  // z-index: 1000;
 }

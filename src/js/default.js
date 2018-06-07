@@ -28,13 +28,14 @@ let app = {
       reputation: true,
       profile: false
     }
-    finallycomments.appendTo('.finally-comments', 'thread', 'finally-hellomars', 'sambillingham', options)
+    finallycomments.appendTo('.finally__example', 'thread', 'finally-hellomars', 'sambillingham', options)
   },
   initSinglePost: async () => {
     let permlink = $('main').data('permlink')
     let postData = await steem.api.getContentAsync('sambillingham', permlink)
     app.appendSingePostContent(postData)
-    finallycomments.appendTo('.single-post__finally-comments', 'steem', `utoptian-io/@sambillingham/${permlink}`, 'sambillingham')
+    finallycomments.init()
+    finallycomments.loadEmbed('.single-post__finally-comments')
   },
   appendSingePostContent: (post) => {
     var converter = new showdown.Converter();
