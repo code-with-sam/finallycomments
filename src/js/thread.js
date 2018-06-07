@@ -615,7 +615,7 @@ const f = {
             metadata = {about: '', profile_image: '/img/default-user.jpg'}
           }
 
-          if (accounts[post.author].json_metadata === '{}') {
+          if (!guest && accounts[post.author].json_metadata === '{}') {
             metadata = {about: '', profile_image: '/img/default-user.jpg'}
           }
 
