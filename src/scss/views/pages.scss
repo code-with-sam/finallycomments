@@ -1,0 +1,134 @@
+.hero__tagline {
+  line-height: 1;
+  text-align: center;
+  margin: 150px 0 50px;
+  font-weight: 500;
+  font-size: 3rem;
+  @media(max-width: 600px ){ font-size: 1.6rem; padding: 0 30px; margin: 50px 0 50px;}
+}
+
+.hero__links {
+  margin:  50px 0 250px;
+  text-align: center;
+  @media(max-width: 600px ){   margin:  100px 0 100px; padding: 0 50px;}
+}
+
+.hero__links .button {
+  display: inline-block;
+  margin-right: 15px;
+}
+.button {
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.code-example {
+  line-height: 0.6;
+  padding: 20px;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: $brand-alt;
+  margin: 0 10% 20px;
+}
+.code-example--alt {
+  padding: 20px;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: $brand-primary;
+  color: $brand-alt;
+  margin: 0 10% 20px;
+}
+
+#intro  {
+  padding: 160px 0;
+  transform: skewY(2.5deg) translateY(30px);
+}
+#get-started  {
+  padding-top: 160px;
+}
+
+#intro .strip__inner {
+  transform: skewY(-2.5deg);
+}
+
+.strip__inner {
+  @extend .container;
+}
+
+.strip {
+  padding: 120px 0;
+  margin: 0;
+  font-size: 1.2rem;
+
+  .title {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    margin: 0 10% 40px ;
+  }
+  .button {
+    margin: 0 15px 0;
+    &:first-of-type {
+      margin-left: 10%;
+    }
+  }
+
+}
+
+.strip__content {
+  font-weight: 500;
+  margin: 0 10% 20px;
+  @media(min-width: 600px){ max-width: 80%; }
+}
+
+
+.strip--brand {
+  background-color: $brand-primary;
+  color: #fafafa;
+  .title {
+    color: #fafafa;
+  }
+  .content-link {
+   color: $brand-contrast;
+   border-bottom: solid 2px  $brand-contrast;
+ }
+}
+
+.strip--alt {
+  background-color: $brand-alt;
+  color: $brand-primary;
+  .title, .content-link {
+    color: $brand-primary;
+  }
+  .content-link {
+   color: $brand-contrast;
+   border-bottom: solid 2px  $brand-contrast;
+ }
+}
+
+.strip--plain {
+  background-color: #fff;
+  color: $brand-primary;
+  .title, .content-link {
+    color: $brand-primary;
+  }
+  .content-link {
+   color: $brand-contrast;
+   border-bottom: solid 2px  $brand-contrast;
+ }
+}
+
+.strip__ul {
+  max-width: 80%;
+  margin-left: 10%;
+}
+.strip__li {
+  list-style: none;
+  margin: 30px 0;
+}
+.strip__question {
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-size: 20px;
+}

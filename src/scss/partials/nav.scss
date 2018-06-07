@@ -1,10 +1,15 @@
 
 .nav__logo {
-  width: 107px;
-  position: absolute;
-  top: -10px;
-  left: 10px;
+  width: 67px;
   z-index: 1000;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  @media(min-width: 600px ){
+    width: 107px;
+    top: -10px;
+  }
+
 }
 
 .nav {
@@ -18,14 +23,13 @@
 .nav__link {
   margin: 10px;
   display: inline-block;
-  font-family: "brandon-grotesque",sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05rem;
-  font-size: 14px;
+  font-size: 12px;
   color: #fff;
   padding: 3px 6px;
-
+  @media(min-width: 600px ){ font-size: 14px; }
   &:hover {
     color: $brand-alt;
     background-color: $brand-primary;
@@ -48,8 +52,4 @@
 
 .nav__steemconnect {
   margin: 10px;
-  // position: absolute;
-  // top: 20px;
-  // right: 20px;
-  // z-index: 1000;
 }

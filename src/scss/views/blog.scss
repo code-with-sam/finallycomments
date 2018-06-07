@@ -1,10 +1,12 @@
 .single-post__content {
   max-width: 800px;
   margin: 0 auto ;
+  padding: 0 15px;
 }
 .single-post__finally-comments {
   max-width: 800px;
   margin: 0 auto 100px;
+  padding: 0 15px;
 }
 
 
@@ -15,12 +17,12 @@
 
 .title.single__title {
   font-weight: 700;
-  font-family: "brandon-grotesque", sans-serif;
   letter-spacing: 1px;
   text-transform: uppercase;
+  margin-left: 10%
 }
 .news__list {
-
+margin-left: 10%;
 }
 
 .news__list li {
@@ -28,7 +30,6 @@
   padding: 10px;
   font-size: 16px;
   font-weight: 700;
-  font-family: "brandon-grotesque", sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   background-color: $brand-alt;
@@ -45,7 +46,6 @@
   font-size: 28px;
   margin: 20px 0;
   font-weight: 700;
-  font-family: "brandon-grotesque", sans-serif;
 }
 .single-post__content h2:first-of-type{
   text-align: center;
