@@ -47,7 +47,21 @@ body {
   font-weight: 500;
 }
 
-
+.code-example {
+  line-height: 0.6;
+  padding: 20px;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: $brand-alt;
+}
+.code-example--alt {
+  padding: 20px;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: $brand-primary;
+  color: $brand-alt;
+  margin-bottom: 20px;
+}
 // a.content-link {
 //   color: $brand-primary;
 //   border-bottom: solid 2px #01d1b2;

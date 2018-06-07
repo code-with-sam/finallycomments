@@ -1,2 +1,63 @@
 extends layout
 block content
+  include partials/nav
+  main.get-started.single
+    h2.title.single__title Get Started
+
+  section.strip.strip--brand
+    .strip__inner
+        h3.title HTML Embed
+        p.strip__content The HTML embed code can be used to embed comments from any STEEM blockchain based platform including Steemit.com, Busy.org, d.tube, Steemhunt.com, musing.io and steepshot.io. Finally can also create new threads that are not linked to previously posted content. To create new blank threads you must use the #[a.content-link(href="/auth/dashboard") Finally dashboard].
+
+        p.strip__content Here is an example embed code. Copy/paste the below code to generate the comments thread on your website. You can change the URL to the relevant content.
+
+        pre.code-example: code.strip__code
+
+
+  section.strip.strip--alt
+    .strip__inner
+        h3.title Javascript Library
+        p.strip__content The Finally library is hosted on #[a.content-link(href="https://www.npmjs.com/package/finallycomments") NPM] & #[a.content-link(href="https://github.com/code-with-sam/npm-finallycomments") Github]
+
+        pre.code-example--alt: code
+          | npm i finallycomments -s
+
+        p.strip__content The library includes a number of helpful functions to include Finally Comments within your project. Create iframes, embed iframes directly or get external links to threads on finallycomments.com.
+
+        pre.code-example--alt: code
+          | // loadFromSteemitUrl(steemitUrl, options)
+          | import finallycomments from 'finallycomments'
+          | finallycomments.init()
+          | let iframe = finallycomments.loadFromSteemitUrl('https://steemit.com/utopian-io/@sambillingham/finally-comments-api-and-new-dashboard-features')
+
+        pre.code-example--alt: code
+          | // directThreadLink(embedType, url, options)
+          | import finallycomments from 'finallycomments'
+          | finallycomments.init()
+          | let href = finallycomments.directThreadLink('steem', 'https://steemit.com/utopian-io/@sambillingham/finally-comments-api-and-new-dashboard-features')
+          | let link = #{'`<a href="${href}">Check out this discussion we has on Steem yesterday</a>`'}
+
+        p.strip__content View full readme on #[a.content-link(href="https://www.npmjs.com/package/finallycomments") NPM] or #[a.content-link(href="https://github.com/code-with-sam/npm-finallycomments") Github]
+
+  section.strip.strip--plain
+    .strip__inner
+        h3.title Finally Dashboard
+        p.strip__content The fastest way to make use of Finally is to login to the dashboard.
+
+        p.strip__content Generate embed code for comment threads from any STEEM based content.
+
+        p.strip__content Create new custom comment threads powered by STEEM
+
+        p.strip__content Connect your website to make use of the API.
+
+        a.button.is-small.is-dark(href="/auth/dashboard") Dashboard
+
+  section.strip.strip--brand
+    .strip__inner
+        h3.title Examples of Finally Comments Online
+        .strip__content
+          p - #[a.content-link(href="/post/finally-comments-api-and-new-dashboard-features") Finally Blog Post]
+          p - #[a.content-link(href="https://photofeed.club/") Photofeed.club Post(click an image)]
+        p.strip__content *Please message to have your site added.
+
+  include partials/footer
