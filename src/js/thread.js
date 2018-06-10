@@ -292,7 +292,9 @@ const f = {
     addVoteTemplateAfter: (dest) => {
       $('.sc-vote').remove()
       let template = `<div class="sc-vote">
-      <span class="sc-vote__btn"><span class="sc-topbar__upvote">${f.upvoteIcon}</span>
+      <span class="sc-vote__btn">
+        <span class="sc-topbar__upvote">${f.upvoteIcon}</span>
+      </span>
       <span class="sc-vote__value">50%</span>
       <input type="range" min="1" max="100" value="50" class="sc-vote__slider" id="myRange">
       <span class="sc-close sc-vote__close" >&#43;</span>
