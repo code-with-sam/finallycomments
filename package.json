@@ -1,6 +1,6 @@
 {
   "name": "finally-comments",
-  "version": "0.1010",
+  "version": "0.10.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
