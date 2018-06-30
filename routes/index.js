@@ -3,6 +3,7 @@ let router = express.Router();
 let util = require('../modules/util');
 let cors = require('cors')
 let { steem, getAccessFromRefresh } = require('../modules/steemconnect')
+const { URL } = require('url');
 const Thread = require('../models/thread')
 const Domain = require('../models/domain')
 const Token = require('../models/token')
@@ -166,12 +167,11 @@ router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
   if(thread.result){
     res.redirect(`/thread/finallycomments/@${username}/${sluglink}`)
   } else {
-    let origin = req.headers.origin
-    let referer = req.headers.referer
-    let refererLessSlash = referer.slice(0, -1)
+    let referer = new URL(req.headers.referer)
+    console.log('REFERER', referer)
     let domains = await Domain.findOne(username)
 
-    if (domains.list.indexOf(referer) > -1 || domains.list.indexOf(refererLessSlash) > -1 ){
+    if (referer.host){
       let newToken
       try { newToken = await getAccessFromRefresh(username) }
       catch(error){console.log(error)}
