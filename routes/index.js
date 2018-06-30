@@ -81,7 +81,37 @@ router.post('/comment', util.isAuthorized, (req, res) => {
     let body = req.body.message
     let parentAuthor = req.body.parentAuthor
     let parentPermlink = req.body.parentPermlink
-    steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, (err, steemResponse) => {
+
+    let commentParams = {
+      parent_author: parentAuthor,
+      parent_permlink: parentPermlink,
+      author: author,
+      permlink: permlink,
+      title: title,
+      body: body,
+      json_metadata : JSON.stringify({ app: 'finally.app' })
+    }
+    let beneficiaries = [];
+    beneficiaries.push({
+      account: 'finallycomments',
+      weight: 100*10
+    });
+    let commentOptionsParams = {
+      author: author,
+      permlink: permlink,
+      max_accepted_payout: '100000.000 SBD',
+      percent_steem_dollars: 10000,
+      allow_votes: true,
+      allow_curation_rewards: true,
+      extensions: [
+        [0, {
+          beneficiaries: beneficiaries
+        }]
+      ]
+    }
+
+    let operations = [['comment', commentParams], ['comment_options', commentOptionsParams]]
+    steem.broadcast(operations, (err, steemResponse) => {
       if (err) {
         res.json({ error: err.error_description })
       } else {
