@@ -81,6 +81,8 @@ router.post('/comment', util.isAuthorized, (req, res) => {
     let body = req.body.message
     let parentAuthor = req.body.parentAuthor
     let parentPermlink = req.body.parentPermlink
+    let beneficiary = req.body.beneficiary
+    let beneficiaryWeight = parseInt(req.body.beneficiaryWeight) > 40 ? 40 : parseInt(req.body.beneficiaryWeight)
 
     let commentParams = {
       parent_author: parentAuthor,
@@ -93,8 +95,8 @@ router.post('/comment', util.isAuthorized, (req, res) => {
     }
     let beneficiaries = [];
     beneficiaries.push({
-      account: 'finallycomments',
-      weight: 100*10
+      account: beneficiary,
+      weight: 100*beneficiaryWeight
     });
     let commentOptionsParams = {
       author: author,
