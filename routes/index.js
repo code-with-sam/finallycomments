@@ -3,7 +3,6 @@ let router = express.Router();
 let util = require('../modules/util');
 let cors = require('cors')
 let { steem, getAccessFromRefresh } = require('../modules/steemconnect')
-const { URL } = require('url');
 const Thread = require('../models/thread')
 const Domain = require('../models/domain')
 const Token = require('../models/token')
@@ -11,6 +10,7 @@ const GuestComment = require('../models/guest-comment')
 const GuestReplyComment = require('../models/guest-reply-comment')
 const Moderation = require('../models/moderation')
 const ModerationController = require('../controllers/moderation')
+const CustomThreadController = require('../controllers/custom-thread')
 
 router.get('/', (req, res, next) =>  {
   res.render('index');
@@ -191,40 +191,7 @@ router.post('/guest-reply-comments', async (req, res) => {
 
 
 router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
-  let username = req.params.username
-  let slug = req.params.slug
-  let sluglink = `finally-${slug}`
-  let thread;
-  try { thread = await Thread.findBySlugAndUser(sluglink, username) } catch(error){console.log(error)}
-  if(thread.result){
-    res.redirect(`/thread/finallycomments/@${username}/${sluglink}`)
-  } else {
-    let referer = new URL(req.headers.referer)
-    let domains = await Domain.findOne(username)
-    if (domains.list.indexOf(referer.host) > -1 ){
-      let newToken
-      try { newToken = await getAccessFromRefresh(username) }
-      catch(error){console.log(error)}
-      steem.setAccessToken(newToken.access_token);
-      const FINALLY_AUTHOR = 'finallycomments'
-      const FINALLY_PERMLINK = 'finally-comments-thread'
-      let author = username
-      let permlink = `finally-${slug}`
-      let title = `${username}: Finally Thread`
-      let body = `${username} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
-      let parentAuthor = FINALLY_AUTHOR
-      let parentPermlink = FINALLY_PERMLINK
-      steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, async (err, steemResponse) => {
-        if (err) { console.log(err); res.redirect('/404');
-        } else {
-          let newThread = { author: author, slug: permlink, title: title }
-          let response = await Thread.insert(newThread)
-          res.redirect(`/thread/finallycomments/@${username}/${permlink}`)
-        }
-      });
-    } else { res.redirect('/404') }
-  }
-
+  CustomThreadController.checkAndGenerate(req, res)
 });
 
 router.post('/new-thread', util.isAuthorized, (req, res) => {
