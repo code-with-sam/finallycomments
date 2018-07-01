@@ -53,8 +53,9 @@ let app = {
     data-values="true"\n
     data-profile="true"\n
     data-generated="false"\n
-    beneficiary=""\n
-    beneficiaryWeight="0"\n
+    data-beneficiary=""\n
+    data-beneficiaryWeight="0"\n
+    data-guestComments="false"
 </section>\n
 <script src="https://finallycomments.com/js/finally.min.js"></script>`
     $('.strip__code').text(codeBlock)
@@ -152,7 +153,8 @@ let app = {
         profile: $(`.${controller} *[data-value="profile"]`).is(':checked'),
         beneficiary: $(`.${controller} *[data-value="beneficiary"]`).is(':checked'),
         beneficiaryUsername: $(`.${controller} *[data-value="beneficiary-username"]`).val(),
-        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val()
+        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val(),
+        guestComments: $(`.${controller} *[data-value="guest-comments"]`).is(':checked')
       }
       if (permlink) app.dashboadLoadEmbed(permlink, controls)
     })
@@ -171,7 +173,8 @@ let app = {
         profile: $(`.${controller} *[data-value="profile"]`).is(':checked'),
         beneficiary: $(`.${controller} *[data-value="beneficiary"]`).is(':checked'),
         beneficiaryUsername: $(`.${controller} *[data-value="beneficiary-username"]`).val(),
-        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val()
+        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val(),
+        guestComments: $(`.${controller} *[data-value="guest-comments"]`).is(':checked')
       }
       console.log(controls)
       app.dashboadLoadEmbed(permlink, controls)
@@ -198,12 +201,13 @@ let app = {
     let rep = controls.rep ? '    data-reputation="true"\n' :''
     let values = controls.values ? '    data-values="true"\n' :''
     let profile = controls.profile ? '    data-profile="true"\n' :''
-    let generated = controls.generated ? '    data-generated="true">\n' : '    data-generated="false">\n'
-    let beneficiary = controls.beneficiary ? `    data-beneficiary="${controls.beneficiaryUsername}">\n` : ''
-    let beneficiaryWeight = controls.beneficiary ? `    data-beneficiaryWeight="${controls.beneficiaryPercentage}">\n` : ''
+    let generated = controls.generated ? '    data-generated="true"\n' : '    data-generated="false"\n'
+    let beneficiary = controls.beneficiary ? `    data-beneficiary="${controls.beneficiaryUsername}"\n` : ''
+    let beneficiaryWeight = controls.beneficiary ? `    data-beneficiaryWeight="${controls.beneficiaryPercentage}"\n` : ''
+    let guestComments = controls.guestComments ? `    data-guestComments="true"\n` : ''
     let embedTemplate = `
 <section class="finally-comments"
-${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}</section>
+${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}${guestComments}</section>
 <script src="https://finallycomments.com/js/finally.min.js"></script>
     `
     $('.embed-code').empty()
