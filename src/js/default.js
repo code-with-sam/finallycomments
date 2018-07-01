@@ -57,7 +57,9 @@ let app = {
     data-beneficiaryWeight="0"\n
     data-guestComments="false"
 </section>\n
-<script src="https://finallycomments.com/js/finally.min.js"></script>`
+<script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>
+<script>finallyComments.init()</script>
+    `
     $('.strip__code').text(codeBlock)
   },
   dashboardLoadPane: () => {
@@ -210,7 +212,8 @@ let app = {
     let embedTemplate = `
 <section class="finally-comments"
 ${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}${guestComments}</section>
-<script src="https://finallycomments.com/js/finally.min.js"></script>
+<script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>
+<script>finallyComments.init()</script>
     `
     $('.embed-code').empty()
     $('.embed-code').text(embedTemplate)
