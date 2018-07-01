@@ -200,10 +200,8 @@ router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
     res.redirect(`/thread/finallycomments/@${username}/${sluglink}`)
   } else {
     let referer = new URL(req.headers.referer)
-    console.log('REFERER', referer)
     let domains = await Domain.findOne(username)
-
-    if (referer.host){
+    if (domains.list.indexOf(referer.host) > -1 ){
       let newToken
       try { newToken = await getAccessFromRefresh(username) }
       catch(error){console.log(error)}
