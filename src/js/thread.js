@@ -30,9 +30,6 @@ const f = {
       f.getPartsFromLink()
       f.addTopBar()
       f.getComments()
-        .then(() => f.getGuestComments(f.PERMLINK))
-        .then(() => f.getGuestReplyComments(f.PERMLINK))
-        .then(() => f.applyCommentModeration(f.PERMLINK))
       f.uiActions()
       window.addEventListener('message', f.frameLoad, false);
     },
@@ -43,10 +40,19 @@ const f = {
       f.OPTIONS.generated = data.generated === 'false' ? false : true
       f.OPTIONS.beneficiary = data.beneficiary || false
       f.OPTIONS.beneficiaryWeight = parseInt(data.beneficiaryWeight) || 0
+      f.OPTIONS.guestComments = true
     },
     frameLoad: (event) => {
       if (event.data.message == 'finally-frame-load'){
         f.setOptions(event.data)
+        f.initAfterOptionsSetActions()
+      }
+    },
+    initAfterOptionsSetActions: () => {
+      if (f.OPTIONS.guestComments) {
+        f.getGuestComments(f.PERMLINK)
+          .then(() => f.getGuestReplyComments(f.PERMLINK))
+          .then(() => f.applyCommentModeration(f.PERMLINK))
       }
     },
     uiActions: () => {
