@@ -185,7 +185,9 @@ let app = {
     $('.new-thread').on('click', () => {
       $('.new-thread').addClass('is-loading')
       let title = $('.new-thread-title').val().trim()
-      app.dashboardNewThread(title)
+      let beneficiary = $('.new-thread-beneficiary').val().trim()
+      let beneficiaryWeight = parseInt($('.new-thread-beneficiary-weight').val())
+      app.dashboardNewThread(title, beneficiary, beneficiaryWeight)
     })
   },
   linkToPermlink(link){
@@ -213,11 +215,11 @@ ${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}${gu
     $('.embed-code').empty()
     $('.embed-code').text(embedTemplate)
   },
-  dashboardNewThread:(title) => {
+  dashboardNewThread:(title, beneficiary, beneficiaryWeight) => {
       $.post({
         url: `/new-thread`,
         dataType: 'json',
-        data: { title : title }
+        data: { title, beneficiary, beneficiaryWeight }
       }, (response) => {
         console.log(response)
         $('.new-thread').removeClass('is-loading')
