@@ -340,7 +340,6 @@ const f = {
         $(parentElement).find('.sc-comment__btn').text('Posting... ')
         $(parentElement).find('.sc-comment__btn').append('<img src="/img/loader.gif">')
       }
-
       $.post({
         url: `/comment`,
         dataType: 'json',

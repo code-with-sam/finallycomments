@@ -139,5 +139,10 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="beneficiary")
+                span Add Beneficiary (max 40%)
+                input.embed-control.input.is-small(type="text" data-controller="overlay" data-value="beneficiary-username" placeholder="username")
+                input.embed-control.input.is-small(type="number" data-controller="overlay" data-value="beneficiary-percentage" placeholder="percentage")
           pre
             code.embed-code.language-html
