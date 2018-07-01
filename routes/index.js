@@ -190,9 +190,10 @@ router.post('/guest-reply-comments', async (req, res) => {
 });
 
 
-router.get('/api/thread/:username/:slug', cors(), async (req, res, next) => {
+router.get('/api/thread/:username/:slug/:beneficiary?/:bweight?', cors(), async (req, res, next) => {
   CustomThreadController.checkAndGenerate(req, res)
 });
+
 
 router.post('/new-thread', util.isAuthorized, (req, res) => {
   const FINALLY_AUTHOR = 'finallycomments'

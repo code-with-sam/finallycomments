@@ -5,7 +5,15 @@ const { URL } = require('url');
 const FINALLY_AUTHOR = 'finallycomments'
 const FINALLY_PERMLINK = 'finally-comments-thread'
 
-async function createThread(username) {
+async function createThread(params) {
+  if(params.beneficiary && params.bweight){
+    newThreadWithBeneficiary(params.username, params.beneficiary, params.bweight)
+  } else {
+    newThread(params.username)
+  }
+}
+
+async function newThread(username) {
   let newToken;
   try { newToken = await getAccessFromRefresh(username) }
   catch(error){console.log(error)}
@@ -22,10 +30,62 @@ async function createThread(username) {
   });
 }
 
+async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight) {
+  let newToken;
+  try { newToken = await getAccessFromRefresh(username) }
+  catch(error){console.log(error)}
+  steem.setAccessToken(newToken.access_token);
+
+  let author = username
+  let permlink = `finally-${slug}`
+  let title = `${username}: Finally Thread`
+  let body = `${username} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
+  let parentAuthor = FINALLY_AUTHOR
+  let parentPermlink = FINALLY_PERMLINK
+  let beneficiaryWeight = parseInt(beneficiaryWeight) > 40 ? 40 : parseInt(beneficiaryWeight)
+
+  let commentParams = {
+    parent_author: parentAuthor,
+    parent_permlink: parentPermlink,
+    author: author,
+    permlink: permlink,
+    title: title,
+    body: body,
+    json_metadata : JSON.stringify({ app: 'finally.app' })
+  }
+  let beneficiaries = [];
+  beneficiaries.push({
+    account: beneficiary,
+    weight: 100*beneficiaryWeight
+  });
+  let commentOptionsParams = {
+    author: author,
+    permlink: permlink,
+    max_accepted_payout: '100000.000 SBD',
+    percent_steem_dollars: 10000,
+    allow_votes: true,
+    allow_curation_rewards: true,
+    extensions: [
+      [0, {
+        beneficiaries: beneficiaries
+      }]
+    ]
+  }
+
+  let operations = [['comment', commentParams], ['comment_options', commentOptionsParams]]
+  steem.broadcast(operations, async (err, steemResponse) => {
+    if (err) { console.log(err); res.redirect('/404');
+    } else {
+      await Thread.insert({ author: author, slug: permlink, title: title })
+      res.redirect(`/thread/finallycomments/@${username}/${permlink}`)
+    }
+  });
+
+}
+
 module.exports.checkAndGenerate = async (req, res) => {
   let username = req.params.username
-  let slug = req.params.slug
-  let sluglink = `finally-${slug}`
+  let sluglink = `finally-${req.params.slug}`
   let thread;
   try { thread = await Thread.findBySlugAndUser(sluglink, username) } catch(error){console.log(error)}
   if(thread.result){
@@ -35,7 +95,7 @@ module.exports.checkAndGenerate = async (req, res) => {
     let referer = new URL(req.headers.referer)
     let domains = await Domain.findOne(username)
     if (domains.list.indexOf(referer.host) > -1 ) {
-      createThread(username)
+      createThread(req.params)
     } else { res.redirect('/404') }
   }
 }
