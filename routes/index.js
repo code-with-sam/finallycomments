@@ -200,14 +200,39 @@ router.post('/new-thread', util.isAuthorized, (req, res) => {
   const FINALLY_PERMLINK = 'finally-comments-thread'
 
   steem.setAccessToken(req.session.access_token);
-  let author = req.session.steemconnect.name
-  let permlink = `finally-${util.urlString(8)}`
-  let title = req.body.title
-  let body = `${title} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
-  let parentAuthor = FINALLY_AUTHOR
-  let parentPermlink = FINALLY_PERMLINK
 
-  steem.comment(parentAuthor, parentPermlink, author, permlink, title, body, { app: 'finally.app' }, async (err, steemResponse) => {
+  let commentParams = {
+    parent_author: FINALLY_AUTHOR,
+    parent_permlink: FINALLY_PERMLINK,
+    author: req.session.steemconnect.name,
+    permlink: `finally-${util.urlString(8)}`,
+    title: req.body.title,
+    body: `${req.body.title} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`,
+    json_metadata : JSON.stringify({ app: 'finally.app' })
+  }
+
+  let beneficiaries = [];
+  beneficiaries.push({
+    account: req.body.beneficiary,
+    weight: 100*parseInt(req.body.beneficiaryWeight)
+  });
+
+  let commentOptionsParams = {
+    author: commentParams.author,
+    permlink: commentParams.permlink,
+    max_accepted_payout: '100000.000 SBD',
+    percent_steem_dollars: 10000,
+    allow_votes: true,
+    allow_curation_rewards: true,
+    extensions: [
+      [0, {
+        beneficiaries: beneficiaries
+      }]
+    ]
+  }
+
+  let operations = [['comment', commentParams], ['comment_options', commentOptionsParams]]
+  steem.broadcast(operations, async (err, steemResponse) => {
     if (err) { res.json({ error: err.error_description }) }
     else {
       let newThread = { author: author, slug: permlink, title: title }
