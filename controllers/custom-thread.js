@@ -11,6 +11,7 @@ module.exports.checkAndGenerate = async (req, res) => {
   if(thread.result){
     res.redirect(`/thread/finallycomments/@${username}/${sluglink}`)
   } else {
+    if(req.headers.referer === undefined) res.redirect('/404')
     let referer = new URL(req.headers.referer)
     let domains = await Domain.findOne(username)
     if (domains.list.indexOf(referer.host) > -1 ){
