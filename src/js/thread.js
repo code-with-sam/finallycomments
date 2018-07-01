@@ -30,9 +30,6 @@ const f = {
       f.getPartsFromLink()
       f.addTopBar()
       f.getComments()
-        .then(() => f.getGuestComments(f.PERMLINK))
-        .then(() => f.getGuestReplyComments(f.PERMLINK))
-        .then(() => f.applyCommentModeration(f.PERMLINK))
       f.uiActions()
       window.addEventListener('message', f.frameLoad, false);
     },
@@ -43,10 +40,19 @@ const f = {
       f.OPTIONS.generated = data.generated === 'false' ? false : true
       f.OPTIONS.beneficiary = data.beneficiary || false
       f.OPTIONS.beneficiaryWeight = parseInt(data.beneficiaryWeight) || 0
+      f.OPTIONS.guestComments = data.guestComments || false
     },
     frameLoad: (event) => {
       if (event.data.message == 'finally-frame-load'){
         f.setOptions(event.data)
+        f.initAfterOptionsSetActions()
+      }
+    },
+    initAfterOptionsSetActions: () => {
+      if (f.OPTIONS.guestComments) {
+        f.getGuestComments(f.PERMLINK)
+          .then(() => f.getGuestReplyComments(f.PERMLINK))
+          .then(() => f.applyCommentModeration(f.PERMLINK))
       }
     },
     uiActions: () => {
@@ -280,11 +286,13 @@ const f = {
     addCommentTemplateAfter: (dest) => {
       $('.sc-comment__container').remove()
       let authUrl = $('.sc-section').data('auth-url')
-      let guestPostUI = `<input placeholder="Name" type="text" name="guest-name" class="sc-input sc-input--guestname"><a href="#" target="_blank" class="sc-guest-comment__btn">Post As Guest </a> or <a href="${authUrl}" class="sc-login ">Sign In</a>`
-      let postButton =  f.ISAUTHENTICATED ? '<a href="#" target="_blank" class="sc-comment__btn">Post</a>' : guestPostUI
+      let signInButton = `<a href="${authUrl}" class="sc-login ">Sign In</a>`
+      let guestPostUI = `<input placeholder="Name" type="text" name="guest-name" class="sc-input sc-input--guestname"><a href="#" target="_blank" class="sc-guest-comment__btn">Post As Guest </a> or ${signInButton}`
+      let uiButton =  f.ISAUTHENTICATED ? '<a href="#" target="_blank" class="sc-comment__btn">Post</a>' : guestPostUI
+      uiButton = !f.ISAUTHENTICATED && !f.OPTIONS.guestComments ? `${signInButton}` : uiButton
       let template = `<div class="sc-comment__container">
       <textarea class="sc-comment__message" placeholder="Reply"></textarea>
-      ${postButton}
+      ${uiButton}
       <span class="sc-close sc-comment__close" >Cancel</span>
       </div>`
       $(template).insertAfter(dest)

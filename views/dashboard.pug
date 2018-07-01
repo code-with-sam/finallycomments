@@ -41,6 +41,9 @@ block content
                 input.embed-control(type="checkbox" data-controller="generator-controls" data-value="profile" checked)
                 span Show User Profile
               label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="guest-comments")
+                span Enable Guest Comments
+              label.checkbox
                 input.embed-control(type="checkbox" data-controller="generator-controls" data-value="beneficiary")
                 span Add Beneficiary (max 40%)
                 input.embed-control.input.is-small(type="text" data-controller="generator-controls" data-value="beneficiary-username" placeholder="username")
@@ -85,7 +88,8 @@ block content
               |   data-generated="true"
               |   data-api="true"
               |   data-beneficiary=""
-              |   data-beneficiaryWeight="0">
+              |   data-beneficiaryWeight="0"
+              |   data-guestComments="false">
               = '</section>'
               |
               |
@@ -96,6 +100,9 @@ block content
       .container
         h3.title.is-3 Custom Threads
           .new-thread__container.field.has-addons
+            .control
+              input.input.new-thread-title.embed-control(type="text" placeholder="Beneficiary" class="new-thread-beneficiary")
+              input.input.new-thread-title.embed-control(type="number" placeholder="Percentage" class="new-thread-beneficiary-weight")
             .control
               input.input.new-thread-title(type="text" placeholder="Title")
             .control
@@ -146,6 +153,9 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="guest-comments")
+                span Enable Guest Comments
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="beneficiary")
                 span Add Beneficiary (max 40%)
