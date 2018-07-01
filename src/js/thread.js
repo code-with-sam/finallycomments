@@ -40,7 +40,7 @@ const f = {
       f.OPTIONS.generated = data.generated === 'false' ? false : true
       f.OPTIONS.beneficiary = data.beneficiary || false
       f.OPTIONS.beneficiaryWeight = parseInt(data.beneficiaryWeight) || 0
-      f.OPTIONS.guestComments = true
+      f.OPTIONS.guestComments = data.guestComments || false
     },
     frameLoad: (event) => {
       if (event.data.message == 'finally-frame-load'){

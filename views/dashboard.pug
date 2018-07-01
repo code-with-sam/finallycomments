@@ -41,6 +41,9 @@ block content
                 input.embed-control(type="checkbox" data-controller="generator-controls" data-value="profile" checked)
                 span Show User Profile
               label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="guest-comments")
+                span Enable Guest Comments
+              label.checkbox
                 input.embed-control(type="checkbox" data-controller="generator-controls" data-value="beneficiary")
                 span Add Beneficiary (max 40%)
                 input.embed-control.input.is-small(type="text" data-controller="generator-controls" data-value="beneficiary-username" placeholder="username")
@@ -85,7 +88,8 @@ block content
               |   data-generated="true"
               |   data-api="true"
               |   data-beneficiary=""
-              |   data-beneficiaryWeight="0">
+              |   data-beneficiaryWeight="0"
+              |   data-guestComments="false">
               = '</section>'
               |
               |
@@ -146,6 +150,9 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="guest-comments")
+                span Enable Guest Comments
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="beneficiary")
                 span Add Beneficiary (max 40%)
