@@ -27,7 +27,7 @@ block content
             .control
               input.input.generate-url(placeholder="url")
             .control
-              a.button.is-primary.generate-embded(type="text") Create
+              a.button.is-primary.generate-embded(type="text" data-controller="generator-controls") Create
         .generator-controls
           .field
             .control
@@ -40,6 +40,14 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="generator-controls" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="guest-comments")
+                span Enable Guest Comments
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="beneficiary")
+                span Add Beneficiary (max 40%)
+                input.embed-control.input.is-small(type="text" data-controller="generator-controls" data-value="beneficiary-username" placeholder="username")
+                input.embed-control.input.is-small(type="number" data-controller="generator-controls" data-value="beneficiary-percentage" placeholder="percentage")
         pre
           code.embed-code.language-html
 
@@ -56,7 +64,7 @@ block content
             .column.is-half
               h3.title.is-3 Your Domains
               .domains
-                p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using. it must match exactly including the protocol e.g 'http://sambillingham.com' or 'https://goodbook.reviews'
+                p If you intend to use the API to add new threads dynamically from your own site you must specify the domains you are using. the host must match exactly  e.g 'sambillingham.com' or 'goodbook.reviews'
                 textarea.textarea.domains__entry
                   if domains
                     for domain in domains
@@ -78,17 +86,24 @@ block content
               |   data-values="true"
               |   data-profile="true"
               |   data-generated="true"
-              |   data-api="true">
+              |   data-api="true"
+              |   data-beneficiary=""
+              |   data-beneficiaryWeight="0"
+              |   data-guestComments="false">
               = '</section>'
               |
               |
-              = '<script src="https://finallycomments.com/js/finally.min.js"></script>'
+              = '<script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>'
+              = '<script>finallyComments.init()</script>'
 
 
     section.dashboard__table.dashboard__table--custom.pane.pane__custom-threads
       .container
         h3.title.is-3 Custom Threads
           .new-thread__container.field.has-addons
+            .control
+              input.input.new-thread-title.embed-control(type="text" placeholder="Beneficiary" class="new-thread-beneficiary")
+              input.input.new-thread-title.embed-control(type="number" placeholder="Percentage" class="new-thread-beneficiary-weight")
             .control
               input.input.new-thread-title(type="text" placeholder="Title")
             .control
@@ -139,5 +154,13 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="guest-comments")
+                span Enable Guest Comments
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="beneficiary")
+                span Add Beneficiary (max 40%)
+                input.embed-control.input.is-small(type="text" data-controller="overlay" data-value="beneficiary-username" placeholder="username")
+                input.embed-control.input.is-small(type="number" data-controller="overlay" data-value="beneficiary-percentage" placeholder="percentage")
           pre
             code.embed-code.language-html
