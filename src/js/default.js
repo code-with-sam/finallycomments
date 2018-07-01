@@ -53,6 +53,8 @@ let app = {
     data-values="true"\n
     data-profile="true"\n
     data-generated="false"\n
+    beneficiary=""\n
+    beneficiaryWeight="0"\n
 </section>\n
 <script src="https://finallycomments.com/js/finally.min.js"></script>`
     $('.strip__code').text(codeBlock)
