@@ -141,9 +141,17 @@ let app = {
       $('.overlay').addClass('--is-active')
     })
 
-    $('.generate-embded').on('click', () => {
+    $('.generate-embded').on('click', (e) => {
+      let controller = $(e.currentTarget).data('controller')
       let permlink = app.linkToPermlink( $('.generate-url').val() )
-      let controls = { values: true, rep: true, profile: true, generated: false }
+      let controls = {
+        values: $(`.${controller} *[data-value="votes"]`).is(':checked'),
+        rep: $(`.${controller} *[data-value="reputation"]`).is(':checked'),
+        profile: $(`.${controller} *[data-value="profile"]`).is(':checked'),
+        beneficiary: $(`.${controller} *[data-value="beneficiary"]`).is(':checked'),
+        beneficiaryUsername: $(`.${controller} *[data-value="beneficiary-username"]`).val(),
+        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val()
+      }
       if (permlink) app.dashboadLoadEmbed(permlink, controls)
     })
 
