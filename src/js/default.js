@@ -53,6 +53,8 @@ let app = {
     data-values="true"\n
     data-profile="true"\n
     data-generated="false"\n
+    beneficiary=""\n
+    beneficiaryWeight="0"\n
 </section>\n
 <script src="https://finallycomments.com/js/finally.min.js"></script>`
     $('.strip__code').text(codeBlock)
@@ -128,20 +130,30 @@ let app = {
     $('.load-more-posts').on('click', (e) => {
       app.dashboardLoadPosts(true)
     })
+
     $('.dashboard').on('click', '.load-embed', (e) => {
       let permlink = $(e.currentTarget).data('permlink')
       let controls = {
          values: true, rep: true, profile: true,
-         generated: $(e.currentTarget).data('generated') ? true : false }
-      console.log(controls)
+         generated: $(e.currentTarget).data('generated') ? true : false,
+         beneficiary: false }
+
       app.dashboadLoadEmbed(permlink, controls)
       $('.overlay').data('permlink', permlink)
       $('.overlay').addClass('--is-active')
     })
 
-    $('.generate-embded').on('click', () => {
+    $('.generate-embded').on('click', (e) => {
+      let controller = $(e.currentTarget).data('controller')
       let permlink = app.linkToPermlink( $('.generate-url').val() )
-      let controls = { values: true, rep: true, profile: true, generated: false }
+      let controls = {
+        values: $(`.${controller} *[data-value="votes"]`).is(':checked'),
+        rep: $(`.${controller} *[data-value="reputation"]`).is(':checked'),
+        profile: $(`.${controller} *[data-value="profile"]`).is(':checked'),
+        beneficiary: $(`.${controller} *[data-value="beneficiary"]`).is(':checked'),
+        beneficiaryUsername: $(`.${controller} *[data-value="beneficiary-username"]`).val(),
+        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val()
+      }
       if (permlink) app.dashboadLoadEmbed(permlink, controls)
     })
 
@@ -156,7 +168,10 @@ let app = {
       let controls = {
         values: $(`.${controller} *[data-value="votes"]`).is(':checked'),
         rep: $(`.${controller} *[data-value="reputation"]`).is(':checked'),
-        profile: $(`.${controller} *[data-value="profile"]`).is(':checked')
+        profile: $(`.${controller} *[data-value="profile"]`).is(':checked'),
+        beneficiary: $(`.${controller} *[data-value="beneficiary"]`).is(':checked'),
+        beneficiaryUsername: $(`.${controller} *[data-value="beneficiary-username"]`).val(),
+        beneficiaryPercentage: $(`.${controller} *[data-value="beneficiary-percentage"]`).val()
       }
       console.log(controls)
       app.dashboadLoadEmbed(permlink, controls)
@@ -178,14 +193,17 @@ let app = {
     return `/${cat}/${author}/${slug}`
   },
   dashboadLoadEmbed: (permlink, controls) => {
+    console.log(controls)
     let id = `    data-id="https://steemit.com${permlink}"\n`
     let rep = controls.rep ? '    data-reputation="true"\n' :''
     let values = controls.values ? '    data-values="true"\n' :''
     let profile = controls.profile ? '    data-profile="true"\n' :''
     let generated = controls.generated ? '    data-generated="true">\n' : '    data-generated="false">\n'
+    let beneficiary = controls.beneficiary ? `    data-beneficiary="${controls.beneficiaryUsername}">\n` : ''
+    let beneficiaryWeight = controls.beneficiary ? `    data-beneficiaryWeight="${controls.beneficiaryPercentage}">\n` : ''
     let embedTemplate = `
 <section class="finally-comments"
-${id}${rep}${values}${profile}${generated}</section>
+${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}</section>
 <script src="https://finallycomments.com/js/finally.min.js"></script>
     `
     $('.embed-code').empty()

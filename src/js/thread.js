@@ -41,7 +41,8 @@ const f = {
       f.OPTIONS.values = data.values === 'false' ? false : true
       f.OPTIONS.profile = data.profile === 'false' ? false : true
       f.OPTIONS.generated = data.generated === 'false' ? false : true
-      console.log(f.OPTIONS)
+      f.OPTIONS.beneficiary = data.beneficiary || false
+      f.OPTIONS.beneficiaryWeight = parseInt(data.beneficiaryWeight) || 0
     },
     frameLoad: (event) => {
       if (event.data.message == 'finally-frame-load'){
@@ -339,7 +340,6 @@ const f = {
         $(parentElement).find('.sc-comment__btn').text('Posting... ')
         $(parentElement).find('.sc-comment__btn').append('<img src="/img/loader.gif">')
       }
-
       $.post({
         url: `/comment`,
         dataType: 'json',
@@ -347,7 +347,9 @@ const f = {
           parentAuthor: parentAuthor,
           parentPermlink: parentPermlink,
           message: message,
-          parentTitle: parentTitle
+          parentTitle: parentTitle,
+          beneficiary: f.OPTIONS.beneficiary,
+          beneficiaryWeight: parseInt(f.OPTIONS.beneficiaryWeight)
         }
       }, (response) => {
         if (response.error) {

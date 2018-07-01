@@ -27,7 +27,7 @@ block content
             .control
               input.input.generate-url(placeholder="url")
             .control
-              a.button.is-primary.generate-embded(type="text") Create
+              a.button.is-primary.generate-embded(type="text" data-controller="generator-controls") Create
         .generator-controls
           .field
             .control
@@ -40,6 +40,11 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="generator-controls" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="generator-controls" data-value="beneficiary")
+                span Add Beneficiary (max 40%)
+                input.embed-control.input.is-small(type="text" data-controller="generator-controls" data-value="beneficiary-username" placeholder="username")
+                input.embed-control.input.is-small(type="number" data-controller="generator-controls" data-value="beneficiary-percentage" placeholder="percentage")
         pre
           code.embed-code.language-html
 
@@ -78,7 +83,9 @@ block content
               |   data-values="true"
               |   data-profile="true"
               |   data-generated="true"
-              |   data-api="true">
+              |   data-api="true"
+              |   data-beneficiary=""
+              |   data-beneficiaryWeight="0">
               = '</section>'
               |
               |
@@ -139,5 +146,10 @@ block content
               label.checkbox
                 input.embed-control(type="checkbox" data-controller="overlay" data-value="profile" checked)
                 span Show User Profile
+              label.checkbox
+                input.embed-control(type="checkbox" data-controller="overlay" data-value="beneficiary")
+                span Add Beneficiary (max 40%)
+                input.embed-control.input.is-small(type="text" data-controller="overlay" data-value="beneficiary-username" placeholder="username")
+                input.embed-control.input.is-small(type="number" data-controller="overlay" data-value="beneficiary-percentage" placeholder="percentage")
           pre
             code.embed-code.language-html
