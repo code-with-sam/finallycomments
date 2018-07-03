@@ -63,13 +63,15 @@ router.get('/button/:tag/:author/:permlink', (req, res, next) => {
       let tag = req.params.tag
       let author = req.params.author
       let permlink = req.params.permlink
+      let username = req.session.steemconnect ? req.session.steemconnect.name : ''
       let url = `${tag}/${author}/${permlink}`
       if(req.session.steemconnect) status = true
 
       res.render('finally-button', {
         path: 'finally-button',
         thread: url,
-        auth: status
+        auth: status,
+        username, username
       });
 });
 

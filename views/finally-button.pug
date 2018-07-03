@@ -1,4 +1,9 @@
 extends layout
 
 block content
-  button(data-auth-url=`/auth/${thread}` data-auth=`${auth}` data-steemlink=`${thread}`) upvote
+  button.finallybutton(
+      data-auth-url=`/auth/${thread}`
+      data-auth=`${auth}`
+      data-steemlink=`${thread}`
+      data-username=`${username}`
+  ) upvote
