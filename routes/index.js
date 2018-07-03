@@ -58,6 +58,21 @@ router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
       });
 });
 
+router.get('/button/:tag/:author/:permlink', (req, res, next) => {
+      let status = false
+      let tag = req.params.tag
+      let author = req.params.author
+      let permlink = req.params.permlink
+      let url = `${tag}/${author}/${permlink}`
+      if(req.session.steemconnect) status = true
+
+      res.render('finally-button', {
+        path: 'finally-button',
+        thread: url,
+        auth: status
+      });
+});
+
 router.post('/vote/:author/:permlink/:weight', util.isAuthorized, (req, res, next) => {
     steem.setAccessToken(req.session.access_token);
     let voter = req.session.steemconnect.name;
