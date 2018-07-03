@@ -18,11 +18,8 @@ const finallyButton = {
   getPartsFromLink: () => {
     let url = $('button').data('steemlink')
     let lastChar = url.substr(url.length -1);
-    if (lastChar === '/')
-      url = url.slice(0, -1);
-
+    if (lastChar === '/') url = url.slice(0, -1);
     let parts = url.split('/')
-
     finallyButton.PERMLINK = parts.pop();
     finallyButton.AUTHOR = parts.pop().substr(1);
     finallyButton.CATEGORY = parts.pop();
@@ -30,7 +27,7 @@ const finallyButton = {
   uiActions: () => {
     $('body').on('click', '.finallybutton', (e) => {
       if(finallyButton.ISAUTHENTICATED){
-        // vote
+        finallyButton.sendVote(finallyButton.AUTHOR,finallyButton.PERMLINK, 100)
       } else {
         finallyButton.authenticatedUser(e)
       }
@@ -38,16 +35,24 @@ const finallyButton = {
   },
   checkVoteStatus: async () => {
     let content = await steem.api.getContentAsync(finallyButton.AUTHOR , finallyButton.PERMLINK)
-    console.log(content)
-    console.log(finallyButton.AUTHENTICATEDUSER)
-    let voted = content.active_votes.filter(v => v.voter === finallyButton.AUTHENTICATEDUSER).length === 1
-    console.log('voted: ', voted)
+    return content.active_votes.filter(v => v.voter === finallyButton.AUTHENTICATEDUSER).length === 1
   },
   authenticatedUser: (e) => {
     let authUrl = $(e.currentTarget).data('auth-url')
     let authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
     if (window.focus) authWindow.focus();
     return false;
+  },
+  sendVote: (author, permlink, weight) => {
+      $.post({ url: `/vote/${author}/${permlink}/${weight}`}, (response) => finallyButton.processVoteResponse(response) )
+  },
+  processVoteResponse: (response) => {
+    if (response.error) return console.log(response.error)
+    if (response.status == 'fail'){
+      console.log('Unknown error, please try again.')
+    } else {
+      // vote sucess
+    }
   }
 }
 
