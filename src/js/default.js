@@ -101,7 +101,8 @@ let app = {
         let template = `<tr data-permlink=${posts[i].permlink}>
           <td>${posts[i].children}</td>
           <td><a href="/viewer/steem-post${posts[i].url}" target="_blank"> ${posts[i].title}</a></td>
-          <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Generate</button></td>
+          <td><button class="button is-dark load-embed" data-permlink="${posts[i].url}">Thread</button></td>
+          <td><button class="button is-dark load-button-embed" data-permlink="${posts[i].url}">Button</button></td>
         </tr>`
         $('.dashboard__table--steem tbody').append(template)
       }
@@ -127,7 +128,7 @@ let app = {
       $('.pane').hide()
       $(`.pane__${pane}`).show()
 
-      if(pane === 'generator') $('.embed-code').empty()
+      if(pane === 'generator') $('.embed-code--finallythread').empty()
     })
 
     $('.load-more-posts').on('click', (e) => {
@@ -142,8 +143,8 @@ let app = {
          beneficiary: false }
 
       app.dashboadLoadEmbed(permlink, controls)
-      $('.overlay').data('permlink', permlink)
-      $('.overlay').addClass('--is-active')
+      $('.overlay--threadembed').data('permlink', permlink)
+      $('.overlay--threadembed').addClass('--is-active')
     })
 
     $('.generate-embded').on('click', (e) => {
@@ -161,11 +162,13 @@ let app = {
       if (permlink) app.dashboadLoadEmbed(permlink, controls)
     })
 
+    $('.generate-button-embded').on('click', (e) => app.dashboardGenerateButtonEmbed(e))
+
     $('.dashboard').on('change', '.embed-control', (e) => {
       let controller = $(e.currentTarget).data('controller')
       let permlink;
       if (controller == 'overlay') {
-         permlink = $('.overlay').data('permlink')
+         permlink = $('.overlay--threadembed').data('permlink')
       } else {
          permlink = app.linkToPermlink( $('.generate-url').val())
       }
@@ -182,7 +185,8 @@ let app = {
       app.dashboadLoadEmbed(permlink, controls)
     })
     $('.overlay__bg').on('click', (e) => {
-      $('.overlay').removeClass('--is-active')
+      $('.overlay--threadembed').removeClass('--is-active')
+      $('.overlay--finallybutton').removeClass('--is-active')
     })
     $('.new-thread').on('click', () => {
       $('.new-thread').addClass('is-loading')
@@ -191,6 +195,25 @@ let app = {
       let beneficiaryWeight = parseInt($('.new-thread-beneficiary-weight').val())
       app.dashboardNewThread(title, beneficiary, beneficiaryWeight)
     })
+
+    $('.dashboard').on('click', '.load-button-embed', (e) => app.dashboardLoadButtonEmbed(e) )
+  },
+  dashboardLoadButtonEmbed: (e) => {
+    let permlink = $(e.currentTarget).data('permlink')
+    $('.overlay--finallybutton').data('permlink', permlink)
+    $('.overlay--finallybutton').addClass('--is-active')
+    let embedTemplate = `<iframe height="66px" width="210px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
+    $('.embed-code--finallybutton').empty()
+    $('.embed-code--finallybutton').text(embedTemplate)
+    $('.overlay__content iframe').remove()
+    $('.overlay__content').append(embedTemplate)
+  },
+  dashboardGenerateButtonEmbed: (e) => {
+    let permlink = $(e.currentTarget).data('permlink')
+    let embedTemplate = `<iframe height="66px" width="210px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
+    $('.embed-code--finallybutton').empty()
+    $('.embed-code--finallybutton').text(embedTemplate)
+    $('.pane__generator .container').append(embedTemplate)
   },
   linkToPermlink(link){
     let input = link.trim().split('/')
@@ -215,8 +238,8 @@ ${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}${gu
 <script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>
 <script>finallyComments.init()</script>
     `
-    $('.embed-code').empty()
-    $('.embed-code').text(embedTemplate)
+    $('.embed-code--finallythread').empty()
+    $('.embed-code--finallythread').text(embedTemplate)
   },
   dashboardNewThread:(title, beneficiary, beneficiaryWeight) => {
       $.post({

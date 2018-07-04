@@ -20,6 +20,10 @@ router.get('/about', (req, res, next) =>  {
   res.render('about');
 });
 
+router.get('/finally-button', (req, res, next) =>  {
+  res.render('finally-button');
+});
+
 router.get('/get-started', (req, res, next) =>  {
   res.render('get-started');
 });
@@ -55,6 +59,23 @@ router.get('/thread/:tag/:author/:permlink', (req, res, next) => {
         tag: tag,
         author: author,
         permlink: permlink
+      });
+});
+
+router.get('/button/:tag/:author/:permlink', (req, res, next) => {
+      let status = false
+      let tag = req.params.tag
+      let author = req.params.author
+      let permlink = req.params.permlink
+      let username = req.session.steemconnect ? req.session.steemconnect.name : ''
+      let url = `${tag}/${author}/${permlink}`
+      if(req.session.steemconnect) status = true
+
+      res.render('finally-button-embed', {
+        path: 'finally-button-embed',
+        thread: url,
+        auth: status,
+        username, username
       });
 });
 

@@ -12,3 +12,6 @@ dist/finally.js
 dist/finally.map
 dist/thread.js
 dist/thread.map
+dist/finally-button.css
+dist/finally-button.js
+dist/finally-button.map
