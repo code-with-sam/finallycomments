@@ -27,7 +27,7 @@ block content
             .control
               input.input.generate-url(placeholder="url")
             .control
-              a.button.is-primary.generate-embded(type="text" data-controller="generator-controls") Create
+              a.button.is-primary.generate-embded(type="text" data-controller="generator-controls") Create Thread
         .generator-controls
           .field
             .control
@@ -50,6 +50,17 @@ block content
                 input.embed-control.input.is-small(type="number" data-controller="generator-controls" data-value="beneficiary-percentage" placeholder="percentage")
         pre
           code.embed-code.embed-code--finallythread.language-html
+
+        br
+        p.generator-intro Generate a Finally upvote button code using a Steemit url.
+        .generator
+          .field.has-addons
+            .control
+              input.input.generate-url(placeholder="url")
+            .control
+              a.button.is-primary.generate-button-embded(type="text" data-controller="generator-controls") Create Button
+        pre
+          code.embed-code.embed-code--finallybutton.language-html
 
     section.pane.pane__api
       .container

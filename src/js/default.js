@@ -162,6 +162,8 @@ let app = {
       if (permlink) app.dashboadLoadEmbed(permlink, controls)
     })
 
+    $('.generate-button-embded').on('click', (e) => app.dashboardGenerateButtonEmbed(e))
+
     $('.dashboard').on('change', '.embed-control', (e) => {
       let controller = $(e.currentTarget).data('controller')
       let permlink;
@@ -203,8 +205,14 @@ let app = {
     let embedTemplate = `<iframe height="66px" width="208px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
     $('.embed-code--finallybutton').empty()
     $('.embed-code--finallybutton').text(embedTemplate)
-
     $('.overlay__content').append(embedTemplate)
+  },
+  dashboardGenerateButtonEmbed: (e) => {
+    let permlink = $(e.currentTarget).data('permlink')
+    let embedTemplate = `<iframe height="66px" width="208px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
+    $('.embed-code--finallybutton').empty()
+    $('.embed-code--finallybutton').text(embedTemplate)
+    $('.pane__generator .container').append(embedTemplate)
   },
   linkToPermlink(link){
     let input = link.trim().split('/')
