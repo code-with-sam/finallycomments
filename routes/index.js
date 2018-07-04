@@ -20,6 +20,10 @@ router.get('/about', (req, res, next) =>  {
   res.render('about');
 });
 
+router.get('/finally-button', (req, res, next) =>  {
+  res.render('finally-button');
+});
+
 router.get('/get-started', (req, res, next) =>  {
   res.render('get-started');
 });
@@ -67,8 +71,8 @@ router.get('/button/:tag/:author/:permlink', (req, res, next) => {
       let url = `${tag}/${author}/${permlink}`
       if(req.session.steemconnect) status = true
 
-      res.render('finally-button', {
-        path: 'finally-button',
+      res.render('finally-button-embed', {
+        path: 'finally-button-embed',
         thread: url,
         auth: status,
         username, username

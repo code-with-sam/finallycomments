@@ -202,14 +202,14 @@ let app = {
     let permlink = $(e.currentTarget).data('permlink')
     $('.overlay--finallybutton').data('permlink', permlink)
     $('.overlay--finallybutton').addClass('--is-active')
-    let embedTemplate = `<iframe height="66px" width="208px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
+    let embedTemplate = `<iframe height="66px" width="210px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
     $('.embed-code--finallybutton').empty()
     $('.embed-code--finallybutton').text(embedTemplate)
     $('.overlay__content').append(embedTemplate)
   },
   dashboardGenerateButtonEmbed: (e) => {
     let permlink = $(e.currentTarget).data('permlink')
-    let embedTemplate = `<iframe height="66px" width="208px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
+    let embedTemplate = `<iframe height="66px" width="210px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
     $('.embed-code--finallybutton').empty()
     $('.embed-code--finallybutton').text(embedTemplate)
     $('.pane__generator .container').append(embedTemplate)

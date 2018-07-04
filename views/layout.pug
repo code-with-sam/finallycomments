@@ -4,7 +4,7 @@ html
     title Finally Comments System
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    if path == 'thread' ||  path == 'finally-button'
+    if path == 'thread' ||  path == 'finally-button-embed'
       link(rel='stylesheet', href='/thread.css')
     else
       link(rel="stylesheet" href="https://use.typekit.net/iqb0qug.css")
@@ -15,7 +15,7 @@ html
 
     if path == 'thread'
       script(src="/thread.js")
-    else if path == 'finally-button'
+    else if path == 'finally-button-embed'
       script(src="/finally-button.js")
     else
       script(src="/default.js")
