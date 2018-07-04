@@ -28,13 +28,12 @@ const finallyButton = {
   uiActions: () => {
     $('.finallybutton').on('click', (e) => finallyButton.activateButton(e))
     $('body').on('input', '.finallyvote__slider', (e) => finallyButton.showVoteSliderValue() )
-    $('body').on('click', '.finallyvote__btn', (e) => finallyButton.calcVote() )
+    $('body').on('click', '.finallyvote__btn', (e) => finallyButton.processVote() )
     $('body').on('click', '.finallyvote__close', (e) => $(e.currentTarget).parent().remove() )
   },
   activateButton: (e) => {
     if(finallyButton.ISAUTHENTICATED){
       finallyButton.loadVoteSlider()
-      // finallyButton.sendVote(finallyButton.AUTHOR,finallyButton.PERMLINK, 100)
     } else {
       finallyButton.authenticatedUser(e)
     }
@@ -70,7 +69,7 @@ const finallyButton = {
     if (window.focus) authWindow.focus();
     return false;
   },
-  calcVote: () => {
+  processVote: () => {
     let weight = parseInt($('.finallyvote__slider').val())
     finallyButton.sendVote(finallyButton.AUTHOR , finallyButton.PERMLINK, weight)
   },
@@ -78,12 +77,15 @@ const finallyButton = {
       $.post({ url: `/vote/${author}/${permlink}/${weight}`}, (response) => finallyButton.processVoteResponse(response) )
   },
   processVoteResponse: (response) => {
-    if (response.error) return console.log(response.error)
-    if (response.status == 'fail'){
-      console.log('Unknown error, please try again.')
+    if (response.error || response.status === 'fail')  {
+      console.log(response.error || 'Unknown error, please try again.')
     } else {
-      // vote sucess
+      finallyButton.voteSucess()
     }
+  },
+  voteSucess: () => {
+    $('.finallyvote__close').parent().remove()
+    finallyButton.highlightVoteStatus(true)
   }
 }
 
