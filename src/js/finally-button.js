@@ -10,10 +10,11 @@ const finallyButton = {
   ISAUTHENTICATED: $('.finallybutton').data('auth'),
   AUTHENTICATEDUSER: $('.finallybutton').data('username'),
   upvoteIcon: '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" width="18px" height="18px"><circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/></svg>',
-  init: () => {
+  init: async () => {
     finallyButton.getPartsFromLink()
     finallyButton.uiActions()
-    if(finallyButton.ISAUTHENTICATED) finallyButton.checkVoteStatus()
+    finallyButton.checkVoteStatus()
+      .then(status => finallyButton.highlightVoteStatus(status))
   },
   getPartsFromLink: () => {
     let url = $('.finallybutton').data('steemlink')
@@ -52,8 +53,16 @@ const finallyButton = {
     $('.finallyvote__value').text(weight + '%')
   },
   checkVoteStatus: async () => {
-    let content = await steem.api.getContentAsync(finallyButton.AUTHOR , finallyButton.PERMLINK)
-    return content.active_votes.filter(v => v.voter === finallyButton.AUTHENTICATEDUSER).length === 1
+    if(finallyButton.ISAUTHENTICATED){
+      let content = await steem.api.getContentAsync(finallyButton.AUTHOR , finallyButton.PERMLINK)
+      return content.active_votes.filter(v => v.voter === finallyButton.AUTHENTICATEDUSER).length === 1
+    }
+  },
+  highlightVoteStatus(voted) {
+    if(voted) {
+      $('.finallybutton span').text('Voted')
+      $('.finallybutton').addClass('finallybutton--voted')
+    }
   },
   authenticatedUser: (e) => {
     let authUrl = $(e.currentTarget).data('auth-url')

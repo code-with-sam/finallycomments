@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:500');
 
-
 .finallybutton {
   margin: 18px 10px;
   padding: 5px;
@@ -14,11 +13,26 @@
   font-weight: 500;
   line-height: 18px;
   letter-spacing: 0.03em;
+}
 
-  &:hover svg circle {
+.finallybutton svg circle {
+  stroke: #fafafa;
+  &:hover {
     fill: #fafafa;
   }
-  &:hover svg line {
+}
+.finallybutton svg line {
+  stroke: #fafafa;
+  &:hover{
+    stroke: #2b365f;
+  }
+}
+
+.finallybutton--voted {
+  svg circle {
+    fill: #fafafa;
+  }
+  svg line {
     stroke: #2b365f;
   }
 }
@@ -26,10 +40,6 @@
 .finallybutton svg {
   margin-right: 5px;
   float: left;
-}
-.finallybutton svg circle,
-.finallybutton svg line {
-  stroke: #fafafa;
 }
 .finallyvote {
   font-family: 'Roboto', sans-serif;
@@ -75,6 +85,7 @@
     stroke: #fafafa;
   }
 }
+
 .finallyvote__btn svg {
   transform: translateY(3px);
 }
