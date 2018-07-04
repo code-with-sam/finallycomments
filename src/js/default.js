@@ -170,7 +170,7 @@ let app = {
       if (controller == 'overlay') {
          permlink = $('.overlay--threadembed').data('permlink')
       } else {
-         permlink = app.linkToPermlink( $('.generate-url').val())
+         permlink = app.linkToPermlink( $('.generate-url--thread').val())
       }
       let controls = {
         values: $(`.${controller} *[data-value="votes"]`).is(':checked'),
@@ -209,7 +209,7 @@ let app = {
     $('.overlay__content').append(embedTemplate)
   },
   dashboardGenerateButtonEmbed: (e) => {
-    let permlink = $(e.currentTarget).data('permlink')
+    let permlink = app.linkToPermlink( $('.generate-url--button').val() )
     let embedTemplate = `<iframe height="66px" width="210px" style="border: none;" src="https://finallycomments.com/button${permlink}"></iframe>`
     $('.embed-code--finallybutton').empty()
     $('.embed-code--finallybutton').text(embedTemplate)
