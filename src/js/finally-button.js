@@ -7,8 +7,8 @@ const finallyButton = {
   CATEGORY: '',
   AUTHOR: '',
   PERMLINK: '',
-  ISAUTHENTICATED: $('button').data('auth'),
-  AUTHENTICATEDUSER: $('button').data('username'),
+  ISAUTHENTICATED: $('.finallybutton').data('auth'),
+  AUTHENTICATEDUSER: $('.finallybutton').data('username'),
   upvoteIcon: '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" width="18px" height="18px"><circle fill="transparent" stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st0" cx="25" cy="25" r="23"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st1" x1="13.6" y1="30.6" x2="26" y2="18.2"/><line stroke="#000000" stroke-width="3" strokemiterlimit="10" class="st2" x1="36.4" y1="30.6" x2="24" y2="18.2"/></svg>',
   init: () => {
     finallyButton.getPartsFromLink()
@@ -16,7 +16,7 @@ const finallyButton = {
     if(finallyButton.ISAUTHENTICATED) finallyButton.checkVoteStatus()
   },
   getPartsFromLink: () => {
-    let url = $('button').data('steemlink')
+    let url = $('.finallybutton').data('steemlink')
     let lastChar = url.substr(url.length -1);
     if (lastChar === '/') url = url.slice(0, -1);
     let parts = url.split('/')
@@ -25,13 +25,24 @@ const finallyButton = {
     finallyButton.CATEGORY = parts.pop();
   },
   uiActions: () => {
-    $('body').on('click', '.finallybutton', (e) => {
-      if(finallyButton.ISAUTHENTICATED){
-        finallyButton.sendVote(finallyButton.AUTHOR,finallyButton.PERMLINK, 100)
-      } else {
-        finallyButton.authenticatedUser(e)
-      }
-    })
+    $('.finallybutton').on('click', (e) => finallyButton.activateButton(e))
+  },
+  activateButton: (e) => {
+    if(finallyButton.ISAUTHENTICATED){
+      finallyButton.loadVoteSlider()
+      // finallyButton.sendVote(finallyButton.AUTHOR,finallyButton.PERMLINK, 100)
+    } else {
+      finallyButton.authenticatedUser(e)
+    }
+  },
+  loadVoteSlider: () => {
+    let template = `<div class="finallyvote">
+    <span class="finallyvote__btn">${finallyButton.upvoteIcon}</span>
+    <span class="finallyvote__value">50%</span>
+    <input type="range" min="1" max="100" value="50" class="finallyvote__slider" id="myRange">
+    <span class="sc-close finallyvote__close" >&#43;</span>
+    </div>`
+    $(template).insertBefore('.finallybutton')
   },
   checkVoteStatus: async () => {
     let content = await steem.api.getContentAsync(finallyButton.AUTHOR , finallyButton.PERMLINK)
