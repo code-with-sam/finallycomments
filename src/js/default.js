@@ -205,6 +205,7 @@ let app = {
     let embedTemplate = `<iframe height="66px" width="210px" style="border: none;" src="https://finallycommenes.com/button${permlink}"></iframe>`
     $('.embed-code--finallybutton').empty()
     $('.embed-code--finallybutton').text(embedTemplate)
+    $('.overlay__content iframe').remove()
     $('.overlay__content').append(embedTemplate)
   },
   dashboardGenerateButtonEmbed: (e) => {
