@@ -4,6 +4,7 @@ import $ from 'jquery'
 import steem from 'steem'
 
 const finallyButton = {
+  // Set Data to be used by multi actions
   CATEGORY: '',
   AUTHOR: '',
   PERMLINK: '',
@@ -17,6 +18,7 @@ const finallyButton = {
       .then(status => finallyButton.highlightVoteStatus(status))
   },
   getPartsFromLink: () => {
+    // Break the Steemit compatible url params into seperate PERMLINK AUTHOR CATEGORY variables
     let url = $('.finallybutton').data('steemlink')
     let lastChar = url.substr(url.length -1);
     if (lastChar === '/') url = url.slice(0, -1);
@@ -26,12 +28,15 @@ const finallyButton = {
     finallyButton.CATEGORY = parts.pop();
   },
   uiActions: () => {
+    // Initialise User Interface actions
     $('.finallybutton').on('click', (e) => finallyButton.activateButton(e))
     $('body').on('input', '.finallyvote__slider', (e) => finallyButton.showVoteSliderValue() )
     $('body').on('click', '.finallyvote__btn', (e) => finallyButton.processVote() )
     $('body').on('click', '.finallyvote__close', (e) => $(e.currentTarget).parent().remove() )
   },
   activateButton: (e) => {
+    // UI Action for when the Finally Button is clicked
+    // Checks for Authentication to create correct user flow
     if(finallyButton.ISAUTHENTICATED){
       finallyButton.loadVoteSlider()
     } else {
@@ -39,6 +44,9 @@ const finallyButton = {
     }
   },
   loadVoteSlider: () => {
+    // if an authenticated user clicks the finally button it loads the slider (expect behaviour from Steem platforms)
+    // clicking the upvote a second time will trigger the actual upvote on the network
+    // this gives users the opportunity to change the voting weight
     let template = `<div class="finallyvote">
     <span class="finallyvote__btn">${finallyButton.upvoteIcon}</span>
     <span class="finallyvote__value">50%</span>
@@ -48,35 +56,48 @@ const finallyButton = {
     $(template).insertBefore('.finallybutton')
   },
   showVoteSliderValue: () => {
+    // display the vote slider percentage to the user as it updates
     let weight = $('.finallyvote__slider').val()
     $('.finallyvote__value').text(weight + '%')
   },
   checkVoteStatus: async () => {
+    // Retrive the relevant content from the Steem blockchain so the 'active_votes' can be checked for the authenticated user
+    // returns ture/false for authd user
     if(finallyButton.ISAUTHENTICATED){
       let content = await steem.api.getContentAsync(finallyButton.AUTHOR , finallyButton.PERMLINK)
       return content.active_votes.filter(v => v.voter === finallyButton.AUTHENTICATEDUSER).length === 1
     }
   },
   highlightVoteStatus(voted) {
+    // Change the UI for authenticated users who have already voted on the respective content
+    // Does not block the user from clicking and changing their vote weight
     if(voted) {
       $('.finallybutton span').text('Voted')
       $('.finallybutton').addClass('finallybutton--voted')
     }
   },
   authenticatedUser: (e) => {
+    // Launches the Steemconnect Popup window for authentication
     let authUrl = $(e.currentTarget).data('auth-url')
     let authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
     if (window.focus) authWindow.focus();
     return false;
   },
   processVote: () => {
+    // 2nd click to upvote button triggers a request for a vote on the Steem blockchain via Finally backed
+    // read weight before passing to send function
     let weight = parseInt($('.finallyvote__slider').val())
     finallyButton.sendVote(finallyButton.AUTHOR , finallyButton.PERMLINK, weight)
   },
   sendVote: (author, permlink, weight) => {
+    // @author - String - Steem username
+    // @permlink - String - Steem permlink
+    // @weight - Number - 0-100 percentage weight (other values will trigger an error from Steem blockchain)
+    // Send vote request to finallybackend
       $.post({ url: `/vote/${author}/${permlink}/${weight}`}, (response) => finallyButton.processVoteResponse(response) )
   },
   processVoteResponse: (response) => {
+    // handle error or change UI for user
     if (response.error || response.status === 'fail')  {
       console.log(response.error || 'Unknown error, please try again.')
     } else {
