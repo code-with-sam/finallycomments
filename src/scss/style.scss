@@ -562,11 +562,17 @@ input[type=range]:focus::-ms-fill-upper {
   font-weight: 500;
   line-height: 18px;
   letter-spacing: 0.03em;
+
+  &:hover svg circle {
+    fill: #fafafa;
+  }
+  &:hover svg line {
+    stroke: #2b365f;
+  }
 }
 
 .finallybutton svg {
   margin-right: 5px;
-  // transform: translateY(8px);
   float: left;
 }
 .finallybutton svg circle,
@@ -586,7 +592,10 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .finallyvote__value {
-  margin: 0 2px;
+  display: inline-block;
+  text-align: center;
+  min-width: 38px;
+  margin: 0;
 }
 .finallyvote__close {
   position: absolute;
@@ -605,13 +614,21 @@ input[type=range]:focus::-ms-fill-upper {
   line-height: 26px;
   text-decoration: none;
   margin: 0 2px;
+  cursor: pointer;
 
+  &:hover svg circle {
+    fill: #2b365f;
+  }
+  &:hover svg line {
+    stroke: #fafafa;
+  }
 }
 .finallyvote__btn svg {
   transform: translateY(3px);
 }
-
-
+.finallyvote__close {
+  cursor: pointer;
+}
 .finallyvote__slider  {
   width: 80px;
   margin: 0 5px;

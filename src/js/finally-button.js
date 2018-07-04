@@ -26,6 +26,9 @@ const finallyButton = {
   },
   uiActions: () => {
     $('.finallybutton').on('click', (e) => finallyButton.activateButton(e))
+    $('body').on('input', '.finallyvote__slider', (e) => finallyButton.showVoteSliderValue() )
+    $('body').on('click', '.finallyvote__btn', (e) => finallyButton.calcVote() )
+    $('body').on('click', '.finallyvote__close', (e) => $(e.currentTarget).parent().remove() )
   },
   activateButton: (e) => {
     if(finallyButton.ISAUTHENTICATED){
@@ -40,9 +43,13 @@ const finallyButton = {
     <span class="finallyvote__btn">${finallyButton.upvoteIcon}</span>
     <span class="finallyvote__value">50%</span>
     <input type="range" min="1" max="100" value="50" class="finallyvote__slider" id="myRange">
-    <span class="sc-close finallyvote__close" >&#43;</span>
+    <span class="finallyvote__close" >&#43;</span>
     </div>`
     $(template).insertBefore('.finallybutton')
+  },
+  showVoteSliderValue: () => {
+    let weight = $('.finallyvote__slider').val()
+    $('.finallyvote__value').text(weight + '%')
   },
   checkVoteStatus: async () => {
     let content = await steem.api.getContentAsync(finallyButton.AUTHOR , finallyButton.PERMLINK)
@@ -53,6 +60,10 @@ const finallyButton = {
     let authWindow = window.open(authUrl,'Steemconnect Auth','height=700,width=600');
     if (window.focus) authWindow.focus();
     return false;
+  },
+  calcVote: () => {
+    let weight = parseInt($('.finallyvote__slider').val())
+    finallyButton.sendVote(finallyButton.AUTHOR , finallyButton.PERMLINK, weight)
   },
   sendVote: (author, permlink, weight) => {
       $.post({ url: `/vote/${author}/${permlink}/${weight}`}, (response) => finallyButton.processVoteResponse(response) )
