@@ -13,17 +13,18 @@
   font-weight: 500;
   line-height: 18px;
   letter-spacing: 0.03em;
-}
 
-.finallybutton svg circle {
-  stroke: #fafafa;
-  &:hover {
+  & svg circle {
+    stroke: #fafafa;
+  }
+  &:hover svg circle {
     fill: #fafafa;
   }
-}
-.finallybutton svg line {
-  stroke: #fafafa;
-  &:hover{
+
+  & svg line {
+    stroke: #fafafa;
+  }
+  &:hover svg line {
     stroke: #2b365f;
   }
 }
