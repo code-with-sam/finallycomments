@@ -1,0 +1,33 @@
+extends layout
+block content
+  include partials/nav
+  header.news.single
+    h2.title.single__title Finally Button
+
+  section.strip.strip--alt
+    .strip__inner
+      h3.title Upvote button for your Blog/website
+      p.strip__content The Finally button has landed. With the simple embed code it is possible to include a Steem upvote button along with your content wherever it is used on the web. Just like Finally Comment threads you can create a button from any content that is posted on the Steem network.
+
+      p.strip__content For example the button below is linked to the latest update post for Finally Comments. The post here - #[a.content-link(href="https://steemit.com/utopian-io/@sambillingham/finally-comments-v0-11-0-custom-beneficiary-enable-disable-guest-comments-fixes") https://steemit.com/utopian-io/@sambillingham/finally-comments-v0-11-0-custom-beneficiary-enable-disable-guest-comments-fixes].
+
+      p.strip__content
+        <iframe class="finally-button-frame" height="66px" width="210px" style="border: none;" src="/button/utopian-io/@sambillingham/finally-comments-v0-11-0-custom-beneficiary-enable-disable-guest-comments-fixes"></iframe>
+
+      p.strip__content Authentication is controlled via Steemconnect. If a visitor is already logged into Finally via  #[a.content-link(href="https://finallycomments.com") https://finallycomments.com] or via an embeded thread they will see a vote slider when clicking. If a visitor has not yet authenticated they will get a popup to connect with Steemconnect.
+
+      p.strip__content The idea behind the Finally button is to have it sit with(or replace) other social network interactions (Facebook Like, Tweet, Pintrest Share).
+
+
+  section.strip.strip--plain
+    .strip__inner
+        h3.title How To Generate A Finally Button
+
+        p.strip__content Access The #[a.content-link(href="https://finallycomments.com/dashboard") Dashboard] to quickly create buttons.
+
+        p.strip__content &middot; #[a.content-link(href="https://finallycomments.com/dashboard#steem-posts") Steem-posts] - Create via your recent Steem posts. Login to Finally with the account you want to use and you will see a list of 10 most recent posts.
+        p.strip__content &middot; #[a.content-link(href="https://finallycomments.com/dashboard#custom-threads") Custom-threads] Create a custom Button - Login to Finally and head to 'custom threads', first name and create a new thread and then generate a button from there.
+        p.strip__content &middot; #[a.content-link(href="https://finallycomments.com/dashboard#generator") Generator] Generate from any Steemit.com link - Find the relevant content on steemit.com and use generator to create the button.
+
+        p.strip__content I hope you find the Finally button useful for you site ✌️
+  include partials/footer

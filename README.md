@@ -1,11 +1,15 @@
 
+<<<<<<< HEAD
 ## Finally comments - V0.12.0
+=======
+## Finally comments - V0.11.1
+>>>>>>> master
 Finally is a comments system for your website that is powered by the STEEM blockchain. The STEEM blockchain is a unique piece of technology that allows content creators to receive a share of weekly token rewards.
 
 Finally aims to provide monetisation to blogs and foster discussions with the incentives the STEEM blockchain provides.
 
 ### Get Started
-[Please visit the site for more detaails](http://finallycomments.com)
+[Please visit the site for more details](http://finallycomments.com)
 
 Finally provides both HTML embed code and a javascript library. The HTML embed can be easily added to any website while the Javascript library enables advanced options for developers.
 

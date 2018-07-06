@@ -25,9 +25,9 @@ block content
         .generator
           .field.has-addons
             .control
-              input.input.generate-url(placeholder="url")
+              input.input.generate-url.generate-url--thread(placeholder="url")
             .control
-              a.button.is-primary.generate-embded(type="text" data-controller="generator-controls") Create
+              a.button.is-primary.generate-embded(type="text" data-controller="generator-controls") Create Thread
         .generator-controls
           .field
             .control
@@ -49,7 +49,18 @@ block content
                 input.embed-control.input.is-small(type="text" data-controller="generator-controls" data-value="beneficiary-username" placeholder="username")
                 input.embed-control.input.is-small(type="number" data-controller="generator-controls" data-value="beneficiary-percentage" placeholder="percentage")
         pre
-          code.embed-code.language-html
+          code.embed-code.embed-code--finallythread.language-html
+
+        br
+        p.generator-intro Generate a Finally upvote button code using a Steemit url.
+        .generator
+          .field.has-addons
+            .control
+              input.input.generate-url.generate-url--button(placeholder="url")
+            .control
+              a.button.is-primary.generate-button-embded(type="text" data-controller="generator-controls") Create Button
+        pre
+          code.embed-code.embed-code--finallybutton.language-html
 
     section.pane.pane__api
       .container
@@ -113,14 +124,15 @@ block content
             tr
               th Title
               th Permalink/ID
-              th Embed
+              th Thread Embed
+              th Button Embed
           tbody
               each val in threads
                 tr
                   td= val['title']
                   td: a(href=`/viewer/custom-thread/finallycomments/@${val['author']}/${val['slug']}` target="_blank") #{val['slug']}
-                  td
-                    button.button.is-dark.load-embed(data-permlink=`/finallycomments/@${val['author']}/${val['slug']}` data-generated='true') Generate
+                  td: button.button.is-dark.load-embed(data-permlink=`/finallycomments/@${val['author']}/${val['slug']}` data-generated='true') Thread
+                  td: button.button.is-dark.load-button-embed(data-permlink=`/finallycomments/@${val['author']}/${val['slug']}` data-generated='true') Button
               else
                tr
                 td.no-custom-threads   No custom threads yet..
@@ -135,14 +147,15 @@ block content
             tr
               th Comments
               th Title
-              th Embed
+              th Thread
+              th Button
           tbody
         .button.is-link.load-more-posts Load More Posts
 
-    section.overlay
+    section.overlay.overlay--threadembed
       .overlay__bg
       .overlay__content
-          h2.title Embed Code
+          h2.title Finally Thread Embed Code
           .field
             .control
               label.checkbox
@@ -163,4 +176,11 @@ block content
                 input.embed-control.input.is-small(type="text" data-controller="overlay" data-value="beneficiary-username" placeholder="username")
                 input.embed-control.input.is-small(type="number" data-controller="overlay" data-value="beneficiary-percentage" placeholder="percentage")
           pre
-            code.embed-code.language-html
+            code.embed-code.embed-code--finallythread.language-html
+
+    section.overlay.overlay--finallybutton
+      .overlay__bg
+      .overlay__content
+          h2.title Finally Button Embed Code
+          pre
+            code.embed-code.embed-code--finallybutton.language-html

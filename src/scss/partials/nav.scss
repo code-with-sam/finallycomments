@@ -16,6 +16,7 @@
   text-align: right;
   padding: 20px;
   color: $brand-primary;
+  @media(max-width: 670px ){ margin-left: 40px;}
 }
 .nav--alt {
 }
