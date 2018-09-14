@@ -7,13 +7,13 @@ const FINALLY_PERMLINK = 'finally-comments-thread'
 
 async function createThread(params) {
   if(params.beneficiary && params.bweight){
-    newThreadWithBeneficiary(params.username, params.beneficiary, params.bweight)
+    newThreadWithBeneficiary(params.username, params.beneficiary, params.bweight, params.slug)
   } else {
-    newThread(params.username)
+    newThread(params.username, params.slug)
   }
 }
 
-async function newThread(username) {
+async function newThread(username, slug) {
   let newToken;
   try { newToken = await getAccessFromRefresh(username) }
   catch(error){console.log(error)}
@@ -30,7 +30,7 @@ async function newThread(username) {
   });
 }
 
-async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight) {
+async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight, slug) {
   let newToken;
   try { newToken = await getAccessFromRefresh(username) }
   catch(error){console.log(error)}
