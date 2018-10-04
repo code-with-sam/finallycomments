@@ -24,7 +24,7 @@ async function newThread(username, slug) {
   steem.comment(FINALLY_AUTHOR, FINALLY_PERMLINK, username, permlink, title, body, { app: 'finally.app' }, async (err, steemResponse) => {
     if (err) { console.log(err); res.redirect('/404');
     } else {
-      await Thread.insert({ author: author, slug: permlink, title: title })
+      await Thread.insert({ author: username, slug: permlink, title: title })
       res.redirect(`/thread/finallycomments/@${username}/${permlink}`)
     }
   });
