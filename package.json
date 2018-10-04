@@ -14,27 +14,31 @@
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
-    "dompurify": "^1.0.4",
+    "dompurify": "^1.0.8",
     "dotenv": "^5.0.1",
-    "express": "~4.15.5",
+    "express": "^4.16.3",
     "express-sanitize-escape": "^1.1.0",
     "express-session": "^1.15.6",
     "finallycomments": "^0.3.2",
-    "iframe-resizer": "^3.6.1",
+    "iframe-resizer": "^3.6.2",
     "jquery": "^3.3.1",
     "moment": "^2.22.2",
-    "mongodb": "^3.0.10",
-    "morgan": "~1.9.0",
-    "parcel-bundler": "^1.8.1",
+    "mongodb": "^3.1.6",
+    "morgan": "^1.9.1",
+    "parcel-bundler": "^1.10.1",
     "pug": "2.0.0-beta11",
-    "request": "^2.87.0",
+    "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "sc2-sdk": "^1.0.2",
     "serve-favicon": "~2.4.5",
     "showdown": "^1.8.6",
-    "steem": "^0.7.1"
+    "steem": "^0.7.2",
+    "steemconnect": "^2.0.0"
   },
   "devDependencies": {
-    "node-sass": "^4.9.0"
-  }
+    "babel-core": "^6.26.3",
+    "node-sass": "^4.9.3"
+  },
+  "browserslist": [
+    "last 1 Chrome version"
+  ]
 }

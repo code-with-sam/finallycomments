@@ -5,15 +5,16 @@ const { URL } = require('url');
 const FINALLY_AUTHOR = 'finallycomments'
 const FINALLY_PERMLINK = 'finally-comments-thread'
 
-async function createThread(params) {
+async function createThread(req, res) {
+  const params = req.params
   if(params.beneficiary && params.bweight){
-    newThreadWithBeneficiary(params.username, params.beneficiary, params.bweight, params.slug)
+    newThreadWithBeneficiary(params.username, params.beneficiary, params.bweight, params.slug, res)
   } else {
-    newThread(params.username, params.slug)
+    newThread(params.username, params.slug, res)
   }
 }
 
-async function newThread(username, slug) {
+async function newThread(username, slug, res) {
   let newToken;
   try { newToken = await getAccessFromRefresh(username) }
   catch(error){console.log(error)}
@@ -30,7 +31,7 @@ async function newThread(username, slug) {
   });
 }
 
-async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight, slug) {
+async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight, slug, res) {
   let newToken;
   try { newToken = await getAccessFromRefresh(username) }
   catch(error){console.log(error)}
@@ -95,7 +96,7 @@ module.exports.checkAndGenerate = async (req, res) => {
     let referer = new URL(req.headers.referer)
     let domains = await Domain.findOne(username)
     if (domains.list.indexOf(referer.host) > -1 ) {
-      createThread(req.params)
+      createThread(req, res)
     } else { res.redirect('/404') }
   }
 }

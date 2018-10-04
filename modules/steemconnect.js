@@ -1,9 +1,9 @@
 const rp = require('request-promise');
-let steemconnect2 = require('sc2-sdk');
+let steemconnect = require('steemconnect');
 let config = require('../config')
 const Token = require('../models/token')
 
-let steem = steemconnect2.Initialize({
+let steem = steemconnect.Initialize({
     app: config.auth.client_id,
     callbackURL: config.auth.redirect_uri,
     scope: ['login','vote', 'comment', 'comment_options']
@@ -38,7 +38,7 @@ let getAccessFromRefresh = async (username) => {
     let token = await Token.findOne(username)
     return rp({
       method: 'POST',
-      uri: 'https://v2.steemconnect.com/api/oauth2/token',
+      uri: 'https://steemconnect.com/api/oauth2/token',
       body: {
         refresh_token: token.refresh,
         client_id: process.env.CLIENT_ID,
