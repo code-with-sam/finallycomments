@@ -55,7 +55,7 @@ let app = {
     data-generated="false"\n
     data-beneficiary=""\n
     data-beneficiaryWeight="0"\n
-    data-guestComments="false"
+    data-guestComments="false">
 </section>\n
 <script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>
 <script>finallyComments.init()</script>
