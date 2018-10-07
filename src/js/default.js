@@ -57,7 +57,7 @@ let app = {
     data-beneficiaryWeight="0"\n
     data-guestComments="false">
 </section>\n
-<script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>
+<script src="https://finallycomments.com/js/finally.v0.4.0.min.js"></script>
 <script>finallyComments.init()</script>
     `
     $('.strip__code').text(codeBlock)
@@ -234,8 +234,8 @@ let app = {
     let guestComments = controls.guestComments ? `    data-guestComments="true"\n` : ''
     let embedTemplate = `
 <section class="finally-comments"
-${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}${guestComments}</section>
-<script src="https://finallycomments.com/js/finally.v0.3.2.min.js"></script>
+${id}${rep}${values}${profile}${generated}${beneficiary}${beneficiaryWeight}${guestComments}></section>
+<script src="https://finallycomments.com/js/finally.v0.4.0.min.js"></script>
 <script>finallyComments.init()</script>
     `
     $('.embed-code--finallythread').empty()
