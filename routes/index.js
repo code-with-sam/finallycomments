@@ -233,10 +233,15 @@ router.post('/new-thread', util.isAuthorized, (req, res) => {
   }
 
   let beneficiaries = [];
-  beneficiaries.push({
-    account: req.body.beneficiary,
-    weight: 100*parseInt(req.body.beneficiaryWeight)
-  });
+  let commentExtentions = [];
+
+  if(req.body.beneficiary !== ''){
+    beneficiaries.push({
+      account: req.body.beneficiary,
+      weight: 100*parseInt(req.body.beneficiaryWeight)
+    });
+    commentExtentions = [[0, { beneficiaries: beneficiaries }]]
+  }
 
   let commentOptionsParams = {
     author: commentParams.author,
