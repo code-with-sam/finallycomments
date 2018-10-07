@@ -250,18 +250,15 @@ router.post('/new-thread', util.isAuthorized, (req, res) => {
     percent_steem_dollars: 10000,
     allow_votes: true,
     allow_curation_rewards: true,
-    extensions: [
-      [0, {
-        beneficiaries: beneficiaries
-      }]
-    ]
+    extensions: commentExtentions
   }
 
   let operations = [['comment', commentParams], ['comment_options', commentOptionsParams]]
+
   steem.broadcast(operations, async (err, steemResponse) => {
     if (err) { res.json({ error: err.error_description }) }
     else {
-      let newThread = { author: author, slug: permlink, title: title }
+      let newThread = { author: commentParams.author, slug:commentParams. permlink, title: commentParams.title }
       let response = await Thread.insert(newThread)
       res.json(response)
     }
