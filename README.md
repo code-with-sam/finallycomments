@@ -1,9 +1,4 @@
-
-<<<<<<< HEAD
 ## Finally comments
-=======
-## Finally comments 
->>>>>>> master
 
 Finally is a comments system for your website that is powered by the STEEM blockchain. The STEEM blockchain is a unique piece of technology that allows content creators to receive a share of weekly token rewards.
 
@@ -47,7 +42,5 @@ NODE_CLIENT_ID="newproject.app" NODE_REDIRECT_URI="localhost:3000/auth/" NODE_SE
 - edit/delete/flag comments
 - Themes
 - How To Guides
-- Beneficiaries
 - Improve Profiles - @username
 - Flag comments using STEEM downvote
-- wordpress plugin
