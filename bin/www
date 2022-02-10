@@ -9,7 +9,15 @@ let debug = require('debug')('boilerplate:server');
 let http = require('http');
 let config = require('../config');
 let db = require('../modules/db')
-const databaseURL = `mongodb://${process.env.FINALLY_DATABASE_USERNAME}:${process.env.FINALLY_DATABASE_PASSWORD}@ds115799.mlab.com:15799/finally`;
+// const databaseURL = `mongodb://localhost:27017/finally`;
+// const databaseURL = `mongodb://${process.env.FINALLY_DATABASE_USERNAME}:${process.env.FINALLY_DATABASE_PASSWORD}@ds115799.mlab.com:15799/finally`;
+
+const databaseURL = `mongodb+srv://finallyabc:${process.env.FINALLY_DATABASE_PASSWORD}@cluster0.z5lts.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+
+
+
+
+
 
 /**
  * Get port from environment and store in Express.

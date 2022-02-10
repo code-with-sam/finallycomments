@@ -43,7 +43,7 @@ async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight
   let body = `${username} : This comment is a thread for the Finally Comments System. Visit https://finallycomments.com for more info.`
   let parentAuthor = FINALLY_AUTHOR
   let parentPermlink = FINALLY_PERMLINK
-  let beneficiaryWeight = parseInt(beneficiaryWeight) > 40 ? 40 : parseInt(beneficiaryWeight)
+  let _beneficiaryWeight = parseInt(beneficiaryWeight) > 40 ? 40 : parseInt(beneficiaryWeight)
 
   let commentParams = {
     parent_author: parentAuthor,
@@ -57,7 +57,7 @@ async function newThreadWithBeneficiary(username, beneficiary, beneficiaryWeight
   let beneficiaries = [];
   beneficiaries.push({
     account: beneficiary,
-    weight: 100*beneficiaryWeight
+    weight: 100*_beneficiaryWeight
   });
   let commentOptionsParams = {
     author: author,
